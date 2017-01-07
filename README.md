@@ -1,7 +1,7 @@
 # Subtitle Converter for PHP
 It is used to converts subtitle files from one format to another. Example: .srt to .stl...
 
-# Inroduction
+# Example
 Best way to learn is to see example. Let's convert .srt file to .stl:
 
 ```
@@ -18,7 +18,7 @@ convert($internal_format) - this method receives array (in "internal format") an
 
 Best example is to look at StlConverter.php (it converts .stl files).
 
-# "Internal Format" 
+## "Internal Format" 
 
 "Internal Format" is just a PHP array. It is used internally in library to be able to convert between different formats.
 
