@@ -1,7 +1,5 @@
 <?php namespace Done\SubtitleConverter;
 
-// https://github.com/captioning/captioning has potential, but :(
-
 interface SubtitleContract {
 
     public static function convert($from_file_path, $to_file_path);
@@ -148,3 +146,15 @@ class SubtitleConverter implements SubtitleContract {
         return $extension;
     }
 }
+
+// https://github.com/captioning/captioning has potential, but :(
+
+/*
+**Other popular formats that are not implemented**
+Feel free to implement one if you can, or choose some other format if you need
+```
+.sub, .sbv - similar to .srt
+.vtt - very similar to .srt
+[.scc](https://en.wikipedia.org/wiki/EIA-608)
+```
+ */

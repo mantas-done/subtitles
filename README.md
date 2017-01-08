@@ -15,15 +15,6 @@ SubtitleConverter::convert('subtitles.srt', 'subtitles.stl');
 | [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt | yes |
 | [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl | yes |
 
-
-**Other popular formats that are not implemented**  
-Feel free to implement one if you can, or choose some other format if you need
-```
-.sub, .sbv - similar to .srt
-.vtt - very similar to .srt
-[.scc](https://en.wikipedia.org/wiki/EIA-608)
-```
-
 ## How to add new subtitle format?
 
 You need to implement ConverterContract.php interface. It has two methods.
