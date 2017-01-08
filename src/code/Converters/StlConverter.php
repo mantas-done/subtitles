@@ -25,7 +25,7 @@ class StlConverter implements ConverterContract {
         return $internal_format;
     }
 
-    public function internalFormatToFileContent($internal_format)
+    public function internalFormatToFileContent(array $internal_format)
     {
         $stl = '';
         foreach ($internal_format as $row) {
