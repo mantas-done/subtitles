@@ -64,3 +64,7 @@ Array
 [end] - when to stop showing text (float -seconds)
 [lines] - one or more text lines (array)
 ```
+
+## Contribution
+
+Feel free to add new formats and create pull requests or create issues, if you need some functionality implemented.
