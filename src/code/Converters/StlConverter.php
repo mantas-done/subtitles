@@ -27,13 +27,7 @@ class StlConverter implements ConverterContract {
 
     public function convert($internal_format)
     {
-        $stl = '//Default Formatting for STL subtitles
-$FontName           = Arial
-$FontSize           = 28
-$HorzAlign          = Center
-$VertAlign          = Bottom
-
-';
+        $stl = '';
         foreach ($internal_format as $row) {
             $stl_start = self::toStlTime($row['start']);
             $stl_end = self::toStlTime($row['end']);

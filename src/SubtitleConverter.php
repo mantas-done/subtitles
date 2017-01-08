@@ -1,11 +1,8 @@
 <?php namespace Done\SubtitleConverter;
 
-use Illuminate\Support\Facades\Response;
-use Done\SubtitleConverter\SrtConverter;
-use Done\SubtitleConverter\StlConverter;
-
-
 interface SubtitleContract {
+
+    public static function convert($from_file_path, $to_file_path);
 
     // input
     public static function loadFile($path, $extension = null);
@@ -18,7 +15,7 @@ interface SubtitleContract {
     public function getOnlyTextFromInput();
 
     // output
-    public function toFile($path);
+    public function saveFile($path);
     public function toString();
 //    public function download($filename);
 }
@@ -29,7 +26,7 @@ class SubtitleConverter implements SubtitleContract {
     protected $input;
     protected $input_format;
 
-    protected $parsed_data;
+    protected $parsed_data; // data in internal format (when file is converted)
 
     protected $converter;
     protected $output;
@@ -39,11 +36,18 @@ class SubtitleConverter implements SubtitleContract {
         'stl',
     ];
 
+    public static function convert($from_file_path, $to_file_path)
+    {
+        $to_extension = self::fileExtension($to_file_path);
+
+        return self::loadFile($from_file_path)->convertTo($to_extension)->saveFile($to_file_path);
+    }
+
     public static function loadFile($path, $extension = null)
     {
         $string = file_get_contents($path);
         if (!$extension) {
-            $extension = fileExtension($path);
+            $extension = self::fileExtension($path);
         }
 
         return self::loadString($string, $extension);
@@ -76,10 +80,10 @@ class SubtitleConverter implements SubtitleContract {
 
     public function download($filename)
     {
-        return Response::make($this->output, '200', array(
-            'Content-Type' => 'text/plain',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ));
+//        return Response::make($this->output, '200', array(
+//            'Content-Type' => 'text/plain',
+//            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+//        ));
     }
 
     public function toString()
@@ -87,9 +91,11 @@ class SubtitleConverter implements SubtitleContract {
         return $this->output;
     }
 
-    public function toFile($path)
+    public function saveFile($path)
     {
         file_put_contents($path, $this->toString());
+
+        return $this;
     }
 
     public function getOnlyTextFromInput()
@@ -106,6 +112,12 @@ class SubtitleConverter implements SubtitleContract {
     }
 
     // -------------------------------------- private ------------------------------------------------------------------
+
+    // for testing only
+    public function getInternalFormat()
+    {
+        return $this->parsed_data;
+    }
 
     public static function removeUtf8Bom($text)
     {
@@ -124,5 +136,13 @@ class SubtitleConverter implements SubtitleContract {
         }
 
         throw new \Exception('unknown format');
+    }
+
+    private static function fileExtension($filename) {
+        $parts = explode('.', $filename);
+        $extension = end($parts);
+        $extension = strtolower($extension);
+
+        return $extension;
     }
 }

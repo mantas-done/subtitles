@@ -5,17 +5,17 @@ use Done\SubtitleConverter\SubtitleConverter;
 
 class SrtTest extends TestCase {
 
-    public function testInitial()
+    public function testConvertingFileFromSrtToSrtDoesntChangeItContent()
     {
         $srt_path = './tests/files/srt.srt';
-        $stl_path = './tests/files/stl.stl';
-        $temporary_stl_path = './tests/files/tmp/stl.stl';
+        $temporary_srt_path = './tests/files/tmp/srt.srt';
 
-        SubtitleConverter::convert($srt_path, $temporary_stl_path);
+        @unlink($temporary_srt_path);
 
-        $this->assertFileEquals($stl_path, $temporary_stl_path);
+        SubtitleConverter::convert($srt_path, $temporary_srt_path);
+        $this->assertFileEquals($srt_path, $temporary_srt_path);
 
-        unlink($temporary_stl_path);
+        unlink($temporary_srt_path);
     }
 
 }

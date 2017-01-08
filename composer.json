@@ -1,7 +1,12 @@
 {
-    "name": "done/subtitle-converter",
+    "name": "mantas783/subtitle-converter",
     "description": "Converts different formats of subtitle files: .srt, .stl...",
     "type": "library",
     "minimum-stability": "dev",
-    "require": {}
+    "require": {},
+    "autoload": {
+        "classmap": [
+            "src"
+        ]
+    }
 }

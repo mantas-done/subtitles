@@ -9,22 +9,12 @@ class SrtConverter implements ConverterContract {
 
     public function convert($internal_format)
     {
-        throw new \Exception('write code here');
+        return self::internalFormatToSrt($internal_format);
     }
 
     // ------------------------------ private --------------------------------------------------------------------------
 
     private static function srtToInternalFormat($srt_file) {
-
-//        $lines = [];
-//        $handle = fopen($srt_file, "r");
-//        if ($handle) {
-//            while (($line = fgets($handle)) !== false) {
-//                $lines[] = trim($line);
-//            }
-//
-//            fclose($handle);
-//        }
 
         $lines = explode("\n", $srt_file);
         foreach ($lines as &$line) {
@@ -114,5 +104,33 @@ class SrtConverter implements ConverterContract {
         $time = $only_seconds + $milliseconds;
 
         return $time;
+    }
+
+    private static function internalFormatToSrt($internal_format)
+    {
+        $output = '';
+
+        foreach ($internal_format as $k => $row) {
+            $output .= $k + 1 . "\n";
+            $output .= self::internalTimeToSrt($row['start']) . ' --> ' . self::internalTimeToSrt($row['end']) . "\n";
+            $output .= implode("\n", $row['lines']) . "\n";
+            $output .= "\n";
+        }
+
+        $output = trim($output);
+
+        return $output;
+    }
+
+
+    private static function internalTimeToSrt($internal_time)
+    {
+        $parts = explode('.', $internal_time); // 1.23
+        $whole = $parts[0]; // 1
+        $decimal = $parts[1]; // 23
+
+        $srt_time = gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
+
+        return $srt_time;
     }
 }
