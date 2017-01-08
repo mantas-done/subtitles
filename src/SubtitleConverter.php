@@ -64,7 +64,7 @@ class SubtitleConverter implements SubtitleContract {
         $converter->input_format = $extension;
 
         $input_converter = self::getConverter($extension);
-        $converter->parsed_data = $input_converter->parse($converter->input);
+        $converter->parsed_data = $input_converter->fileContentToInternalFormat($converter->input);
 
         return $converter;
     }
@@ -73,7 +73,7 @@ class SubtitleConverter implements SubtitleContract {
     {
         $converter = self::getConverter($extension);
 
-        $this->output = $converter->convert($this->parsed_data);
+        $this->output = $converter->internalFormatToFileContent($this->parsed_data);
 
         return $this;
     }

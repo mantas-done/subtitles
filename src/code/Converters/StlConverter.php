@@ -2,7 +2,7 @@
 
 class StlConverter implements ConverterContract {
 
-    public function parse($string)
+    public function fileContentToInternalFormat($string)
     {
         $not_trimmed_lines = explode("\n", $string);
         $lines = array_map('trim', $not_trimmed_lines);
@@ -25,7 +25,7 @@ class StlConverter implements ConverterContract {
         return $internal_format;
     }
 
-    public function convert($internal_format)
+    public function internalFormatToFileContent($internal_format)
     {
         $stl = '';
         foreach ($internal_format as $row) {

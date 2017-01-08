@@ -2,12 +2,12 @@
 
 class SrtConverter implements ConverterContract {
 
-    public function parse($string)
+    public function fileContentToInternalFormat($string)
     {
         return self::srtToInternalFormat($string);
     }
 
-    public function convert($internal_format)
+    public function internalFormatToFileContent($internal_format)
     {
         return self::internalFormatToSrt($internal_format);
     }

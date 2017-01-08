@@ -5,7 +5,7 @@ It is used to converts subtitle files from one format to another. Example: .srt 
 Best way to learn is to see example. Let's convert .srt file to .stl:
 
 ```
-SubtitleConverter::convert('movie.srt', 'movie.stl');
+SubtitleConverter::convert('subtitles.srt', 'subtitles.stl');
 ```
 # How to add new subtitle format?
 

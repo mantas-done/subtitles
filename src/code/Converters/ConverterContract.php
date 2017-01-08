@@ -3,20 +3,19 @@
 interface ConverterContract {
 
     /**
-     * srt, stl to internal format
+     * Convert file content (.srt, .stl... file) to library's "internal format"
      *
-     * @param $string
-     * @return array  Internal format
+     * @param string $file_content      Content of file that will be converted
+     * @return array                    Internal format
      */
-    public function parse($string);
+    public function fileContentToInternalFormat($file_content);
 
     /**
-     * Internal format to srt, stl
+     * Convert library's "internal format" to file content
      *
-     * @param $internal_format
-     * @return string  SRT, STL..
+     * @param array $internal_format    Internal format array
+     * @return string                   Converted file content
      */
-    public function convert($internal_format);
-
+    public function internalFormatToFileContent($internal_format);
 
 }
