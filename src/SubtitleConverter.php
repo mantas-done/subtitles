@@ -1,5 +1,7 @@
 <?php namespace Done\SubtitleConverter;
 
+// https://github.com/captioning/captioning has potential, but :(
+
 interface SubtitleContract {
 
     public static function convert($from_file_path, $to_file_path);

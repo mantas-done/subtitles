@@ -13,7 +13,7 @@ SubtitleConverter::convert('subtitles.srt', 'subtitles.stl');
 | Format | Extension | Implemented |
 | --- | --- | --- |
 | [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt | yes |
-| [STL](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl | yes |
+| [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl | yes |
 
 
 **Other popular formats that are not implemented**  
@@ -37,7 +37,8 @@ Basically what your implementation should be able to do, is convert subtitle fil
 
 "Internal library's" format is used like middle ground, to be able to convert between different formats.
 
-Best example is to look how SrtConverter.php is implemented.
+Best example is to look how [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) is implemented.  
+And this is example of [.srt file](https://github.com/mantas783/subtitle-converter/blob/master/tests/files/srt.srt).
 
 ### "Internal Format" 
 
