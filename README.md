@@ -25,13 +25,9 @@ fileContentToInternalFormat($file_content)
 internalFormatToFileContent($internal_format)
 ```
 
-Basically what your implementation should be able to do, is convert subtitle file to "internal library's format" and from internal libary's format to subtitle file.
+Basically what your implementation should be able to do, is convert subtitle file to "internal library's format", and from internal library's format back to subtitle file.
 
-For example, if this library would not had support for .srt file format and we wanted to add it we would need to implement two things:  
-1. Ability to convert .srt file to internal library's format  
-2. Convert this internal format back to .srt file  
-
-So by using this "internal format" we are unifying how files are converted. This way we first convert .srt file to "internal format" and then we can convert "internal format" to any other implemented file format.
+"Internal library's" format is used like middle ground, to be able to convert between different formats.
 
 Best example is to look how SrtConverter.php is implemented.
 
@@ -64,7 +60,7 @@ Array
 )
 ```
 ```
-[start] - when to start showing text (seconds, float)
-[end] - when to stop showing text (seconds, float)
-[lines] - one or more text lines (array of strings, each string in array contains separate line)
+[start] - when to start showing text (float - seconds)
+[end] - when to stop showing text (float -seconds)
+[lines] - one or more text lines (array)
 ```
