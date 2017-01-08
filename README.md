@@ -27,8 +27,8 @@ internalFormatToFileContent($internal_format)
 
 Basically what your implementation should be able to do, is convert subtitle file to "internal library's format" and from internal libary's format to subtitle file.
 
-For example, if this library would not had support for .srt file format and we wanted to add it we would need to implement two things.
-1. Ability to convert .srt file to internal library's format
+For example, if this library would not had support for .srt file format and we wanted to add it we would need to implement two things:  
+1. Ability to convert .srt file to internal library's format  
 2. Convert this internal format back to .srt file  
 
 So by using this "internal format" we are unifying how files are converted. This way we first convert .srt file to "internal format" and then we can convert "internal format" to any other implemented file format.
