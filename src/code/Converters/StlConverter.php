@@ -2,9 +2,9 @@
 
 class StlConverter implements ConverterContract {
 
-    public function fileContentToInternalFormat($string)
+    public function fileContentToInternalFormat($file_content)
     {
-        $not_trimmed_lines = explode("\n", $string);
+        $not_trimmed_lines = explode("\n", $file_content);
         $lines = array_map('trim', $not_trimmed_lines);
 
         $frames_per_seconds = self::framesPerSecond($lines);

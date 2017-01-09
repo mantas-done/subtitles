@@ -8,11 +8,11 @@ class SrtConverter implements ConverterContract {
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($string)
+    public function fileContentToInternalFormat($file_content)
     {
         $internal_format = [];
 
-        $blocks = explode("\n\n", trim($string));
+        $blocks = explode("\n\n", trim($file_content));
         foreach ($blocks as $block) {
             $lines = explode("\n", $block);
             $times = explode(' --> ', $lines[1]);
@@ -35,18 +35,18 @@ class SrtConverter implements ConverterContract {
      */
     public function internalFormatToFileContent(array $internal_format)
     {
-        $output = '';
+        $file_content = '';
 
-        foreach ($internal_format as $k => $row) {
-            $output .= $k + 1 . "\n";
-            $output .= self::internalTimeToSrt($row['start']) . ' --> ' . self::internalTimeToSrt($row['end']) . "\n";
-            $output .= implode("\n", $row['lines']) . "\n";
-            $output .= "\n";
+        foreach ($internal_format as $k => $block) {
+            $file_content .= $k + 1 . "\n";
+            $file_content .= self::internalTimeToSrt($block['start']) . ' --> ' . self::internalTimeToSrt($block['end']) . "\n";
+            $file_content .= implode("\n", $block['lines']) . "\n";
+            $file_content .= "\n";
         }
 
-        $output = trim($output);
+        $file_content = trim($file_content);
 
-        return $output;
+        return $file_content;
     }
 
     // ------------------------------ private --------------------------------------------------------------------------
