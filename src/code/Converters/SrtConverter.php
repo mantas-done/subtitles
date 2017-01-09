@@ -38,9 +38,14 @@ class SrtConverter implements ConverterContract {
         $file_content = '';
 
         foreach ($internal_format as $k => $block) {
-            $file_content .= $k + 1 . "\n";
-            $file_content .= self::internalTimeToSrt($block['start']) . ' --> ' . self::internalTimeToSrt($block['end']) . "\n";
-            $file_content .= implode("\n", $block['lines']) . "\n";
+            $nr = $k + 1;
+            $start = self::internalTimeToSrt($block['start']);
+            $end = self::internalTimeToSrt($block['end']);
+            $lines = implode("\n", $block['lines']);
+
+            $file_content .= $nr . "\n";
+            $file_content .= $start . ' --> ' . $end . "\n";
+            $file_content .= $lines . "\n";
             $file_content .= "\n";
         }
 
