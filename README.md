@@ -67,4 +67,13 @@ Array
 
 ## Contribution
 
-Feel free to add new formats and create pull requests or create issues, if you need some functionality implemented.
+You can contribute in any way you want. If you need some guidance, choose something from this table:
+
+| Title | Difficulty | Description |
+| --- | --- | --- |
+| Add .sub, .sbv formats | Easy | [Format description](https://en.wikipedia.org/wiki/SubViewer) |
+| Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
+| Add .vtt format | Medium | [Format description}(https://en.wikipedia.org/wiki/WebVTT) |
+| Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
+
+For now library should support only basic features (several lines of text). No need to support different text styles or positioning of text.
