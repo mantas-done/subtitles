@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Done\SubtitleConverter\SubtitleConverter;
+use Done\Subtitles\Subtitles;
 
 class SrtTest extends TestCase {
 
@@ -12,7 +12,7 @@ class SrtTest extends TestCase {
 
         @unlink($temporary_srt_path);
 
-        SubtitleConverter::convert($srt_path, $temporary_srt_path);
+        Subtitles::convert($srt_path, $temporary_srt_path);
         $this->assertFileEquals($srt_path, $temporary_srt_path);
 
         unlink($temporary_srt_path);

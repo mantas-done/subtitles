@@ -5,7 +5,7 @@ Converts subtitle files from one format to another. Example: .srt to .stl...
 Best way to learn is to see example. Let's convert .srt file to .stl:
 
 ```
-SubtitleConverter::convert('subtitles.srt', 'subtitles.stl');
+Subtitles::convert('subtitles.srt', 'subtitles.stl');
 ```
 
 ## Currently supported formats
@@ -69,9 +69,9 @@ Array
 
 You can contribute in any way you want. If you need some guidance, choose something from this table:
 
-| Title | Difficulty | Description |
+| Task | Difficulty | Description |
 | --- | --- | --- |
-| Add .sub, .sbv formats | Easy | [Format description](https://en.wikipedia.org/wiki/SubViewer) |
+| Add .sub, .sbv formats | Easy | Supporting more formats is nice. So implement this format. You can find how file should look like in [format description](https://en.wikipedia.org/wiki/SubViewer) |
 | Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
 | Add .vtt format | Medium | [Format description}(https://en.wikipedia.org/wiki/WebVTT) |
 | Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |

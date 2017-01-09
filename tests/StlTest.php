@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Done\SubtitleConverter\SubtitleConverter;
+use Done\Subtitles\Subtitles;
 
 class StlTest extends TestCase {
 
@@ -14,7 +14,7 @@ class StlTest extends TestCase {
         @unlink($temporary_stl_path);
 
         // srt to stl
-        SubtitleConverter::convert($srt_path, $temporary_stl_path);
+        Subtitles::convert($srt_path, $temporary_stl_path);
         $this->assertFileEquals($stl_path, $temporary_stl_path);
 
         unlink($temporary_stl_path);
@@ -32,10 +32,10 @@ class StlTest extends TestCase {
         @unlink($temporary_stl_path);
 
         // stl to srt
-        $stl_object = SubtitleConverter::convert($stl_path, $temporary_srt_path);
+        $stl_object = Subtitles::convert($stl_path, $temporary_srt_path);
         $stl_internal_format = $stl_object->getInternalFormat();
 
-        $srt_object = SubtitleConverter::convert($srt_path, $temporary_stl_path);
+        $srt_object = Subtitles::convert($srt_path, $temporary_stl_path);
         $srt_internal_format = $srt_object->getInternalFormat();
 
         unlink($temporary_srt_path);

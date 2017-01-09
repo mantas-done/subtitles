@@ -1,6 +1,6 @@
 {
-    "name": "mantas783/subtitle-converter",
-    "description": "Converts different formats of subtitle files: .srt, .stl...",
+    "name": "done/subtitles",
+    "description": "Subtitle converter and generator for PHP",
     "type": "library",
     "minimum-stability": "dev",
     "require": {},

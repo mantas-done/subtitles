@@ -1,4 +1,4 @@
-<?php namespace Done\SubtitleConverter;
+<?php namespace Done\Subtitles;
 
 interface ConverterContract {
 
