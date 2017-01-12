@@ -1,5 +1,8 @@
-# Subtitle Converter for PHP
-Converts subtitle files from one format to another. Example: .srt to .stl...
+# Caption And Subtitle Converter for PHP
+This library helps to work with subtitles (captions):
+1. Convert formats (example: .srt to .stl)
+2. Create subtitles manually
+3. Time shift and edit subtitles (add some time or subtract time to synchronize captions)
 
 ## Example
 Best way to learn is to see example. Let's convert .srt file to .stl:
@@ -75,5 +78,7 @@ You can contribute in any way you want. If you need some guidance, choose someth
 | Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
 | Add .vtt format | Medium | [Format description}(https://en.wikipedia.org/wiki/WebVTT) |
 | Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
+
+Some other popular formats: .mcc, .ttml, .qt.txt, .dfxp, .cap 
 
 For now library should support only basic features (several lines of text). No need to support different text styles or positioning of text.

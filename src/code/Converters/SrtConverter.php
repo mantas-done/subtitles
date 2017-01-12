@@ -18,8 +18,8 @@ class SrtConverter implements ConverterContract {
             $times = explode(' --> ', $lines[1]);
 
             $internal_format[] = [
-                'start' => self::convertFromSrtTimeToInternal($times[0]),
-                'end' => self::convertFromSrtTimeToInternal($times[1]),
+                'start' => self::srtTimeToInternal($times[0]),
+                'end' => self::srtTimeToInternal($times[1]),
                 'lines' => array_slice($lines, 2),
             ];
         }
@@ -64,7 +64,7 @@ class SrtConverter implements ConverterContract {
      *
      * @return float
      */
-    private static function convertFromSrtTimeToInternal($srt_time)
+    private static function srtTimeToInternal($srt_time)
     {
         $parts = explode(',', $srt_time);
 
