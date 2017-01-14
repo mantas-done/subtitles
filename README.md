@@ -12,7 +12,12 @@ Convert and edit subtitles and captions.
 | [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
 | [SubViewer](https://en.wikipedia.org/wiki/SubViewer) | .sub |
 
-## Code Examples
+## Installation
+```
+composer require mantas-done/subtitles
+```
+
+## Usage
 Convert .srt file to .vtt:
 ```php
 Subtitles::convert('subtitles.srt', 'subtitles.vtt');
