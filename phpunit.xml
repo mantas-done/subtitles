@@ -10,15 +10,13 @@
          stopOnFailure="false"
          syntaxCheck="false">
     <testsuites>
-        <testsuite name="Nacho Test Suite">
+        <testsuite name="Tests">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
-    <blacklist>
-        <directory>vendor</directory>
-        <directory>tests</directory>
-    </blacklist>
-    <whitelist>
-        <directory>src</directory>
-    </whitelist>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory>./src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
