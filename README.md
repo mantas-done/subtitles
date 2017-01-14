@@ -1,8 +1,8 @@
 # Caption And Subtitle Converter for PHP
 This library helps to work with subtitles (captions):
-1. Convert formats (example: .srt to .stl)
-2. Create subtitles manually
-3. Parse files
+1. Convert formats (example: .srt to .stl)  
+2. Create subtitles manually  
+3. Parse files  
 4. Time shift and edit subtitles (add some time or subtract time to synchronize captions)
 
 ## Example
@@ -12,12 +12,13 @@ Best way to learn is to see example. Let's convert .srt file to .stl:
 Subtitles::convert('subtitles.srt', 'subtitles.stl');
 ```
 
-## Currently supported formats
+## Supported formats
 
-| Format | Extension | Implemented |
+| Format | Extension |
 | --- | --- | --- |
-| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt | yes |
-| [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl | yes |
+| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
+| [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
+| [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
 
 ## How to add new subtitle format?
 
@@ -77,7 +78,7 @@ You can contribute in any way you want. If you need some guidance, choose someth
 | --- | --- | --- |
 | Add .sub, .sbv formats | Easy | Supporting more formats is nice. So implement this format. You can find how file should look like in [format description](https://en.wikipedia.org/wiki/SubViewer) |
 | Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
-| Add .vtt format | Medium | [Format description}(https://en.wikipedia.org/wiki/WebVTT) |
+| Add .vtt format | Medium | [Format description](https://en.wikipedia.org/wiki/WebVTT) |
 | Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
 
 Some other popular formats: .mcc, .ttml, .qt.txt, .dfxp, .cap 

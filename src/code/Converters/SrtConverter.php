@@ -3,7 +3,7 @@
 class SrtConverter implements ConverterContract {
 
     /**
-     * Converts file content (.srt) to library's "internal format" (array)
+     * Converts file's content (.srt) to library's "internal format" (array)
      *
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format

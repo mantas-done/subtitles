@@ -1,9 +1,8 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
 
-class SrtTest extends TestCase {
+class Srt extends SubtitleCase {
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()
     {

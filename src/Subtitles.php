@@ -55,11 +55,6 @@ class Subtitles implements SubtitleContract {
     protected $converter;
     protected $output;
 
-    protected static $supported_file_extensions = [
-        'srt',
-        'stl',
-    ];
-
     public static function convert($from_file_path, $to_file_path)
     {
         self::load($from_file_path)->save($to_file_path);
@@ -150,12 +145,9 @@ class Subtitles implements SubtitleContract {
 
     public static function loadString($text, $extension)
     {
-        if (!in_array($extension, self::$supported_file_extensions)) {
-            throw new \Exception('unsupported format');
-        }
-
         $converter = new self;
-        $converter->input = self::removeUtf8Bom($text);
+        $converter->input = self::normalizeNewLines(self::removeUtf8Bom($text));
+
         $converter->input_format = $extension;
 
         $input_converter = self::getConverter($extension);
@@ -230,6 +222,8 @@ class Subtitles implements SubtitleContract {
     {
         if ($extension == 'stl') {
             return new StlConverter();
+        } elseif ($extension == 'vtt') {
+            return new VttConverter();
         } elseif ($extension == 'srt') {
             return new SrtConverter();
         }
@@ -243,6 +237,14 @@ class Subtitles implements SubtitleContract {
         $extension = strtolower($extension);
 
         return $extension;
+    }
+
+    private static function normalizeNewLines($file_content)
+    {
+        $file_content = str_replace("\r\n", "\n", $file_content);
+        $file_content = str_replace("\r", "\n", $file_content);
+
+        return $file_content;
     }
 }
 

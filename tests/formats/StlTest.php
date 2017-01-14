@@ -1,9 +1,8 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
 
-class StlTest extends TestCase {
+class Stl extends SubtitleCase {
 
     public function testConvertFromSrtToStl()
     {
