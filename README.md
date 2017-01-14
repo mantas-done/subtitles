@@ -137,6 +137,3 @@ Simplest way is to download and put phpunit.phar file into the main directory of
 ```
 php phpunit.phar
 ```
-
-## TODO
-1. Maybe should pass new Subtitles() into fileContentToInternalFormat function?
