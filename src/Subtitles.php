@@ -4,7 +4,7 @@ interface SubtitleContract {
 
     public static function convert($from_file_path, $to_file_path);
 
-    public static function load($file_name); // load file
+    public static function load($file_name, $extension = null); // load file
     public function save($file_name); // save file
     public function content($format); // output file content (instead of saving to file)
 
@@ -60,9 +60,16 @@ class Subtitles implements SubtitleContract {
         self::load($from_file_path)->save($to_file_path);
     }
 
-    public static function load($file_name)
+    public static function load($file_name, $extension = null)
     {
-        return self::loadFile($file_name);
+        if (strstr($file_name, "\n") === false) {
+            return self::loadFile($file_name);
+        } else {
+            if (!$extension) {
+                throw new \Exception('Specify extension');
+            }
+            return self::loadString($file_name, $extension);
+        }
     }
 
     public function save($path)

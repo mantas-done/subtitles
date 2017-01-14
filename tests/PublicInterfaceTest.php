@@ -17,13 +17,27 @@ class PublicInterfaceTest extends TestCase {
         unlink($temporary_srt_path);
     }
 
-    public function testLoad()
+    public function testLoadFromFile()
     {
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
 
         $subtitles = Subtitles::load($srt_path);
 
         $this->assertTrue(!empty($subtitles->getInternalFormat()));
+    }
+
+    public function testLoadFromString()
+    {
+        $string = "
+1
+00:02:17,440 --> 00:02:20,375
+Senator, we're making
+our final approach into Coruscant.
+    ";
+        $subtitles = Subtitles::load($string, 'srt');
+
+        $this->assertTrue(!empty($subtitles->getInternalFormat()));
+
     }
 
     public function saveFile()

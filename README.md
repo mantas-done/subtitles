@@ -5,11 +5,60 @@ This library helps to work with subtitles (captions):
 3. Parse files  
 4. Time shift and edit subtitles (add some time or subtract time to synchronize captions)
 
-## Example
-Best way to learn is to see example. Let's convert .srt file to .stl:
-
+## Code Examples
+Convert .srt file to .vtt:
 ```
-Subtitles::convert('subtitles.srt', 'subtitles.stl');
+Subtitles::convert('subtitles.srt', 'subtitles.vtt');
+```
+
+Manually create file
+```
+$subtitles = new Subtitles();
+$subtitles->add(0, 5, 'This text is shown in the beggining of video for 5 seconds');
+$subtitles->save('subtitles.vtt');
+```
+
+Load subtitles from existing file
+```
+$subtitles = Subtitles::load('subtitles.srt');
+```
+
+Load subtitles from string
+```
+$string = "
+1
+00:02:17,440 --> 00:02:20,375
+Senator, we're making
+our final approach into Coruscant.";  
+
+$subtitles = Subtitles::load($string);
+```
+
+Save subtitles to file
+```
+$subtitles->save('subtitler.vtt');
+```
+
+Get file content without saving to file
+```
+$subtitles->content('vtt');
+```
+
+Remove some subtitles
+```
+$from_time = 0;
+$till_time = 5;
+$subtitles->remove($from_time, $till_time);
+```
+
+Add 1 second to subtitle time
+```
+$subtitles->add(1);
+```
+
+Subtract 0.5 seconds from subtitle time
+```
+$subtitles->add(-0.5);
 ```
 
 ## Supported formats
@@ -78,7 +127,6 @@ You can contribute in any way you want. If you need some guidance, choose someth
 | --- | --- | --- |
 | Add .sub, .sbv formats | Easy | Supporting more formats is nice. So implement this format. You can find how file should look like in [format description](https://en.wikipedia.org/wiki/SubViewer) |
 | Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
-| Add .vtt format | Medium | [Format description](https://en.wikipedia.org/wiki/WebVTT) |
 | Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
 
 Some other popular formats: .mcc, .ttml, .qt.txt, .dfxp, .cap 
