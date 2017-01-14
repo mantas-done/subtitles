@@ -165,22 +165,22 @@ class Subtitles implements SubtitleContract {
         return $converter;
     }
 
-    public function convertTo($extension)
-    {
-        $converter = self::getConverter($extension);
+//    public function convertTo($extension)
+//    {
+//        $converter = self::getConverter($extension);
+//
+//        $this->output = $converter->internalFormatToFileContent($this->internal_format);
+//
+//        return $this;
+//    }
 
-        $this->output = $converter->internalFormatToFileContent($this->internal_format);
-
-        return $this;
-    }
-
-    public function download($filename)
-    {
+//    public function download($filename)
+//    {
 //        return Response::make($this->output, '200', array(
 //            'Content-Type' => 'text/plain',
 //            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
 //        ));
-    }
+//    }
 
     public function content($format)
     {
@@ -192,18 +192,18 @@ class Subtitles implements SubtitleContract {
         return $content;
     }
 
-    public function getOnlyTextFromInput()
-    {
-        $text = '';
-        $data = $this->internal_format;
-        foreach ($data as $row) {
-            foreach ($row['lines'] as $line) {
-                $text .= $line . "\n";
-            }
-        }
-
-        return $text;
-    }
+//    public function getOnlyTextFromInput()
+//    {
+//        $text = '';
+//        $data = $this->internal_format;
+//        foreach ($data as $row) {
+//            foreach ($row['lines'] as $line) {
+//                $text .= $line . "\n";
+//            }
+//        }
+//
+//        return $text;
+//    }
 
     // for testing only
     public function getInternalFormat()
