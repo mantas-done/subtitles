@@ -9,3 +9,5 @@ php:
   - nightly
 before_script:
   - composer install
+script:
+  - bin/atoum --test-all
