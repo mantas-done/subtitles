@@ -4,6 +4,9 @@
     "type": "library",
     "minimum-stability": "dev",
     "require": {},
+    "require-dev": {
+        "codeclimate/php-test-reporter": "dev-master"
+    },
     "autoload": {
         "classmap": [
             "src"

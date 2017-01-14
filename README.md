@@ -1,5 +1,3 @@
-[![Coverage Status](https://coveralls.io/repos/github/mantas-done/subtitles/badge.svg?branch=master)](https://coveralls.io/github/mantas-done/subtitles?branch=master)
-
 # Caption And Subtitle Converter for PHP
 
 Convert and edit subtitles and captions.
