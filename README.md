@@ -5,6 +5,14 @@ This library helps to work with subtitles (captions):
 3. Parse files  
 4. Time shift and edit subtitles (add some time or subtract time to synchronize captions)
 
+## Supported formats
+
+| Format | Extension |
+| --- | --- | --- |
+| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
+| [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
+| [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
+
 ## Code Examples
 Convert .srt file to .vtt:
 ```php
@@ -60,14 +68,6 @@ Subtract 0.5 seconds from subtitle time
 ```php
 $subtitles->add(-0.5);
 ```
-
-## Supported formats
-
-| Format | Extension |
-| --- | --- | --- |
-| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
-| [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
-| [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
 
 ## How to add new subtitle format?
 
