@@ -7,19 +7,19 @@ This library helps to work with subtitles (captions):
 
 ## Code Examples
 Convert .srt file to .vtt:
-```
+```php
 Subtitles::convert('subtitles.srt', 'subtitles.vtt');
 ```
 
 Manually create file
-```
+```php
 $subtitles = new Subtitles();
 $subtitles->add(0, 5, 'This text is shown in the beggining of video for 5 seconds');
 $subtitles->save('subtitles.vtt');
 ```
 
 Load subtitles from existing file
-```
+```php
 $subtitles = Subtitles::load('subtitles.srt');
 ```
 
@@ -35,29 +35,29 @@ $subtitles = Subtitles::load($string);
 ```
 
 Save subtitles to file
-```PHP
+```php
 $subtitles->save('subtitler.vtt');
 ```
 
 Get file content without saving to file
-```
+```php
 $subtitles->content('vtt');
 ```
 
 Remove some subtitles
-```
+```php
 $from_time = 0;
 $till_time = 5;
 $subtitles->remove($from_time, $till_time);
 ```
 
 Add 1 second to subtitle time
-```
+```php
 $subtitles->add(1);
 ```
 
 Subtract 0.5 seconds from subtitle time
-```
+```php
 $subtitles->add(-0.5);
 ```
 
@@ -72,7 +72,7 @@ $subtitles->add(-0.5);
 ## How to add new subtitle format?
 
 You need to implement ConverterContract.php interface. It has two methods.
-```
+```php
 fileContentToInternalFormat($file_content)  
   
 internalFormatToFileContent($internal_format)
