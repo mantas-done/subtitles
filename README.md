@@ -24,7 +24,7 @@ $subtitles = Subtitles::load('subtitles.srt');
 ```
 
 Load subtitles from string
-```
+```php
 $string = "
 1
 00:02:17,440 --> 00:02:20,375
@@ -35,7 +35,7 @@ $subtitles = Subtitles::load($string);
 ```
 
 Save subtitles to file
-```
+```PHP
 $subtitles->save('subtitler.vtt');
 ```
 
