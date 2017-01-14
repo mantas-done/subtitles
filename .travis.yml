@@ -12,5 +12,4 @@ before_script:
 script:
   - phpunit --coverage-clover build/logs/clover.xml
 after_script:
-  - chmod +x ./codeclimate.sh
   - ./codeclimate.sh
