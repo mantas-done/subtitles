@@ -1,9 +1,6 @@
 # Caption And Subtitle Converter for PHP
-This library helps to work with subtitles (captions):  
-1. Convert formats (example: .srt to .stl)  
-2. Create subtitles manually  
-3. Parse files  
-4. Time shift and edit subtitles (add some time or subtract time to synchronize captions)
+
+Convert and edit subtitles and captions.
 
 ## Supported formats
 
