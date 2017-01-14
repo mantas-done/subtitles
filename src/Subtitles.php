@@ -35,10 +35,10 @@ interface SubtitleContract {
     public static function loadString($string, $extension);
 
     // chose format
-    public function convertTo($format);
+//    public function convertTo($format);
 
     // only text from file (without timestamps)
-    public function getOnlyTextFromInput();
+//    public function getOnlyTextFromInput();
 
     // output
 //    public function download($filename);
