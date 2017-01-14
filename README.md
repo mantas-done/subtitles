@@ -9,6 +9,7 @@ Convert and edit subtitles and captions.
 | [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
 | [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
 | [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
+| [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
 
 ## Code Examples
 Convert .srt file to .vtt:

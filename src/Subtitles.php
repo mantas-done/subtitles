@@ -215,6 +215,8 @@ class Subtitles implements SubtitleContract {
     public function setInternalFormat(array $internal_format)
     {
         $this->internal_format = $internal_format;
+
+        return $this;
     }
 
     // -------------------------------------- private ------------------------------------------------------------------
@@ -235,6 +237,8 @@ class Subtitles implements SubtitleContract {
             return new VttConverter();
         } elseif ($extension == 'srt') {
             return new SrtConverter();
+        } elseif ($extension == 'sbv') {
+            return new SbvConverter();
         }
 
         throw new \Exception('unknown format');

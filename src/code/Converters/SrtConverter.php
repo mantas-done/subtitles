@@ -88,7 +88,7 @@ class SrtConverter implements ConverterContract {
     {
         $parts = explode('.', $internal_time); // 1.23
         $whole = $parts[0]; // 1
-        $decimal = $parts[1]; // 23
+        $decimal = isset($parts[1]) ? $parts[1] : 0; // 23
 
         $srt_time = gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
 
