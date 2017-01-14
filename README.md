@@ -5,7 +5,7 @@ Convert and edit subtitles and captions.
 ## Supported formats
 
 | Format | Extension |
-| --- | --- | --- |
+| --- | --- |
 | [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
 | [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
 | [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
