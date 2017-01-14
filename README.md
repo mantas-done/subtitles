@@ -1,7 +1,5 @@
-[![Build Status](https://travis-ci.org/mantas-done/subtitles.svg?branch=master)](https://travis-ci.org/mantas-done/subtitles)
-[![Code Climate](https://codeclimate.com/github/mantas-done/subtitles/badges/gpa.svg)](https://codeclimate.com/github/mantas-done/subtitles)
-[![Issue Count](https://codeclimate.com/github/mantas-done/subtitles/badges/issue_count.svg)](https://codeclimate.com/github/mantas-done/subtitles)
-[![Test Coverage](https://codeclimate.com/github/mantas-done/subtitles/badges/coverage.svg)](https://codeclimate.com/github/mantas-done/subtitles/coverage)
+[![Build Status](https://scrutinizer-ci.com/g/mantas-done/subtitles/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mantas-done/subtitles/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/mantas-done/subtitles/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mantas-done/subtitles/?branch=master)
 
 # Caption And Subtitle Converter for PHP
 
