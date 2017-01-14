@@ -3,8 +3,11 @@
     "description": "Subtitle converter and generator for PHP",
     "type": "library",
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+
+    },
     "require-dev": {
+        "phpunit/phpunit": " 5.5.*",
         "codeclimate/php-test-reporter": "dev-master"
     },
     "autoload": {
