@@ -10,6 +10,7 @@ Convert and edit subtitles and captions.
 | [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
 | [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
 | [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
+| [SubViewer](https://en.wikipedia.org/wiki/SubViewer) | .sub |
 
 ## Code Examples
 Convert .srt file to .vtt:
@@ -126,11 +127,9 @@ You can contribute in any way you want. If you need some guidance, choose someth
 
 | Task | Difficulty | Description |
 | --- | --- | --- |
-| Add .sub, .sbv formats | Easy | Supporting more formats is nice. So implement this format. You can find how file should look like in [format description](https://en.wikipedia.org/wiki/SubViewer) |
+| Add new formats | Medium | Supporting more formats is nice. Some popular formats: .mcc, .ttml, .qt.txt, .dfxp, .cap  |
 | Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
 | Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
-
-Some other popular formats: .mcc, .ttml, .qt.txt, .dfxp, .cap 
 
 For now library should support only basic features (several lines of text). No need to support different text styles or positioning of text.
 

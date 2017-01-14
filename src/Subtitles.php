@@ -89,16 +89,16 @@ class Subtitles implements SubtitleContract {
         $this->internal_format[] = [
             'start' => $start,
             'end' => $end,
-            'lines' => [$text],
+            'lines' => is_array($text) ? $text : [$text],
         ];
         usort($this->internal_format, function ($item1, $item2) {
             // return $item2['start'] <=> $item1['start']; // from  PHP 7
             if ($item2['start'] == $item1['start']) {
                 return 0;
             } elseif ($item2['start'] < $item1['start']) {
-                return -1;
-            } else {
                 return 1;
+            } else {
+                return -1;
             }
         });
 
@@ -239,6 +239,8 @@ class Subtitles implements SubtitleContract {
             return new SrtConverter();
         } elseif ($extension == 'sbv') {
             return new SbvConverter();
+        } elseif ($extension == 'sub') {
+            return new SubConverter();
         }
 
         throw new \Exception('unknown format');
