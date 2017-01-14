@@ -78,6 +78,8 @@ class Subtitles implements SubtitleContract {
         $content = $this->content($file_extension);
 
         file_put_contents($path, $content);
+
+        return $this;
     }
 
     public function add($start, $end, $text)
