@@ -4,10 +4,7 @@
     "type": "library",
     "minimum-stability": "dev",
     "require": {
-
-    },
-    "require-dev": {
-        "phpunit/phpunit": " 5.7.*"
+      "phpunit/phpunit": " 5.7.*"
     },
     "autoload": {
         "classmap": [
