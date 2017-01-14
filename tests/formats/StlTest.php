@@ -25,21 +25,13 @@ class StlTest extends TestCase {
     {
         $srt_path = './tests/files/srt.srt';
         $stl_path = './tests/files/stl.stl';
-        $temporary_srt_path = './tests/files/tmp/srt.srt';
-        $temporary_stl_path = './tests/files/tmp/stl.stl';
-
-        @unlink($temporary_srt_path);
-        @unlink($temporary_stl_path);
 
         // stl to srt
-        $stl_object = Subtitles::convert($stl_path, $temporary_srt_path);
+        $stl_object = Subtitles::load($stl_path);
         $stl_internal_format = $stl_object->getInternalFormat();
 
-        $srt_object = Subtitles::convert($srt_path, $temporary_stl_path);
+        $srt_object = Subtitles::load($srt_path);
         $srt_internal_format = $srt_object->getInternalFormat();
-
-        unlink($temporary_srt_path);
-        unlink($temporary_stl_path);
 
         // compare both internal formats
         foreach ($srt_internal_format as $block_key => $srt_block) {

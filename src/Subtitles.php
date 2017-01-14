@@ -4,8 +4,34 @@ interface SubtitleContract {
 
     public static function convert($from_file_path, $to_file_path);
 
+    public static function load($file_name); // load file
+    public function save($file_name); // save file
+    public function content($format); // output file content (instead of saving to file)
+
+    public function add($start, $end, $text); // add one line // @TODO ability to add multilines
+    public function remove($from, $till); // delete test from subtitles
+    public function time($seconds); // shift time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // input
-    public static function loadFile($path, $extension = null);
     public static function loadString($string, $extension);
 
     // chose format
@@ -15,8 +41,6 @@ interface SubtitleContract {
     public function getOnlyTextFromInput();
 
     // output
-    public function saveFile($path);
-    public function toString();
 //    public function download($filename);
 }
 
@@ -26,7 +50,7 @@ class Subtitles implements SubtitleContract {
     protected $input;
     protected $input_format;
 
-    protected $parsed_data; // data in internal format (when file is converted)
+    protected $internal_format; // data in internal format (when file is converted)
 
     protected $converter;
     protected $output;
@@ -38,12 +62,83 @@ class Subtitles implements SubtitleContract {
 
     public static function convert($from_file_path, $to_file_path)
     {
-        $to_extension = self::fileExtension($to_file_path);
-
-        return self::loadFile($from_file_path)->convertTo($to_extension)->saveFile($to_file_path);
+        self::load($from_file_path)->save($to_file_path);
     }
 
-    public static function loadFile($path, $extension = null)
+    public static function load($file_name)
+    {
+        return self::loadFile($file_name);
+    }
+
+    public function save($path)
+    {
+        $file_extension = self::fileExtension($path);
+        $content = $this->content($file_extension);
+
+        file_put_contents($path, $content);
+    }
+
+    public function add($start, $end, $text)
+    {
+        // @TODO validation
+        // @TODO check subtitles to not overlap
+        $this->internal_format[] = [
+            'start' => $start,
+            'end' => $end,
+            'lines' => [$text],
+        ];
+        usort($this->internal_format, function ($item1, $item2) {
+            // return $item2['start'] <=> $item1['start']; // from  PHP 7
+            if ($item2['start'] == $item1['start']) {
+                return 0;
+            } elseif ($item2['start'] < $item1['start']) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+
+        return $this;
+    }
+
+    public function remove($from, $till)
+    {
+        foreach ($this->internal_format as $k => $block) {
+            if (($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till)) {
+                unset($this->internal_format[$k]);
+            }
+        }
+
+        $this->internal_format = array_values($this->internal_format); // reorder keys
+
+        return $this;
+    }
+
+    public function time($seconds)
+    {
+        foreach ($this->internal_format as &$block) {
+            $block['start'] += $seconds;
+            $block['end'] += $seconds;
+        }
+        unset($block);
+
+        return $this;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private static function loadFile($path, $extension = null)
     {
         $string = file_get_contents($path);
         if (!$extension) {
@@ -64,7 +159,7 @@ class Subtitles implements SubtitleContract {
         $converter->input_format = $extension;
 
         $input_converter = self::getConverter($extension);
-        $converter->parsed_data = $input_converter->fileContentToInternalFormat($converter->input);
+        $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
 
         return $converter;
     }
@@ -73,7 +168,7 @@ class Subtitles implements SubtitleContract {
     {
         $converter = self::getConverter($extension);
 
-        $this->output = $converter->internalFormatToFileContent($this->parsed_data);
+        $this->output = $converter->internalFormatToFileContent($this->internal_format);
 
         return $this;
     }
@@ -86,22 +181,20 @@ class Subtitles implements SubtitleContract {
 //        ));
     }
 
-    public function toString()
+    public function content($format)
     {
-        return $this->output;
-    }
+        $format = strtolower(trim($format, '.'));
 
-    public function saveFile($path)
-    {
-        file_put_contents($path, $this->toString());
+        $converter = self::getConverter($format);
+        $content = $converter->internalFormatToFileContent($this->internal_format);
 
-        return $this;
+        return $content;
     }
 
     public function getOnlyTextFromInput()
     {
         $text = '';
-        $data = $this->parsed_data;
+        $data = $this->internal_format;
         foreach ($data as $row) {
             foreach ($row['lines'] as $line) {
                 $text .= $line . "\n";
@@ -111,13 +204,19 @@ class Subtitles implements SubtitleContract {
         return $text;
     }
 
-    // -------------------------------------- private ------------------------------------------------------------------
-
     // for testing only
     public function getInternalFormat()
     {
-        return $this->parsed_data;
+        return $this->internal_format;
     }
+
+    // for testing only
+    public function setInternalFormat(array $internal_format)
+    {
+        $this->internal_format = $internal_format;
+    }
+
+    // -------------------------------------- private ------------------------------------------------------------------
 
     public static function removeUtf8Bom($text)
     {
@@ -148,6 +247,7 @@ class Subtitles implements SubtitleContract {
 }
 
 // https://github.com/captioning/captioning has potential, but :(
+// https://github.com/snikch/captions-php too small
 
 /*
 **Other popular formats that are not implemented**

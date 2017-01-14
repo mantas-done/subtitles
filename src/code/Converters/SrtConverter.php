@@ -3,24 +3,24 @@
 class SrtConverter implements ConverterContract {
 
     /**
-     * Converts file content (.srt, .stl... file content) to library's "internal format"
+     * Converts file content (.srt) to library's "internal format" (array)
      *
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
     public function fileContentToInternalFormat($file_content)
     {
-        $internal_format = [];
+        $internal_format = []; // array - where file content will be stored
 
-        $blocks = explode("\n\n", trim($file_content));
+        $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
-            $lines = explode("\n", $block);
-            $times = explode(' --> ', $lines[1]);
+            $lines = explode("\n", $block); // separate all block lines
+            $times = explode(' --> ', $lines[1]); // one the second line there is start and end times
 
             $internal_format[] = [
                 'start' => self::srtTimeToInternal($times[0]),
                 'end' => self::srtTimeToInternal($times[1]),
-                'lines' => array_slice($lines, 2),
+                'lines' => array_slice($lines, 2), // get all the remaining lines from block (if multiple lines of text)
             ];
         }
 
@@ -28,7 +28,7 @@ class SrtConverter implements ConverterContract {
     }
 
     /**
-     * Convert library's "internal format" to file's content
+     * Convert library's "internal format" (array) to file's content
      *
      * @param array $internal_format    Internal format
      * @return string                   Converted file content

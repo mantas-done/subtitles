@@ -2,7 +2,8 @@
 This library helps to work with subtitles (captions):
 1. Convert formats (example: .srt to .stl)
 2. Create subtitles manually
-3. Time shift and edit subtitles (add some time or subtract time to synchronize captions)
+3. Parse files
+4. Time shift and edit subtitles (add some time or subtract time to synchronize captions)
 
 ## Example
 Best way to learn is to see example. Let's convert .srt file to .stl:
@@ -82,3 +83,14 @@ You can contribute in any way you want. If you need some guidance, choose someth
 Some other popular formats: .mcc, .ttml, .qt.txt, .dfxp, .cap 
 
 For now library should support only basic features (several lines of text). No need to support different text styles or positioning of text.
+
+## Running Tests
+
+Simplest way is to download and put phpunit.phar file into the main directory of the project. Then run the command:
+
+```
+php phpunit.phar
+```
+
+## TODO
+1. Maybe should pass new Subtitles() into fileContentToInternalFormat function?
