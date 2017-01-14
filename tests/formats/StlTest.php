@@ -2,7 +2,7 @@
 
 use Done\Subtitles\Subtitles;
 
-class Stl extends SubtitleCase {
+class StlTest extends SubtitleCase {
 
     public function testConvertFromSrtToStl()
     {

@@ -2,7 +2,7 @@
 
 use Done\Subtitles\Subtitles;
 
-class Srt extends SubtitleCase {
+class SrtTest extends SubtitleCase {
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()
     {
