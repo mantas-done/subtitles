@@ -49,21 +49,24 @@ Get file content without saving to file
 $subtitles->content('vtt');
 ```
 
-Remove some subtitles
+Add subtitles
 ```php
-$from_time = 0;
-$till_time = 5;
-$subtitles->remove($from_time, $till_time);
+$subtitles->add(0, 5, 'some text'); // from 0, till 5 seconds
+````
+
+Remove subtitles
+```php
+$subtitles->remove(0, 5); // from 0, till 5 seconds
 ```
 
 Add 1 second to subtitle time
 ```php
-$subtitles->add(1);
+$subtitles->time(1);
 ```
 
 Subtract 0.5 seconds from subtitle time
 ```php
-$subtitles->add(-0.5);
+$subtitles->time(-0.5);
 ```
 
 ## How to add new subtitle format?
