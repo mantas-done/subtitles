@@ -131,6 +131,14 @@ Array
 [lines] - one or more text lines (array)
 ```
 
+## Running Tests
+
+Simplest way is to download and put phpunit.phar file into the main directory of the project. Then run the command:
+
+```
+php phpunit.phar
+```
+
 ## Contribution
 
 You can contribute in any way you want. If you need some guidance, choose something from this table:
@@ -143,10 +151,6 @@ You can contribute in any way you want. If you need some guidance, choose someth
 
 For now library should support only basic features (several lines of text). No need to support different text styles or positioning of text.
 
-## Running Tests
+## Report Bugs
 
-Simplest way is to download and put phpunit.phar file into the main directory of the project. Then run the command:
-
-```
-php phpunit.phar
-```
+If some file is not working with the library, please create and issue and attach the file.
