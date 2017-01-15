@@ -43,10 +43,10 @@ Load subtitles from string
 $string = "
 1
 00:02:17,440 --> 00:02:20,375
-Senator, we're making
-our final approach into Coruscant.";  
+Senator, we're making our final approach
+";  
 
-$subtitles = Subtitles::load($string);
+$subtitles = Subtitles::load($string, 'srt');
 ```
 
 Save subtitles to file
@@ -56,7 +56,7 @@ $subtitles->save('subtitler.vtt');
 
 Get file content without saving to file
 ```php
-$subtitles->content('vtt');
+echo $subtitles->content('vtt');
 ```
 
 Add subtitles
@@ -69,12 +69,12 @@ Remove subtitles
 $subtitles->remove(0, 5); // from 0, till 5 seconds
 ```
 
-Add 1 second to subtitle time
+Add 1 second to all subtitles
 ```php
 $subtitles->time(1);
 ```
 
-Subtract 0.5 seconds from subtitle time
+Subtract 0.5 second
 ```php
 $subtitles->time(-0.5);
 ```
