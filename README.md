@@ -23,6 +23,8 @@ composer require mantas-done/subtitles
 ## Usage
 Convert .srt file to .vtt:
 ```php
+use \Done\Subtitles\Subtitles; // don't forge namespace at the beggining to be able to use Subtitles class
+
 Subtitles::convert('subtitles.srt', 'subtitles.vtt');
 ```
 
