@@ -10,7 +10,7 @@ interface SubtitleContract {
 
     public function add($start, $end, $text); // add one line or several
     public function remove($from, $till); // delete text from subtitles
-    public function time($seconds); // add or subtract some amount of seconds from all times
+    public function time($seconds, $from = null, $till = null); // add or subtract some amount of seconds from all times
 
     public function getInternalFormat();
     public function setInternalFormat(array $internal_format);
@@ -89,11 +89,22 @@ class Subtitles implements SubtitleContract {
         return $this;
     }
 
-    public function time($seconds)
+    public function time($seconds, $from = null, $till = null)
     {
         foreach ($this->internal_format as &$block) {
-            $block['start'] += $seconds;
-            $block['end'] += $seconds;
+            $timeshift = true;
+
+            if ($from !== null &&  $block['end'] < $from) {
+                $timeshift = false;
+            }
+            if ($till !== null && $till < $block['start']) {
+                $timeshift = false;
+            }
+
+            if ($timeshift) {
+                $block['start'] += $seconds;
+                $block['end'] += $seconds;
+            }
         }
         unset($block);
 

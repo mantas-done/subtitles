@@ -158,4 +158,69 @@ our final approach into Coruscant.
         $this->assertTrue($expected_internal_format === $actual_internal_format);
     }
 
+    public function testFromTillTime()
+    {
+        $actual_internal_format = (new Subtitles())
+            ->add(1, 3, 'a')
+            ->time(1, 1, 3)
+            ->getInternalFormat();
+        $expected_internal_format = [[
+            'start' => 2,
+            'end' => 4,
+            'lines' => ['a'],
+        ]];
+
+        $this->assertTrue($expected_internal_format === $actual_internal_format);
+    }
+
+    public function testFromTillTimeWhenNotInRange()
+    {
+        $actual_internal_format1 = (new Subtitles())
+            ->add(1, 3, 'a')
+            ->time(1, 0, 0.5)
+            ->getInternalFormat();
+        $actual_internal_format2 = (new Subtitles())
+            ->add(1, 3, 'a')
+            ->time(1, 4, 5)
+            ->getInternalFormat();
+        $expected_internal_format = [[
+            'start' => 1,
+            'end' => 3,
+            'lines' => ['a'],
+        ]];
+
+        $this->assertTrue($expected_internal_format === $actual_internal_format1);
+        $this->assertTrue($expected_internal_format === $actual_internal_format2);
+    }
+
+    public function testFromTillTimeOverlappingStart()
+    {
+        $actual_internal_format = (new Subtitles())
+            ->add(1, 3, 'a')
+            ->time(1, 0, 1)
+            ->getInternalFormat();
+        $expected_internal_format = [[
+            'start' => 2,
+            'end' => 4,
+            'lines' => ['a'],
+        ]];
+
+        $this->assertTrue($expected_internal_format === $actual_internal_format);
+    }
+
+    public function testFromTillTimeOverlappingEnd()
+    {
+        $actual_internal_format = (new Subtitles())
+            ->add(1, 3, 'a')
+            ->time(1, 3, 4)
+            ->getInternalFormat();
+        $expected_internal_format = [[
+            'start' => 2,
+            'end' => 4,
+            'lines' => ['a'],
+        ]];
+
+        $this->assertTrue($expected_internal_format === $actual_internal_format);
+    }
+
 }

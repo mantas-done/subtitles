@@ -81,6 +81,11 @@ Subtract 0.5 second
 $subtitles->time(-0.5);
 ```
 
+Add 5 second to subtitles starting from 1 minute till 2 mintes 
+```php
+$subtitles->time(5, 60, 120);
+```
+
 ## How to add new subtitle format?
 
 You need to implement ConverterContract.php interface. It has two methods.
