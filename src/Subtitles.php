@@ -4,44 +4,16 @@ interface SubtitleContract {
 
     public static function convert($from_file_path, $to_file_path);
 
-    public static function load($file_name, $extension = null); // load file
+    public static function load($file_name_or_file_content, $extension = null); // load file
     public function save($file_name); // save file
     public function content($format); // output file content (instead of saving to file)
 
-    public function add($start, $end, $text); // add one line // @TODO ability to add multilines
-    public function remove($from, $till); // delete test from subtitles
-    public function time($seconds); // shift time
+    public function add($start, $end, $text); // add one line or several
+    public function remove($from, $till); // delete text from subtitles
+    public function time($seconds); // add or subtract some amount of seconds from all times
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // input
-    public static function loadString($string, $extension);
-
-    // chose format
-//    public function convertTo($format);
-
-    // only text from file (without timestamps)
-//    public function getOnlyTextFromInput();
-
-    // output
-//    public function download($filename);
+    public function getInternalFormat();
+    public function setInternalFormat(array $internal_format);
 }
 
 
@@ -60,15 +32,15 @@ class Subtitles implements SubtitleContract {
         self::load($from_file_path)->save($to_file_path);
     }
 
-    public static function load($file_name, $extension = null)
+    public static function load($file_name_or_file_content, $extension = null)
     {
-        if (strstr($file_name, "\n") === false) {
-            return self::loadFile($file_name);
+        if (strstr($file_name_or_file_content, "\n") === false) {
+            return self::loadFile($file_name_or_file_content);
         } else {
             if (!$extension) {
                 throw new \Exception('Specify extension');
             }
-            return self::loadString($file_name, $extension);
+            return self::loadString($file_name_or_file_content, $extension);
         }
     }
 
@@ -92,7 +64,6 @@ class Subtitles implements SubtitleContract {
             'lines' => is_array($text) ? $text : [$text],
         ];
         usort($this->internal_format, function ($item1, $item2) {
-            // return $item2['start'] <=> $item1['start']; // from  PHP 7
             if ($item2['start'] == $item1['start']) {
                 return 0;
             } elseif ($item2['start'] < $item1['start']) {
@@ -129,59 +100,6 @@ class Subtitles implements SubtitleContract {
         return $this;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private static function loadFile($path, $extension = null)
-    {
-        $string = file_get_contents($path);
-        if (!$extension) {
-            $extension = self::fileExtension($path);
-        }
-
-        return self::loadString($string, $extension);
-    }
-
-    public static function loadString($text, $extension)
-    {
-        $converter = new self;
-        $converter->input = self::normalizeNewLines(self::removeUtf8Bom($text));
-
-        $converter->input_format = $extension;
-
-        $input_converter = self::getConverter($extension);
-        $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
-
-        return $converter;
-    }
-
-//    public function convertTo($extension)
-//    {
-//        $converter = self::getConverter($extension);
-//
-//        $this->output = $converter->internalFormatToFileContent($this->internal_format);
-//
-//        return $this;
-//    }
-
-//    public function download($filename)
-//    {
-//        return Response::make($this->output, '200', array(
-//            'Content-Type' => 'text/plain',
-//            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-//        ));
-//    }
-
     public function content($format)
     {
         $format = strtolower(trim($format, '.'));
@@ -191,19 +109,6 @@ class Subtitles implements SubtitleContract {
 
         return $content;
     }
-
-//    public function getOnlyTextFromInput()
-//    {
-//        $text = '';
-//        $data = $this->internal_format;
-//        foreach ($data as $row) {
-//            foreach ($row['lines'] as $line) {
-//                $text .= $line . "\n";
-//            }
-//        }
-//
-//        return $text;
-//    }
 
     // for testing only
     public function getInternalFormat()
@@ -220,6 +125,29 @@ class Subtitles implements SubtitleContract {
     }
 
     // -------------------------------------- private ------------------------------------------------------------------
+
+    private static function loadFile($path, $extension = null)
+    {
+        $string = file_get_contents($path);
+        if (!$extension) {
+            $extension = self::fileExtension($path);
+        }
+
+        return self::loadString($string, $extension);
+    }
+
+    private static function loadString($text, $extension)
+    {
+        $converter = new self;
+        $converter->input = self::normalizeNewLines(self::removeUtf8Bom($text));
+
+        $converter->input_format = $extension;
+
+        $input_converter = self::getConverter($extension);
+        $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
+
+        return $converter;
+    }
 
     public static function removeUtf8Bom($text)
     {
@@ -265,13 +193,3 @@ class Subtitles implements SubtitleContract {
 
 // https://github.com/captioning/captioning has potential, but :(
 // https://github.com/snikch/captions-php too small
-
-/*
-**Other popular formats that are not implemented**
-Feel free to implement one if you can, or choose some other format if you need
-```
-.sub, .sbv - similar to .srt
-.vtt - very similar to .srt
-[.scc](https://en.wikipedia.org/wiki/EIA-608)
-```
- */
