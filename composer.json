@@ -10,5 +10,10 @@
         "classmap": [
             "src"
         ]
+    },
+    "autoload-dev": {
+      "files": [
+        "./tests/helpers/AdditionalAssertions.php"
+      ]
     }
 }

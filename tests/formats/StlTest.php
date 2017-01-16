@@ -1,8 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use PHPUnit\Framework\TestCase;
 
-class StlTest extends SubtitleCase {
+class StlTest extends TestCase {
+
+    use AdditionalAssertions;
 
     public function testConvertFromSrtToStl()
     {
@@ -51,9 +54,13 @@ class StlTest extends SubtitleCase {
         Subtitles::load('./tests/files/stl_with_comments.stl')->content('stl');
     }
 
-    public function parseFile()
+    public function testTimesBiggerThan24HoursThrowException()
     {
-        
+        $this->expectException(Exception::class);
+
+        $subtitles = new Subtitles();
+        $subtitles->add(0, 3600 * 24 * 10, 'text');
+        $subtitles->content('stl');
     }
 
 }

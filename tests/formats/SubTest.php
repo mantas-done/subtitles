@@ -1,8 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use PHPUnit\Framework\TestCase;
 
-class SubSubtitle extends SubtitleCase {
+class SubSubtitle extends TestCase {
+
+    use AdditionalAssertions;
 
     public function testFileToInternalFormat()
     {

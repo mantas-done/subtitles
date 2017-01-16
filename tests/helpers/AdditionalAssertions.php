@@ -1,6 +1,6 @@
 <?php
 
-abstract class SubtitleCase extends \PHPUnit\Framework\TestCase
+trait AdditionalAssertions
 {
     public function assertInternalFormatsEqual($expected, $actual)
     {

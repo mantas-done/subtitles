@@ -1,8 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use PHPUnit\Framework\TestCase;
 
-class SrtTest extends SubtitleCase {
+class SrtTest extends TestCase {
+
+    use AdditionalAssertions;
 
     protected $format = 'srt';
 

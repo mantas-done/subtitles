@@ -5,6 +5,8 @@ use Done\Subtitles\Subtitles;
 
 class PublicInterfaceTest extends TestCase {
 
+    use AdditionalAssertions;
+
     public function testConvert()
     {
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
@@ -94,6 +96,26 @@ our final approach into Coruscant.
         ]];
 
         $this->assertTrue($expected_internal_format === $actual_internal_format);
+    }
+
+    public function testAddOrdersSubtitlesByTime()
+    {
+        $expected_internal_format = [[
+                'start' => 0,
+                'end' => 5,
+                'lines' => ['text 1'],
+            ], [
+                'start' => 10,
+                'end' => 15,
+                'lines' => ['text 2'],
+            ]];
+
+        $subtitles = new Subtitles();
+        $subtitles->add(10, 15, 'text 2');
+        $subtitles->add(0, 5, 'text 1');
+        $actual_internal_format = $subtitles->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
     // ----------------------------------------- remove() --------------------------------------------------------------
