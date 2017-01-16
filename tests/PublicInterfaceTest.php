@@ -84,6 +84,15 @@ our final approach into Coruscant.
         $this->assertTrue(strlen($content) > 10); // 10 - just random number
     }
 
+    public function testNonExistentFormatThrowsError()
+    {
+        $this->expectException(Exception::class);
+
+        $srt_path = './tests/files/srt_for_public_interface_test.srt';
+        Subtitles::load($srt_path)->content('exe');
+
+    }
+
     public function testAdd()
     {
         $subtitles = new Subtitles();

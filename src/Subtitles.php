@@ -92,19 +92,12 @@ class Subtitles implements SubtitleContract {
     public function time($seconds, $from = null, $till = null)
     {
         foreach ($this->internal_format as &$block) {
-            $timeshift = true;
-
-            if ($from !== null &&  $block['end'] < $from) {
-                $timeshift = false;
-            }
-            if ($till !== null && $till < $block['start']) {
-                $timeshift = false;
+            if (!$this->shouldTimeBeAdded($from, $till, $block['start'], $block['end'])) {
+                continue;
             }
 
-            if ($timeshift) {
-                $block['start'] += $seconds;
-                $block['end'] += $seconds;
-            }
+            $block['start'] += $seconds;
+            $block['end'] += $seconds;
         }
         unset($block);
 
@@ -136,6 +129,18 @@ class Subtitles implements SubtitleContract {
     }
 
     // -------------------------------------- private ------------------------------------------------------------------
+
+    private static function shouldTimeBeAdded($from, $till, $block_start, $block_end)
+    {
+        if ($from !== null &&  $block_end < $from) {
+            return false;
+        }
+        if ($till !== null && $till < $block_start) {
+            return false;
+        }
+
+        return true;
+    }
 
     private static function loadFile($path, $extension = null)
     {
@@ -174,19 +179,15 @@ class Subtitles implements SubtitleContract {
 
     private static function getConverter($extension)
     {
-        if ($extension == 'stl') {
-            return new StlConverter();
-        } elseif ($extension == 'vtt') {
-            return new VttConverter();
-        } elseif ($extension == 'srt') {
-            return new SrtConverter();
-        } elseif ($extension == 'sbv') {
-            return new SbvConverter();
-        } elseif ($extension == 'sub') {
-            return new SubConverter();
+        $class_name = ucfirst($extension) . 'Converter';
+
+        if (!file_exists('./src/code/Converters/' . $class_name . '.php')) {
+            throw new \Exception('unknown format: ' . $extension);
         }
 
-        throw new \Exception('unknown format');
+        $full_class_name = "\\Done\\Subtitles\\" . $class_name;
+
+        return new $full_class_name();
     }
 
     private static function fileExtension($filename) {
