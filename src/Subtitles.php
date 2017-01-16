@@ -128,6 +128,10 @@ class Subtitles implements SubtitleContract {
 
     private static function loadFile($path, $extension = null)
     {
+        if (!file_exists($path)) {
+            throw new \Exception("file doesn't exist: " . $path);
+        }
+
         $string = file_get_contents($path);
         if (!$extension) {
             $extension = self::fileExtension($path);

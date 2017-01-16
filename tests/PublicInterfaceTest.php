@@ -37,7 +37,27 @@ our final approach into Coruscant.
         $subtitles = Subtitles::load($string, 'srt');
 
         $this->assertTrue(!empty($subtitles->getInternalFormat()));
+    }
 
+    public function testLoadWithoutExtensionThrowsException()
+    {
+        $this->expectException(Exception::class);
+
+        Subtitles::load("normal file\nnormal file");
+    }
+
+    public function testLoadFileThatDoesNotExist()
+    {
+        $this->expectException(Exception::class);
+
+        Subtitles::load("some_random_name.srt");
+    }
+
+    public function testLoadFileWithNotSupportedExtension()
+    {
+        $this->expectException(Exception::class);
+
+        Subtitles::load("subtitles.exe");
     }
 
     public function saveFile()

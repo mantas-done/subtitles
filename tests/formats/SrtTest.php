@@ -4,8 +4,6 @@ use Done\Subtitles\Subtitles;
 
 class SrtTest extends SubtitleCase {
 
-    use TextBasedFileTrait;
-
     protected $format = 'srt';
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()
@@ -19,6 +17,20 @@ class SrtTest extends SubtitleCase {
         $this->assertFileEquals($srt_path, $temporary_srt_path);
 
         unlink($temporary_srt_path);
+    }
+
+    public function testFileToInternalFormat()
+    {
+        $actual_internal_format = Subtitles::load(self::fileContent(), $this->format)->getInternalFormat();
+
+        $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
+    }
+
+    public function testConvertToFile()
+    {
+        $actual_file_content = self::generatedSubtitles()->content($this->format);
+
+        $this->assertEquals(self::fileContent(), $actual_file_content);
     }
 
     // @TODO test time above 1 hour

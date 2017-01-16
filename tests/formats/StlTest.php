@@ -46,4 +46,14 @@ class StlTest extends SubtitleCase {
         }
     }
 
+    public function testParsesFilesWithComments()
+    {
+        Subtitles::load('./tests/files/stl_with_comments.stl')->content('stl');
+    }
+
+    public function parseFile()
+    {
+        
+    }
+
 }

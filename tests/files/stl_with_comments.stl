@@ -1,0 +1,8 @@
+//Default Formatting for STL subtitles
+$FontName           = Arial
+$FontSize           = 28
+$HorzAlign          = Center
+$VertAlign          = Bottom
+
+00:02:17:10 , 00:02:20:09 , Senator, we're making | our final approach into Coruscant.
+00:02:20:11 , 00:02:22:12 , Very good, Lieutenant.

@@ -9,9 +9,6 @@
     "autoload": {
         "classmap": [
             "src"
-        ],
-        "files": [
-            "./tests/formats/abstract/TextBasedFileTrait.php"
         ]
     }
 }
