@@ -16,9 +16,9 @@ class VttConverter implements ConverterContract {
             $times = explode(' --> ', $lines[0]);
 
             $internal_format[] = [
-                'start' => self::vttTimeToInternal($times[0]),
-                'end' => self::vttTimeToInternal($times[1]),
-                'lines' => array_map(self::fixLine(), array_slice($lines, 1)), // get all the remaining lines from block (if multiple lines of text)
+                'start' => static::vttTimeToInternal($times[0]),
+                'end' => static::vttTimeToInternal($times[1]),
+                'lines' => array_map(static::fixLine(), array_slice($lines, 1)), // get all the remaining lines from block (if multiple lines of text)
             ];
         }
 
@@ -30,8 +30,8 @@ class VttConverter implements ConverterContract {
         $file_content = "WEBVTT\n\n";
 
         foreach ($internal_format as $k => $block) {
-            $start = self::internalTimeToVtt($block['start']);
-            $end = self::internalTimeToVtt($block['end']);
+            $start = static::internalTimeToVtt($block['start']);
+            $end = static::internalTimeToVtt($block['end']);
             $lines = implode("\n", $block['lines']);
 
             $file_content .= $start . ' --> ' . $end . "\n";

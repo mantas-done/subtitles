@@ -18,8 +18,8 @@ class SubConverter implements ConverterContract {
             $times = explode(',', $lines[0]); // one the second line there is start and end times
 
             $internal_format[] = [
-                'start' => self::srtTimeToInternal($times[0]),
-                'end' => self::srtTimeToInternal($times[1]),
+                'start' => static::srtTimeToInternal($times[0]),
+                'end' => static::srtTimeToInternal($times[1]),
                 'lines' => explode('[br]', $lines[1]), // get all the remaining lines from block (if multiple lines of text)
             ];
         }
@@ -38,8 +38,8 @@ class SubConverter implements ConverterContract {
         $file_content = '';
 
         foreach ($internal_format as $k => $block) {
-            $start = self::internalTimeToSrt($block['start']);
-            $end = self::internalTimeToSrt($block['end']);
+            $start = static::internalTimeToSrt($block['start']);
+            $end = static::internalTimeToSrt($block['end']);
             $lines = implode("[br]", $block['lines']);
 
             $file_content .= $start . ',' . $end . "\n";

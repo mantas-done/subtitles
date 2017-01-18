@@ -29,24 +29,24 @@ class Subtitles implements SubtitleContract {
 
     public static function convert($from_file_path, $to_file_path)
     {
-        self::load($from_file_path)->save($to_file_path);
+        static::load($from_file_path)->save($to_file_path);
     }
 
     public static function load($file_name_or_file_content, $extension = null)
     {
         if (strstr($file_name_or_file_content, "\n") === false) {
-            return self::loadFile($file_name_or_file_content);
+            return static::loadFile($file_name_or_file_content);
         } else {
             if (!$extension) {
                 throw new \Exception('Specify extension');
             }
-            return self::loadString($file_name_or_file_content, $extension);
+            return static::loadString($file_name_or_file_content, $extension);
         }
     }
 
     public function save($path)
     {
-        $file_extension = self::fileExtension($path);
+        $file_extension = static::fileExtension($path);
         $content = $this->content($file_extension);
 
         file_put_contents($path, $content);
@@ -108,7 +108,7 @@ class Subtitles implements SubtitleContract {
     {
         $format = strtolower(trim($format, '.'));
 
-        $converter = self::getConverter($format);
+        $converter = static::getConverter($format);
         $content = $converter->internalFormatToFileContent($this->internal_format);
 
         return $content;
@@ -150,20 +150,20 @@ class Subtitles implements SubtitleContract {
 
         $string = file_get_contents($path);
         if (!$extension) {
-            $extension = self::fileExtension($path);
+            $extension = static::fileExtension($path);
         }
 
-        return self::loadString($string, $extension);
+        return static::loadString($string, $extension);
     }
 
     private static function loadString($text, $extension)
     {
-        $converter = new self;
-        $converter->input = self::normalizeNewLines(self::removeUtf8Bom($text));
+        $converter = new static;
+        $converter->input = static::normalizeNewLines(static::removeUtf8Bom($text));
 
         $converter->input_format = $extension;
 
-        $input_converter = self::getConverter($extension);
+        $input_converter = static::getConverter($extension);
         $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
 
         return $converter;

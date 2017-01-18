@@ -7,18 +7,18 @@ class StlConverter implements ConverterContract {
         $not_trimmed_lines = explode("\n", $file_content);
         $lines = array_map('trim', $not_trimmed_lines);
 
-        $frames_per_seconds = self::framesPerSecond($lines);
+        $frames_per_seconds = static::framesPerSecond($lines);
 
         $internal_format = [];
         foreach ($lines as $line) {
-            if (!self::doesLineHaveTimestamp($line)) {
+            if (!static::doesLineHaveTimestamp($line)) {
                 continue;
             }
 
             $internal_format[] = [
-                'start' => self::convertFromSrtTime(self::getStartLine($line), $frames_per_seconds),
-                'end' => self::convertFromSrtTime(self::getEndLine($line), $frames_per_seconds),
-                'lines' => self::getLines($line),
+                'start' => static::convertFromSrtTime(static::getStartLine($line), $frames_per_seconds),
+                'end' => static::convertFromSrtTime(static::getEndLine($line), $frames_per_seconds),
+                'lines' => static::getLines($line),
             ];
         }
 
@@ -29,9 +29,9 @@ class StlConverter implements ConverterContract {
     {
         $stl = '';
         foreach ($internal_format as $row) {
-            $stl_start = self::toStlTime($row['start']);
-            $stl_end = self::toStlTime($row['end']);
-            $stt_lines = self::toStlLines($row['lines']);
+            $stl_start = static::toStlTime($row['start']);
+            $stl_end = static::toStlTime($row['end']);
+            $stt_lines = static::toStlLines($row['lines']);
 
             $line = "$stl_start , $stl_end , $stt_lines\n";
             $stl .= $line;
@@ -132,12 +132,12 @@ class StlConverter implements ConverterContract {
     {
         $max_frames = 0;
         foreach ($lines as $line) {
-            if (!self::doesLineHaveTimestamp($line)) {
+            if (!static::doesLineHaveTimestamp($line)) {
                 continue;
             }
 
-            $frames1 = self::returnFramesFromTime(self::getStartLine($line));
-            $frames2 = self::returnFramesFromTime(self::getEndLine($line));
+            $frames1 = static::returnFramesFromTime(static::getStartLine($line));
+            $frames2 = static::returnFramesFromTime(static::getEndLine($line));
 
             if ($frames1 > $max_frames) {
                 $max_frames = $frames1;
