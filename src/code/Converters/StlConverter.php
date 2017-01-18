@@ -42,7 +42,7 @@ class StlConverter implements ConverterContract {
 
     // ------------------------- private -------------------------------------------------------------------------------
 
-    private static function getLines($original_line)
+    protected static function getLines($original_line)
     {
         $parts = explode(',', $original_line);
 
@@ -57,7 +57,7 @@ class StlConverter implements ConverterContract {
         return $lines;
     }
 
-    private static function getStartLine($line)
+    protected static function getStartLine($line)
     {
         $parts = explode(',', $line);
         $start_string = trim($parts[0]);
@@ -66,7 +66,7 @@ class StlConverter implements ConverterContract {
         return $start_string;
     }
 
-    private static function getEndLine($line)
+    protected static function getEndLine($line)
     {
         $parts = explode(',', $line);
         $end_string = trim($parts[1]);
@@ -74,7 +74,7 @@ class StlConverter implements ConverterContract {
         return $end_string;
     }
 
-    private static function convertFromSrtTime($srt_time, $frames_per_seconds)
+    protected static function convertFromSrtTime($srt_time, $frames_per_seconds)
     {
         $parts = explode(':', $srt_time);
         $frames = array_pop($parts);
@@ -92,7 +92,7 @@ class StlConverter implements ConverterContract {
         return $seconds;
     }
 
-    private static function returnFramesFromTime($srt_time)
+    protected static function returnFramesFromTime($srt_time)
     {
         $parts = explode(':', $srt_time);
         $frames = array_pop($parts);
@@ -100,7 +100,7 @@ class StlConverter implements ConverterContract {
         return $frames;
     }
 
-    private static function doesLineHaveTimestamp($line)
+    protected static function doesLineHaveTimestamp($line)
     {
         $first_two_symbols = substr($line, 0, 2);
 
@@ -108,7 +108,7 @@ class StlConverter implements ConverterContract {
     }
 
     // stl counts frames at the end (25 - 30 frames)
-    private static function toStlTime($seconds)
+    protected static function toStlTime($seconds)
     {
         if ($seconds >= 86400) {
             throw new \Exception('conversion function doesnt support more than 1 day, edit the code');
@@ -123,12 +123,12 @@ class StlConverter implements ConverterContract {
         return $stl_time;
     }
 
-    private static function toStlLines($lines)
+    protected static function toStlLines($lines)
     {
         return implode(' | ', $lines);
     }
 
-    private static function framesPerSecond($lines)
+    protected static function framesPerSecond($lines)
     {
         $max_frames = 0;
         foreach ($lines as $line) {

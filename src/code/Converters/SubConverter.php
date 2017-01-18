@@ -62,7 +62,7 @@ class SubConverter implements ConverterContract {
      *
      * @return float
      */
-    private static function srtTimeToInternal($srt_time)
+    protected static function srtTimeToInternal($srt_time)
     {
         $parts = explode('.', $srt_time);
 
@@ -82,7 +82,7 @@ class SubConverter implements ConverterContract {
      *
      * @return string
      */
-    private static function internalTimeToSrt($internal_time)
+    protected static function internalTimeToSrt($internal_time)
     {
         $parts = explode('.', $internal_time); // 1.23
         $whole = $parts[0]; // 1

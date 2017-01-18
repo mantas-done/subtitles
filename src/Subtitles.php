@@ -130,7 +130,7 @@ class Subtitles implements SubtitleContract {
 
     // -------------------------------------- private ------------------------------------------------------------------
 
-    private static function shouldTimeBeAdded($from, $till, $block_start, $block_end)
+    protected static function shouldTimeBeAdded($from, $till, $block_start, $block_end)
     {
         if ($from !== null &&  $block_end < $from) {
             return false;
@@ -142,7 +142,7 @@ class Subtitles implements SubtitleContract {
         return true;
     }
 
-    private static function loadFile($path, $extension = null)
+    protected static function loadFile($path, $extension = null)
     {
         if (!file_exists($path)) {
             throw new \Exception("file doesn't exist: " . $path);
@@ -156,7 +156,7 @@ class Subtitles implements SubtitleContract {
         return static::loadString($string, $extension);
     }
 
-    private static function loadString($text, $extension)
+    protected static function loadString($text, $extension)
     {
         $converter = new static;
         $converter->input = static::normalizeNewLines(static::removeUtf8Bom($text));
@@ -169,7 +169,7 @@ class Subtitles implements SubtitleContract {
         return $converter;
     }
 
-    public static function removeUtf8Bom($text)
+    protected static function removeUtf8Bom($text)
     {
         $bom = pack('H*','EFBBBF');
         $text = preg_replace("/^$bom/", '', $text);
@@ -177,7 +177,7 @@ class Subtitles implements SubtitleContract {
         return $text;
     }
 
-    private static function getConverter($extension)
+    protected static function getConverter($extension)
     {
         $class_name = ucfirst($extension) . 'Converter';
 
@@ -190,7 +190,7 @@ class Subtitles implements SubtitleContract {
         return new $full_class_name();
     }
 
-    private static function fileExtension($filename) {
+    protected static function fileExtension($filename) {
         $parts = explode('.', $filename);
         $extension = end($parts);
         $extension = strtolower($extension);
@@ -198,7 +198,7 @@ class Subtitles implements SubtitleContract {
         return $extension;
     }
 
-    private static function normalizeNewLines($file_content)
+    protected static function normalizeNewLines($file_content)
     {
         $file_content = str_replace("\r\n", "\n", $file_content);
         $file_content = str_replace("\r", "\n", $file_content);

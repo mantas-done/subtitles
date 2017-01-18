@@ -46,7 +46,7 @@ class VttConverter implements ConverterContract {
 
     // ------------------------------ private --------------------------------------------------------------------------
 
-    private static function vttTimeToInternal($vtt_time)
+    protected static function vttTimeToInternal($vtt_time)
     {
         $parts = explode('.', '00:' . $vtt_time);
 
@@ -58,7 +58,7 @@ class VttConverter implements ConverterContract {
         return $time;
     }
 
-    private static function internalTimeToVtt($internal_time)
+    protected static function internalTimeToVtt($internal_time)
     {
         $parts = explode('.', $internal_time); // 1.23
         $whole = $parts[0]; // 1
@@ -69,7 +69,7 @@ class VttConverter implements ConverterContract {
         return $srt_time;
     }
 
-    public static function fixLine()
+    protected static function fixLine()
     {
         return function ($line) {
             if (substr($line, 0, 3) == '<v ') {
