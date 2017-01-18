@@ -10,7 +10,8 @@ interface SubtitleContract {
 
     public function add($start, $end, $text); // add one line or several
     public function remove($from, $till); // delete text from subtitles
-    public function time($seconds, $from = null, $till = null); // add or subtract some amount of seconds from all times
+    public function shiftTime($seconds, $from = 0, $till = null); // add or subtract some amount of seconds from all times
+    public function shiftTimeGradually($seconds_to_shift, $from = 0, $till = null);
 
     public function getInternalFormat();
     public function setInternalFormat(array $internal_format);
@@ -63,15 +64,8 @@ class Subtitles implements SubtitleContract {
             'end' => $end,
             'lines' => is_array($text) ? $text : [$text],
         ];
-        usort($this->internal_format, function ($item1, $item2) {
-            if ($item2['start'] == $item1['start']) {
-                return 0;
-            } elseif ($item2['start'] < $item1['start']) {
-                return 1;
-            } else {
-                return -1;
-            }
-        });
+
+        $this->sortInternalFormat();
 
         return $this;
     }
@@ -89,10 +83,10 @@ class Subtitles implements SubtitleContract {
         return $this;
     }
 
-    public function time($seconds, $from = null, $till = null)
+    public function shiftTime($seconds, $from = 0, $till = null)
     {
         foreach ($this->internal_format as &$block) {
-            if (!$this->shouldTimeBeAdded($from, $till, $block['start'], $block['end'])) {
+            if (!$this->shouldBlockTimeBeshifted($from, $till, $block['start'], $block['end'])) {
                 continue;
             }
 
@@ -100,6 +94,46 @@ class Subtitles implements SubtitleContract {
             $block['end'] += $seconds;
         }
         unset($block);
+
+        $this->sortInternalFormat();
+
+        return $this;
+    }
+
+    public function shiftTimeGradually($seconds, $from = 0, $till = null)
+    {
+        if ($till === null) {
+            $till = $this->maxTime();
+        }
+
+        foreach ($this->internal_format as &$block) {
+            if (!$this->shouldBlockTimeBeshifted($from, $till, $block['start'], $block['end'])) {
+                continue;
+            }
+
+            if (!($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till)) {
+                continue;
+            }
+
+            // start
+            $tmp_from_start = $block['start'] - $from;
+            $percents = 0;
+            if (($till - $from) != 0) {
+                $percents = $tmp_from_start / ($till - $from);
+            }
+            $block['start'] += $seconds * $percents;
+
+            // end
+            $tmp_from_start = $block['end'] - $from;
+            $percents = 0;
+            if (($till - $from) != 0) {
+                $percents = $tmp_from_start / ($till - $from);
+            }
+            $block['end'] += $seconds * $percents;
+        }
+        unset($block);
+
+        $this->sortInternalFormat();
 
         return $this;
     }
@@ -128,9 +162,17 @@ class Subtitles implements SubtitleContract {
         return $this;
     }
 
+    /**
+     * @deprecated  Use shiftTime() instead
+     */
+    public function time($seconds, $from = null, $till = null)
+    {
+        return $this->shiftTime($seconds, $from, $till);
+    }
+
     // -------------------------------------- private ------------------------------------------------------------------
 
-    protected static function shouldTimeBeAdded($from, $till, $block_start, $block_end)
+    protected static function shouldBlockTimeBeshifted($from, $till, $block_start, $block_end)
     {
         if ($from !== null &&  $block_end < $from) {
             return false;
@@ -204,6 +246,31 @@ class Subtitles implements SubtitleContract {
         $file_content = str_replace("\r", "\n", $file_content);
 
         return $file_content;
+    }
+
+    protected function sortInternalFormat()
+    {
+        usort($this->internal_format, function ($item1, $item2) {
+            if ($item2['start'] == $item1['start']) {
+                return 0;
+            } elseif ($item2['start'] < $item1['start']) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+    }
+
+    protected function maxTime()
+    {
+        $max_time = 0;
+        foreach ($this->internal_format as $block) {
+            if ($max_time < $block['end']) {
+                $max_time = $block['end'];
+            }
+        }
+
+        return $max_time;
     }
 }
 

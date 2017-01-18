@@ -163,7 +163,7 @@ our final approach into Coruscant.
     {
         $actual_internal_format = (new Subtitles())
             ->add(1, 3, 'Hello World')
-            ->time(1)
+            ->shiftTime(1)
             ->getInternalFormat();
         $expected_internal_format = [[
             'start' => 2,
@@ -178,7 +178,7 @@ our final approach into Coruscant.
     {
         $actual_internal_format = (new Subtitles())
             ->add(1, 3, 'Hello World')
-            ->time(-1)
+            ->shiftTime(-1)
             ->getInternalFormat();
         $expected_internal_format = [[
             'start' => 0,
@@ -193,7 +193,7 @@ our final approach into Coruscant.
     {
         $actual_internal_format = (new Subtitles())
             ->add(1, 3, 'a')
-            ->time(1, 1, 3)
+            ->shiftTime(1, 1, 3)
             ->getInternalFormat();
         $expected_internal_format = [[
             'start' => 2,
@@ -208,11 +208,11 @@ our final approach into Coruscant.
     {
         $actual_internal_format1 = (new Subtitles())
             ->add(1, 3, 'a')
-            ->time(1, 0, 0.5)
+            ->shiftTime(1, 0, 0.5)
             ->getInternalFormat();
         $actual_internal_format2 = (new Subtitles())
             ->add(1, 3, 'a')
-            ->time(1, 4, 5)
+            ->shiftTime(1, 4, 5)
             ->getInternalFormat();
         $expected_internal_format = [[
             'start' => 1,
@@ -228,7 +228,7 @@ our final approach into Coruscant.
     {
         $actual_internal_format = (new Subtitles())
             ->add(1, 3, 'a')
-            ->time(1, 0, 1)
+            ->shiftTime(1, 0, 1)
             ->getInternalFormat();
         $expected_internal_format = [[
             'start' => 2,
@@ -239,19 +239,46 @@ our final approach into Coruscant.
         $this->assertTrue($expected_internal_format === $actual_internal_format);
     }
 
-    public function testFromTillTimeOverlappingEnd()
+    public function testSiftTimeGradually()
     {
         $actual_internal_format = (new Subtitles())
-            ->add(1, 3, 'a')
-            ->time(1, 3, 4)
+            ->add(0, 2, 'a')
+            ->add(2, 4, 'a')
+            ->add(4, 6, 'a')
+            ->shiftTimeGradually(3)
             ->getInternalFormat();
-        $expected_internal_format = [[
-            'start' => 2,
-            'end' => 4,
-            'lines' => ['a'],
-        ]];
+        $expected_internal_format = (new Subtitles())
+            ->add(0, 3, 'a')
+            ->add(3, 6, 'a')
+            ->add(6, 9, 'a')
+            ->getInternalFormat();
 
-        $this->assertTrue($expected_internal_format === $actual_internal_format);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
+
+    public function testSiftTimeGraduallyWithFromAndTill()
+    {
+        $actual_internal_format = (new Subtitles())
+            ->add(0, 2, 'a')
+            ->add(2, 4, 'a')
+            ->add(4, 6, 'a')
+            ->add(6, 8, 'a')
+            ->add(8, 10, 'a')
+            ->shiftTimeGradually(3, 2, 8)
+            ->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(0, 2, 'a')
+            ->add(2, 5, 'a')
+            ->add(5, 8, 'a')
+            ->add(8, 11, 'a')
+            ->add(8, 10, 'a')
+            ->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
+    // ------------------------------------ shiftTimeGradually ---------------------------------------------------------
+
+
 
 }

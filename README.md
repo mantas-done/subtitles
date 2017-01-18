@@ -23,7 +23,8 @@ composer require mantas-done/subtitles
 ## Usage
 Convert .srt file to .vtt:
 ```php
-use \Done\Subtitles\Subtitles; // don't forge namespace at the beggining to be able to use Subtitles class
+// add namespace
+use \Done\Subtitles\Subtitles;
 
 Subtitles::convert('subtitles.srt', 'subtitles.vtt');
 ```
@@ -73,17 +74,22 @@ $subtitles->remove(0, 5); // from 0, till 5 seconds
 
 Add 1 second to all subtitles
 ```php
-$subtitles->time(1);
+$subtitles->shiftTime(1);
 ```
 
 Subtract 0.5 second
 ```php
-$subtitles->time(-0.5);
+$subtitles->shiftTime(-0.5);
 ```
 
 Add 5 second to subtitles starting from 1 minute till 2 mintes 
 ```php
-$subtitles->time(5, 60, 120);
+$subtitles->shiftTime(5, 60, 120);
+```
+
+Example: shift time gradually by 2 seconds over 1 hour video. At the beginning of the video don't change time, in the middle shift time by 1 second. By the end of video, shift time by 2 seconds.
+```php
+$subtitles->shiftTimeGradually(2, 0, 3600);
 ```
 
 ## How to add new subtitle format?
