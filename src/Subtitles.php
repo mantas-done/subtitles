@@ -149,14 +149,15 @@ class Subtitles implements SubtitleContract {
 
     protected static function shouldBlockTimeBeShifted($from, $till, $block_start, $block_end)
     {
-        if ($from !== null &&  $block_end < $from) {
-            return false;
-        }
-        if ($till !== null && $till < $block_start) {
+        if ($block_end < $from) {
             return false;
         }
 
-        return true;
+        if ($till === null) {
+            return true;
+        }
+
+        return $till >= $block_start;
     }
 
     protected static function loadFile($path, $extension = null)
