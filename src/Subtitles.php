@@ -254,27 +254,26 @@ class Subtitles implements SubtitleContract {
 
     protected static function shiftBlockTime($block, $seconds, $from, $till)
     {
-        if (!($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till)) {
+        if (!static::blockTimesWithinRange($block, $from, $till)) {
             return $block;
         }
 
         // start
         $tmp_from_start = $block['start'] - $from;
-        $percents = 0;
-        if (($till - $from) != 0) {
-            $percents = $tmp_from_start / ($till - $from);
-        }
-        $block['start'] += $seconds * $percents;
+        $start_percents = $tmp_from_start / ($till - $from);
+        $block['start'] += $seconds * $start_percents;
 
         // end
         $tmp_from_start = $block['end'] - $from;
-        $percents = 0;
-        if (($till - $from) != 0) {
-            $percents = $tmp_from_start / ($till - $from);
-        }
-        $block['end'] += $seconds * $percents;
+        $end_percents = $tmp_from_start / ($till - $from);
+        $block['end'] += $seconds * $end_percents;
 
         return $block;
+    }
+
+    protected static function blockTimesWithinRange($block, $from, $till)
+    {
+        return ($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till);
     }
 }
 
