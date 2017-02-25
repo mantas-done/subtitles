@@ -71,7 +71,7 @@ class VttConverter implements ConverterContract {
 
     protected static function fixLine()
     {
-        return function ($line) {
+        return function($line) {
             if (substr($line, 0, 3) == '<v ') {
                 $line = substr($line, 3);
                 $line = str_replace('>', ' ', $line);
