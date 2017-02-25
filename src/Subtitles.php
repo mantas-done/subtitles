@@ -149,7 +149,7 @@ class Subtitles implements SubtitleContract {
 
     protected function sortInternalFormat()
     {
-        usort($this->internal_format, function ($item1, $item2) {
+        usort($this->internal_format, function($item1, $item2) {
             if ($item2['start'] == $item1['start']) {
                 return 0;
             } elseif ($item2['start'] < $item1['start']) {

@@ -17,7 +17,7 @@ class Helpers
 
     public static function removeUtf8Bom($text)
     {
-        $bom = pack('H*','EFBBBF');
+        $bom = pack('H*', 'EFBBBF');
         $text = preg_replace("/^$bom/", '', $text);
 
         return $text;
