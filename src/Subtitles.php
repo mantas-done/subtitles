@@ -44,7 +44,7 @@ class Subtitles implements SubtitleContract {
 
     public function save($path)
     {
-        $file_extension = static::fileExtension($path);
+        $file_extension = Helpers::fileExtension($path);
         $content = $this->content($file_extension);
 
         file_put_contents($path, $content);
@@ -83,7 +83,7 @@ class Subtitles implements SubtitleContract {
     public function shiftTime($seconds, $from = 0, $till = null)
     {
         foreach ($this->internal_format as &$block) {
-            if (!$this->shouldBlockTimeBeShifted($from, $till, $block['start'], $block['end'])) {
+            if (!Helpers::shouldBlockTimeBeShifted($from, $till, $block['start'], $block['end'])) {
                 continue;
             }
 
@@ -104,7 +104,7 @@ class Subtitles implements SubtitleContract {
         }
 
         foreach ($this->internal_format as &$block) {
-            $block = static::shiftBlockTime($block, $seconds, $from, $till);
+            $block = Helpers::shiftBlockTime($block, $seconds, $from, $till);
         }
         unset($block);
 
@@ -117,7 +117,7 @@ class Subtitles implements SubtitleContract {
     {
         $format = strtolower(trim($format, '.'));
 
-        $converter = static::getConverter($format);
+        $converter = Helpers::getConverter($format);
         $content = $converter->internalFormatToFileContent($this->internal_format);
 
         return $content;
@@ -146,83 +146,6 @@ class Subtitles implements SubtitleContract {
     }
 
     // -------------------------------------- private ------------------------------------------------------------------
-
-    protected static function shouldBlockTimeBeShifted($from, $till, $block_start, $block_end)
-    {
-        if ($block_end < $from) {
-            return false;
-        }
-
-        if ($till === null) {
-            return true;
-        }
-
-        return $till >= $block_start;
-    }
-
-    protected static function loadFile($path, $extension = null)
-    {
-        if (!file_exists($path)) {
-            throw new \Exception("file doesn't exist: " . $path);
-        }
-
-        $string = file_get_contents($path);
-        if (!$extension) {
-            $extension = static::fileExtension($path);
-        }
-
-        return static::loadString($string, $extension);
-    }
-
-    protected static function loadString($text, $extension)
-    {
-        $converter = new static;
-        $converter->input = static::normalizeNewLines(static::removeUtf8Bom($text));
-
-        $converter->input_format = $extension;
-
-        $input_converter = static::getConverter($extension);
-        $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
-
-        return $converter;
-    }
-
-    protected static function removeUtf8Bom($text)
-    {
-        $bom = pack('H*','EFBBBF');
-        $text = preg_replace("/^$bom/", '', $text);
-
-        return $text;
-    }
-
-    protected static function getConverter($extension)
-    {
-        $class_name = ucfirst($extension) . 'Converter';
-
-        if (!file_exists('./src/code/Converters/' . $class_name . '.php')) {
-            throw new \Exception('unknown format: ' . $extension);
-        }
-
-        $full_class_name = "\\Done\\Subtitles\\" . $class_name;
-
-        return new $full_class_name();
-    }
-
-    protected static function fileExtension($filename) {
-        $parts = explode('.', $filename);
-        $extension = end($parts);
-        $extension = strtolower($extension);
-
-        return $extension;
-    }
-
-    protected static function normalizeNewLines($file_content)
-    {
-        $file_content = str_replace("\r\n", "\n", $file_content);
-        $file_content = str_replace("\r", "\n", $file_content);
-
-        return $file_content;
-    }
 
     protected function sortInternalFormat()
     {
@@ -253,28 +176,31 @@ class Subtitles implements SubtitleContract {
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
-    protected static function shiftBlockTime($block, $seconds, $from, $till)
+    public static function loadFile($path, $extension = null)
     {
-        if (!static::blockTimesWithinRange($block, $from, $till)) {
-            return $block;
+        if (!file_exists($path)) {
+            throw new \Exception("file doesn't exist: " . $path);
         }
 
-        // start
-        $tmp_from_start = $block['start'] - $from;
-        $start_percents = $tmp_from_start / ($till - $from);
-        $block['start'] += $seconds * $start_percents;
+        $string = file_get_contents($path);
+        if (!$extension) {
+            $extension = Helpers::fileExtension($path);
+        }
 
-        // end
-        $tmp_from_start = $block['end'] - $from;
-        $end_percents = $tmp_from_start / ($till - $from);
-        $block['end'] += $seconds * $end_percents;
-
-        return $block;
+        return static::loadString($string, $extension);
     }
 
-    protected static function blockTimesWithinRange($block, $from, $till)
+    public static function loadString($text, $extension)
     {
-        return ($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till);
+        $converter = new static;
+        $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
+
+        $converter->input_format = $extension;
+
+        $input_converter = Helpers::getConverter($extension);
+        $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
+
+        return $converter;
     }
 }
 
