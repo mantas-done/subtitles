@@ -35,14 +35,11 @@ class Subtitles implements SubtitleContract {
 
     public static function load($file_name_or_file_content, $extension = null)
     {
-        if (strstr($file_name_or_file_content, "\n") === false) {
+        if (file_exists($file_name_or_file_content)) {
             return static::loadFile($file_name_or_file_content);
-        } else {
-            if (!$extension) {
-                throw new \Exception('Specify extension');
-            }
-            return static::loadString($file_name_or_file_content, $extension);
         }
+
+        return static::loadString($file_name_or_file_content, $extension);
     }
 
     public function save($path)
@@ -73,7 +70,7 @@ class Subtitles implements SubtitleContract {
     public function remove($from, $till)
     {
         foreach ($this->internal_format as $k => $block) {
-            if (($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till)) {
+            if ($this->shouldBlockBeRemoved($block, $from, $till)) {
                 unset($this->internal_format[$k]);
             }
         }
@@ -86,7 +83,7 @@ class Subtitles implements SubtitleContract {
     public function shiftTime($seconds, $from = 0, $till = null)
     {
         foreach ($this->internal_format as &$block) {
-            if (!$this->shouldBlockTimeBeshifted($from, $till, $block['start'], $block['end'])) {
+            if (!$this->shouldBlockTimeBeShifted($from, $till, $block['start'], $block['end'])) {
                 continue;
             }
 
@@ -107,29 +104,7 @@ class Subtitles implements SubtitleContract {
         }
 
         foreach ($this->internal_format as &$block) {
-            if (!$this->shouldBlockTimeBeshifted($from, $till, $block['start'], $block['end'])) {
-                continue;
-            }
-
-            if (!($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till)) {
-                continue;
-            }
-
-            // start
-            $tmp_from_start = $block['start'] - $from;
-            $percents = 0;
-            if (($till - $from) != 0) {
-                $percents = $tmp_from_start / ($till - $from);
-            }
-            $block['start'] += $seconds * $percents;
-
-            // end
-            $tmp_from_start = $block['end'] - $from;
-            $percents = 0;
-            if (($till - $from) != 0) {
-                $percents = $tmp_from_start / ($till - $from);
-            }
-            $block['end'] += $seconds * $percents;
+            $block = static::shiftBlockTime($block, $seconds, $from, $till);
         }
         unset($block);
 
@@ -172,7 +147,7 @@ class Subtitles implements SubtitleContract {
 
     // -------------------------------------- private ------------------------------------------------------------------
 
-    protected static function shouldBlockTimeBeshifted($from, $till, $block_start, $block_end)
+    protected static function shouldBlockTimeBeShifted($from, $till, $block_start, $block_end)
     {
         if ($from !== null &&  $block_end < $from) {
             return false;
@@ -271,6 +246,35 @@ class Subtitles implements SubtitleContract {
         }
 
         return $max_time;
+    }
+
+    protected function shouldBlockBeRemoved($block, $from, $till) {
+        return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
+    }
+
+    protected static function shiftBlockTime($block, $seconds, $from, $till)
+    {
+        if (!($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till)) {
+            return $block;
+        }
+
+        // start
+        $tmp_from_start = $block['start'] - $from;
+        $percents = 0;
+        if (($till - $from) != 0) {
+            $percents = $tmp_from_start / ($till - $from);
+        }
+        $block['start'] += $seconds * $percents;
+
+        // end
+        $tmp_from_start = $block['end'] - $from;
+        $percents = 0;
+        if (($till - $from) != 0) {
+            $percents = $tmp_from_start / ($till - $from);
+        }
+        $block['end'] += $seconds * $percents;
+
+        return $block;
     }
 }
 
