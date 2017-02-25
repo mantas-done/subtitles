@@ -132,19 +132,7 @@ class StlConverter implements ConverterContract {
     {
         $max_frames = 0;
         foreach ($lines as $line) {
-            if (!static::doesLineHaveTimestamp($line)) {
-                continue;
-            }
-
-            $frames1 = static::returnFramesFromTime(static::getStartLine($line));
-            $frames2 = static::returnFramesFromTime(static::getEndLine($line));
-
-            if ($frames1 > $max_frames) {
-                $max_frames = $frames1;
-            }
-            if ($frames2 > $max_frames) {
-                $max_frames = $frames2;
-            }
+            $max_frames = self::maxFrames($line, $max_frames);
         }
 
         if ($max_frames >= 30) {
@@ -155,6 +143,25 @@ class StlConverter implements ConverterContract {
         }
 
         return 25;
+    }
+
+    private static function maxFrames($line, $max_frames)
+    {
+        if (!static::doesLineHaveTimestamp($line)) {
+            return $max_frames;
+        }
+
+        $frames1 = static::returnFramesFromTime(static::getStartLine($line));
+        $frames2 = static::returnFramesFromTime(static::getEndLine($line));
+
+        if ($frames1 > $max_frames) {
+            $max_frames = $frames1;
+        }
+        if ($frames2 > $max_frames) {
+            $max_frames = $frames2;
+        }
+
+        return $max_frames;
     }
 
 }
