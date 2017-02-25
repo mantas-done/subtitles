@@ -3,9 +3,6 @@
     "description": "Subtitle converter and generator for PHP",
     "type": "library",
     "minimum-stability": "dev",
-    "require": {
-      "phpunit/phpunit": " 5.7.*"
-    },
     "autoload": {
         "classmap": [
             "src"
@@ -15,5 +12,8 @@
       "files": [
         "./tests/helpers/AdditionalAssertions.php"
       ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
     }
 }
