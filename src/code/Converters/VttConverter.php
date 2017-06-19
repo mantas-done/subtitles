@@ -64,7 +64,7 @@ class VttConverter implements ConverterContract {
         $whole = $parts[0]; // 1
         $decimal = isset($parts[1]) ? $parts[1] : 0; // 23
 
-        $srt_time = gmdate("i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
+        $srt_time = gmdate("H:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
 
         return $srt_time;
     }
