@@ -28,7 +28,7 @@ class VttSubtitle extends TestCase {
         $expected_vtt_file_content = <<< TEXT
 WEBVTT
 
-00:09.000 --> 00:11.000
+00:00:09.000 --> 00:00:11.000
 Roger Bingham We are in New York City
 TEXT;
         $expected_vtt_file_content = str_replace("\r", '', $expected_vtt_file_content);

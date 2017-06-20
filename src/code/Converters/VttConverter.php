@@ -48,7 +48,7 @@ class VttConverter implements ConverterContract {
 
     protected static function vttTimeToInternal($vtt_time)
     {
-        $parts = explode('.', '00:' . $vtt_time);
+        $parts = explode('.', $vtt_time);
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float)('0.' . $parts[1]);
