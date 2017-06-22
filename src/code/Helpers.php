@@ -27,7 +27,7 @@ class Helpers
     {
         $class_name = ucfirst($extension) . 'Converter';
 
-        if (!file_exists('./src/code/Converters/' . $class_name . '.php')) {
+        if (!file_exists(__DIR__ . '/Converters/' . $class_name . '.php')) {
             throw new \Exception('unknown format: ' . $extension);
         }
 
