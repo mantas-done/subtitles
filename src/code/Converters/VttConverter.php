@@ -9,10 +9,18 @@ class VttConverter implements ConverterContract {
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
 
         foreach ($blocks as $block) {
-                if (trim($block) == 'WEBVTT') {
+            
+            if (trim($block) == 'WEBVTT') {
                 continue;
             }
+            
             $lines = explode("\n", $block); // separate all block lines
+            
+            if (is_numeric($lines[0])) {
+                unset($lines[0]); // not supporting cue id
+                $lines = array_values($lines);
+            }
+            
             $times = explode(' --> ', $lines[0]);
 
             $internal_format[] = [
