@@ -16,7 +16,7 @@ class VttConverter implements ConverterContract {
             
             $lines = explode("\n", $block); // separate all block lines
             
-            if (is_numeric($lines[0])) {
+            if (strpos($lines[0], '-->') === false) { // first line not containing '-->', must be cue id
                 unset($lines[0]); // not supporting cue id
                 $lines = array_values($lines);
             }
