@@ -9,7 +9,6 @@ class VttConverter implements ConverterContract {
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
 
         foreach ($blocks as $block) {
-            
             if (trim($block) == 'WEBVTT') {
                 continue;
             }

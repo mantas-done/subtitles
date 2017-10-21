@@ -21,8 +21,6 @@ class VttSubtitle extends TestCase {
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
-
-
     public function testConvertToFile()
     {
         $expected_vtt_file_content = <<< TEXT
@@ -34,6 +32,29 @@ TEXT;
         $expected_vtt_file_content = str_replace("\r", '', $expected_vtt_file_content);
 
         $actual_vtt_file_content = (new Subtitles())->add(9, 11, 'Roger Bingham We are in New York City')->content('vtt');
+
+        $this->assertEquals($expected_vtt_file_content, $actual_vtt_file_content);
+    }
+
+    public function testConvertToInternalFormatWhenFileContainsNumbers() // numbers are optional in webvtt format
+    {
+        $input_vtt_file_content = <<< TEXT
+WEBVTT
+
+1
+00:00:09.000 --> 00:00:11.000
+Roger Bingham We are in New York City
+TEXT;
+        $expected_vtt_file_content = <<< TEXT
+WEBVTT
+
+00:00:09.000 --> 00:00:11.000
+Roger Bingham We are in New York City
+TEXT;
+
+        $expected_vtt_file_content = str_replace("\r", '', $expected_vtt_file_content);
+
+        $actual_vtt_file_content = (new Subtitles())->load($input_vtt_file_content, 'vtt')->content('vtt');
 
         $this->assertEquals($expected_vtt_file_content, $actual_vtt_file_content);
     }
