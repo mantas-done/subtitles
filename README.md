@@ -64,7 +64,13 @@ echo $subtitles->content('vtt');
 
 Add subtitles
 ```php
-$subtitles->add(0, 5, 'some text'); // from 0, till 5 seconds
+$subtitles->add(0, 5, 'some text'); // from 0, till 5 seconds  
+
+// Add multiline text
+$subtitles->add(0, 5, [
+    'first line',
+    'second line',
+]);
 ````
 
 Remove subtitles
