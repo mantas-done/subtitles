@@ -56,10 +56,13 @@ class Subtitles implements SubtitleContract {
     {
         // @TODO validation
         // @TODO check subtitles to not overlap
+        $normalizeText = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
+        $lines = explode("\n", $normalizeText);
+
         $this->internal_format[] = [
             'start' => $start,
             'end' => $end,
-            'lines' => is_array($text) ? $text : [$text],
+            'lines' => $lines,
         ];
 
         $this->sortInternalFormat();
