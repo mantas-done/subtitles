@@ -86,7 +86,7 @@ class SbvConverter implements ConverterContract {
     {
         $parts = explode('.', $internal_time); // 1.23
         $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? $parts[1] : 0; // 23
+        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
 
         $srt_time = gmdate("0:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
 
