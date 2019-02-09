@@ -33,7 +33,7 @@ class StlConverter implements ConverterContract {
             $stl_end = static::toStlTime($row['end']);
             $stt_lines = static::toStlLines($row['lines']);
 
-            $line = "$stl_start , $stl_end , $stt_lines\n";
+            $line = "$stl_start , $stl_end , $stt_lines\r\n";
             $stl .= $line;
         }
 

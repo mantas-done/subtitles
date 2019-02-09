@@ -22,10 +22,15 @@ class VttConverter implements ConverterContract {
             
             $times = explode(' --> ', $lines[0]);
 
+            $lines_array = array_map(static::fixLine(), array_slice($lines, 1)); // get all the remaining lines from block (if multiple lines of text)
+            if (count($lines_array) === 0) {
+                continue;
+            }
+
             $internal_format[] = [
                 'start' => static::vttTimeToInternal($times[0]),
                 'end' => static::vttTimeToInternal($times[1]),
-                'lines' => array_map(static::fixLine(), array_slice($lines, 1)), // get all the remaining lines from block (if multiple lines of text)
+                'lines' => $lines_array,
             ];
         }
 
@@ -34,16 +39,16 @@ class VttConverter implements ConverterContract {
 
     public function internalFormatToFileContent(array $internal_format)
     {
-        $file_content = "WEBVTT\n\n";
+        $file_content = "WEBVTT\r\n\r\n";
 
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToVtt($block['start']);
             $end = static::internalTimeToVtt($block['end']);
-            $lines = implode("\n", $block['lines']);
+            $lines = implode("\r\n", $block['lines']);
 
-            $file_content .= $start . ' --> ' . $end . "\n";
-            $file_content .= $lines . "\n";
-            $file_content .= "\n";
+            $file_content .= $start . ' --> ' . $end . "\r\n";
+            $file_content .= $lines . "\r\n";
+            $file_content .= "\r\n";
         }
 
         $file_content = trim($file_content);

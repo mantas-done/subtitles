@@ -3,51 +3,38 @@
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 
-class SubSubtitle extends TestCase {
+class SubTest extends TestCase {
 
     use AdditionalAssertions;
 
-    public function testFileToInternalFormat()
+    public function testConvertFromSubToSrt()
     {
-        $actual_internal_format = Subtitles::load(self::fileContent(), 'sub')->getInternalFormat();
+        $sub_path = './tests/files/sub.sub';
 
-        $this->assertInternalFormatsEqual(self::internalFormat(), $actual_internal_format);
-    }
+        $expected = <<<TEXT
+1
+00:02:17,400 --> 00:02:20,400
+Senator, we're making
+our final approach into Coruscant.
 
-
-
-    public function testConvertToFile()
-    {
-        $actual_file_content = (new Subtitles())->setInternalFormat(self::internalFormat())->content('sub');
-
-        $this->assertEquals(self::fileContent(), $actual_file_content);
-    }
-
-    // @TODO test time above 1 hour
-
-    // ---------------------------------- private ----------------------------------------------------------------------
-
-    private static function fileContent()
-    {
-        $content = <<< TEXT
-00:05:35.00,00:05:38.00
-Hello guys... please sit down...
-
-00:05:42.00,00:05:50.00
-M. Franklin,[br]are you crazy?
+2
+01:02:20,500 --> 01:02:22,500
+Very good, Lieutenant.
 TEXT;
-        $content = str_replace("\r", '', $content);
 
-        return $content;
+        $actual = (new Subtitles())->load($sub_path)->content('srt');
 
+        $this->assertEquals($expected, $actual);
     }
 
-    private static function internalFormat()
+    public function testConvertFromSrtToSub()
     {
-        return (new Subtitles())
-            ->add(335, 338, ['Hello guys... please sit down...'])
-            ->add(342, 350, ['M. Franklin,', 'are you crazy?'])
-            ->getInternalFormat();
-    }
+        $srt_path = './tests/files/srt.srt';
+        $sub_path = './tests/files/sub.sub';
 
+        $expected = file_get_contents($sub_path);
+        $actual = (new Subtitles())->load($srt_path)->content('sub');
+
+        $this->assertEquals($expected, $actual);
+    }
 }

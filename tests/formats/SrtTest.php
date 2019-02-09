@@ -36,8 +36,6 @@ class SrtTest extends TestCase {
         $this->assertEquals(self::fileContent(), $actual_file_content);
     }
 
-    // @TODO test time above 1 hour
-
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function fileContent()
@@ -49,20 +47,18 @@ Senator, we're making
 our final approach into Coruscant.
 
 2
-00:02:20,476 --> 00:02:22,501
+01:02:20,476 --> 01:02:22,501
 Very good, Lieutenant.
 TEXT;
-        $content = str_replace("\r", '', $content);
 
         return $content;
-
     }
 
     private static function generatedSubtitles()
     {
         return (new Subtitles())
             ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])
-            ->add(140.476, 142.501, ['Very good, Lieutenant.']);
+            ->add(3740.476, 3742.501, ['Very good, Lieutenant.']);
     }
 
 }

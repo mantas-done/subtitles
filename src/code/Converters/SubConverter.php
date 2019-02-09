@@ -42,9 +42,9 @@ class SubConverter implements ConverterContract {
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode("[br]", $block['lines']);
 
-            $file_content .= $start . ',' . $end . "\n";
-            $file_content .= $lines . "\n";
-            $file_content .= "\n";
+            $file_content .= $start . ',' . $end . "\r\n";
+            $file_content .= $lines . "\r\n";
+            $file_content .= "\r\n";
         }
 
         $file_content = trim($file_content);
@@ -58,13 +58,13 @@ class SubConverter implements ConverterContract {
      * Convert .srt file format to internal time format (float in seconds)
      * Example: 00:02:17,440 -> 137.44
      *
-     * @param $srt_time
+     * @param $sub_time
      *
      * @return float
      */
-    protected static function srtTimeToInternal($srt_time)
+    protected static function srtTimeToInternal($sub_time)
     {
-        $parts = explode('.', $srt_time);
+        $parts = explode('.', $sub_time);
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float)('0.' . $parts[1]);
@@ -84,11 +84,12 @@ class SubConverter implements ConverterContract {
      */
     protected static function internalTimeToSrt($internal_time)
     {
-        $parts = explode('.', $internal_time); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
+        $seconds = floor($internal_time);
+        $remainder = fmod($internal_time, 1);
+        $remainder_string = round($remainder, 2) * 100;
+        $remainder_string = str_pad($remainder_string, 2, '0', STR_PAD_RIGHT);
 
-        $srt_time = gmdate("00:i:s", floor($whole)) . '.' . str_pad($decimal, 2, '0', STR_PAD_RIGHT);
+        $srt_time = gmdate("H:i:s", $seconds) . '.' . $remainder_string;
 
         return $srt_time;
     }

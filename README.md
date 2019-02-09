@@ -14,6 +14,7 @@ Convert and edit subtitles and captions.
 | [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
 | [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
 | [SubViewer](https://en.wikipedia.org/wiki/SubViewer) | .sub |
+| Advanced Sub Station | .ass |
 
 ## Installation
 ```
