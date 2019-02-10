@@ -12,14 +12,21 @@ class VttConverter implements ConverterContract {
             if(preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
                 continue;
             }
-            
+
             $lines = explode("\n", $block); // separate all block lines
-            
+
+            if ($lines[0] == '') {
+                // support double new lines between blocks
+                // (not in webvtt specs - see issues #15 and #17)
+                unset($lines[0]); 
+                $lines = array_values($lines);
+            }
+
             if (strpos($lines[0], '-->') === false) { // first line not containing '-->', must be cue id
                 unset($lines[0]); // not supporting cue id
                 $lines = array_values($lines);
             }
-            
+
             $times = explode(' --> ', $lines[0]);
 
             $lines_array = array_map(static::fixLine(), array_slice($lines, 1)); // get all the remaining lines from block (if multiple lines of text)
