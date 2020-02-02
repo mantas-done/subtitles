@@ -15,6 +15,12 @@ class SrtConverter implements ConverterContract {
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
             $lines = explode("\n", $block); // separate all block lines
+            
+            if (empty($lines[0]) && $lines[0] != "0") { // first line empty, should be index
+                unset($lines[0]); // not supporting cue id
+                $lines = array_values($lines);
+            }
+            
             $times = explode(' --> ', $lines[1]); // one the second line there is start and end times
 
             $internal_format[] = [
