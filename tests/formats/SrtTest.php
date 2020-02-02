@@ -35,6 +35,41 @@ class SrtTest extends TestCase {
 
         $this->assertEquals(self::fileContent(), $actual_file_content);
     }
+    
+        public function testStringToInternalFormatWithMissingText()
+    {
+        $content = <<< TEXT
+0
+00:00:00,010 --> 00:00:07,777
+
+
+1
+00:00:03,371 --> 00:00:07,406
+For 13 years, the<i> cassini</i> spacecraft explored
+
+2
+00:00:07,408 --> 00:00:12,845
+astounding worlds ... saturn and its moons.
+
+3
+00:00:38,865 --> 00:00:40,822
+Lorem Ispum.
+Lorem ipsum dolor sit amet
+TEXT;
+
+        $actual_internal_format = Subtitles::load($content, $this->format)->getInternalFormat();
+
+        $expected = (new Subtitles())
+            ->add(00.010, 7.777, '')
+            ->add(3.371, 7.406, ['For 13 years, the<i> cassini</i> spacecraft explored'])
+            ->add(7.408, 12.845, ['astounding worlds ... saturn and its moons.'])
+            ->add(38.865, 40.822, ['Lorem Ispum.', 'Lorem ipsum dolor sit amet'])
+            ->getInternalFormat();
+        $actual = $actual_internal_format;
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
 
     // ---------------------------------- private ----------------------------------------------------------------------
 
