@@ -16,6 +16,11 @@ class SrtConverter implements ConverterContract {
         foreach ($blocks as $block) {
             $lines = explode("\n", $block); // separate all block lines
             
+            // No text is available in the block
+            if(!isset($lines[2])){
+                $lines[2] = ''; // Add an empty line, so the internal format is consitent
+            }
+            
             if (empty($lines[0]) && $lines[0] != "0") { // first line empty, should be index
                 unset($lines[0]); // not supporting cue id
                 $lines = array_values($lines);
