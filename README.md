@@ -16,6 +16,7 @@ Convert and edit subtitles and captions.
 | [SubViewer](https://en.wikipedia.org/wiki/SubViewer) | .sub |
 | Advanced Sub Station | .ass |
 | [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp |
+| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml |
 
 ## Installation
 ```

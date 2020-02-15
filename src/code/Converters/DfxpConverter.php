@@ -4,7 +4,7 @@ class DfxpConverter implements ConverterContract
 {
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all('/<p.+xml:id="p(?<line>[0-9]+).*begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
+        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
 
         $internal_format = [];
         foreach ($matches as $block) {
