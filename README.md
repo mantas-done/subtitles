@@ -15,6 +15,7 @@ Convert and edit subtitles and captions.
 | [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
 | [SubViewer](https://en.wikipedia.org/wiki/SubViewer) | .sub |
 | Advanced Sub Station | .ass |
+| [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp |
 
 ## Installation
 ```

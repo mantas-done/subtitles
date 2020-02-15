@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <head>
+    <metadata>
+      <ttm:title>Netflix Subtitle</ttm:title>
+    </metadata>
+    <styling>
+      <style tts:fontStyle="normal" tts:fontWeight="normal" xml:id="s1" tts:color="white" tts:fontFamily="Arial" tts:fontSize="100%"></style>
+    </styling>
+    <layout>
+      <region tts:extent="80% 40%" tts:origin="10% 10%" tts:displayAlign="before" tts:textAlign="center" xml:id="topCenter" />
+      <region tts:extent="80% 40%" tts:origin="10% 50%" tts:displayAlign="after" tts:textAlign="center" xml:id="bottomCenter" />
+    </layout>
+  </head>
+  <body>
+    <div style="s1" xml:id="d1">
+    <p xml:id="p1" begin="00:02:17,400" end="00:02:20,400" region="bottomCenter">Senator, we're making<br/>our final approach into Coruscant.</p>
+    <p xml:id="p2" begin="01:02:20,500" end="01:02:22,500" region="bottomCenter">Very good, Lieutenant.</p>
+  </div>
+  </body>
+</tt>
