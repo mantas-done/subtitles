@@ -1,5 +1,4 @@
 [![Build Status](https://scrutinizer-ci.com/g/mantas-done/subtitles/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mantas-done/subtitles/build-status/master)
-[![Code Coverage](https://scrutinizer-ci.com/g/mantas-done/subtitles/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mantas-done/subtitles/?branch=master)
 
 # Caption And Subtitle Converter for PHP
 
