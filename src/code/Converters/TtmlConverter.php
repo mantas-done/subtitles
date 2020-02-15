@@ -46,6 +46,7 @@ class TtmlConverter implements ConverterContract
   </body>
 </tt>';
 
+        $file_content = str_replace("\r", "", $file_content);
         $file_content = str_replace("\n", "\r\n", $file_content);
 
         return $file_content;

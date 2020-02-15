@@ -84,4 +84,29 @@ TEXT;
         ]];
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+        public function testFileContainingMultipleNewLinesBetweenBlocks()
+    {
+        $given = <<< TEXT
+WEBVTT
+
+00:00:00.000 --> 00:00:01.000
+text1
+
+
+
+
+
+00:00:01.000 --> 00:00:02.000
+text2
+TEXT;
+        $actual = (new Subtitles())->load($given, 'vtt')->getInternalFormat();
+
+        $expected = (new Subtitles())
+            ->add(0, 1, 'text1')
+            ->add(1, 2, 'text2')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
 }

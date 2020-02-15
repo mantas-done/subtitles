@@ -6,6 +6,8 @@ class VttConverter implements ConverterContract {
     {
         $internal_format = []; // array - where file content will be stored
 
+        $file_content = preg_replace('/\n\n+/', "\n\n", $file_content); // replace if there are more than 2 new lines
+
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
 
         foreach ($blocks as $block) {
@@ -19,7 +21,7 @@ class VttConverter implements ConverterContract {
                 unset($lines[0]); // not supporting cue id
                 $lines = array_values($lines);
             }
-            
+
             $times = explode(' --> ', $lines[0]);
 
             $lines_array = array_map(static::fixLine(), array_slice($lines, 1)); // get all the remaining lines from block (if multiple lines of text)
