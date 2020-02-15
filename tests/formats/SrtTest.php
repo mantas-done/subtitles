@@ -36,6 +36,26 @@ class SrtTest extends TestCase {
         $this->assertEquals(self::fileContent(), $actual_file_content);
     }
 
+    public function testRemovesEmptyLines()
+    {
+        $content = <<< TEXT
+1
+00:00:01,000 --> 00:00:02,000
+
+
+2
+00:00:03,000 --> 00:00:04,000
+Very good, Lieutenant.
+TEXT;
+
+        $actual_format = Subtitles::load($content, 'srt')->getInternalFormat();
+        $expected_format = (new Subtitles())
+            ->add(3, 4, ['Very good, Lieutenant.'])
+            ->getInternalFormat();
+        $this->assertEquals($expected_format, $actual_format);
+
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function fileContent()

@@ -14,13 +14,17 @@ class SrtConverter implements ConverterContract {
 
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
-            $lines = explode("\n", $block); // separate all block lines
-            $times = explode(' --> ', $lines[1]); // one the second line there is start and end times
+            preg_match('/(?<start>.*) --> (?<end>.*)\n(?<text>(\n*.*)*)/m', $block, $matches);
+
+            // if block doesn't contain text (invalid srt file given)
+            if (empty($matches)) {
+                continue;
+            }
 
             $internal_format[] = [
-                'start' => static::srtTimeToInternal($times[0]),
-                'end' => static::srtTimeToInternal($times[1]),
-                'lines' => array_slice($lines, 2), // get all the remaining lines from block (if multiple lines of text)
+                'start' => static::srtTimeToInternal($matches['start']),
+                'end' => static::srtTimeToInternal($matches['end']),
+                'lines' => explode("\n", $matches['text']),
             ];
         }
 
