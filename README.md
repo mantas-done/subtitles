@@ -11,9 +11,9 @@ Convert and edit subtitles and captions.
 | --- | --- |
 | [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
 | [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
-| [SAMI](https://documentation.apple.com/en/dvdstudiopro/usermanual/index.html#chapter=19%26section=13%26tasks=true) | .stl |
+| [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ) | .stl |
 | [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
-| [SubViewer](https://en.wikipedia.org/wiki/SubViewer) | .sub |
+| [SubViewer](https://wiki.videolan.org/SubViewer) | .sub |
 | Advanced Sub Station | .ass |
 | [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp |
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml |
