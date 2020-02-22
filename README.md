@@ -16,6 +16,7 @@ Convert and edit subtitles and captions.
 | Advanced Sub Station | .ass |
 | [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp |
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml |
+| QuickTime | .qt.txt |
 
 ## Installation
 ```
@@ -164,7 +165,7 @@ You can contribute in any way you want. If you need some guidance, choose someth
 
 | Task | Difficulty | Description |
 | --- | --- | --- |
-| Add new formats | Medium | Supporting more formats is nice. Some popular formats: .mcc, .ttml, .qt.txt, .dfxp, .cap  |
+| Add new formats | Medium | Supporting more formats is nice. Some popular formats: .mcc, .cap |
 | Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
 | Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
 
