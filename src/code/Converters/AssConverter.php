@@ -4,7 +4,7 @@ class AssConverter implements ConverterContract {
 
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all('/0,([^,]*),([^,]*),Default,,0,0,0,,(.*)/', $file_content, $blocks, PREG_SET_ORDER);
+        preg_match_all('/0,([^,]*),([^,]*),[A-Za-z]+,,0{1,},0{1,},0{1,},,(.*)/', $file_content, $blocks, PREG_SET_ORDER);
 
         foreach ($blocks as $block) {
             $internal_format[] = [
