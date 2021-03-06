@@ -11,8 +11,5 @@ Style: Default,Arial,20,&H00FFFFFF,&H0300FFFF,&H00000000,&H02000000,0,0,0,0,100,
 
 [Events]
 Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:12.53,0:00:14.49,Flashback,,0000,0000,0000,,Feuerwerkskugeln?!
-Dialogue: 0,0:00:16.45,0:00:18.91,Internal,,0000,0000,0000,,Das ist eine Buche de Noël, oder?
-Dialogue: 0,0:00:28.75,0:00:30.25,Default,,0000,0000,0000,,Sehr schön anzusehen.
-Dialogue: 0,0:02:17.40,0:02:20.40,Default,,0,0,0,,Senator, we're making\Nour final approach into Coruscant.
-Dialogue: 0,1:02:20.50,1:02:22.50,Default,,0,0,0,,Very good, Lieutenant.
+Dialogue: 0,0:02:17.40,0:02:20.40,Flashback,,0000,0000,0000,,Senator, we're making\Nour final approach into Coruscant.
+Dialogue: 0,1:02:20.50,1:02:22.50,Internal,,0000,0000,0000,,Very good, Lieutenant.
