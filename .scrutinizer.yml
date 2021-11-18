@@ -1,24 +1,23 @@
 filter:
-    excluded_paths:
-        - 'tests/*'
+  excluded_paths:
+    - 'tests/*'
 checks:
-    php: true
+  php: true
 coding_style:
-    php:
-        spaces:
-            around_operators:
-                concatenation: true
-            other:
-                after_type_cast: false
+  php:
+    spaces:
+      around_operators:
+        concatenation: true
+      other:
+        after_type_cast: false
 build:
   environment:
-          php:
-              version: 7.1.0     # Common versions: 5.4, 5.5, 5.6, 7.0 or hhvm
+    php:
+      version: 7.4.25     # Common versions: 5.4, 5.5, 5.6, 7.0 or hhvm
 
   tests:
-          override:
-              -
-                  command: 'phpunit --coverage-clover=build/logs/clover.xml'
-                  coverage:
-                      file: 'build/logs/clover.xml'
-                      format: 'clover'
+    override:
+      - command: 'phpunit --coverage-clover=build/logs/clover.xml'
+        coverage:
+          file: 'build/logs/clover.xml'
+          format: 'clover'
