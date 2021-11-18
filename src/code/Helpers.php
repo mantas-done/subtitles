@@ -46,7 +46,7 @@ class Helpers
 
     public static function normalizeNewLines($file_content)
     {
-        $file_content = str_replace("\r\n", "\n", $file_content);
+        $file_content = str_replace("\n", "\n", $file_content);
         $file_content = str_replace("\r", "\n", $file_content);
 
         return $file_content;

@@ -42,9 +42,9 @@ class SubConverter implements ConverterContract {
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode("[br]", $block['lines']);
 
-            $file_content .= $start . ',' . $end . "\r\n";
-            $file_content .= $lines . "\r\n";
-            $file_content .= "\r\n";
+            $file_content .= $start . ',' . $end . "\n";
+            $file_content .= $lines . "\n";
+            $file_content .= "\n";
         }
 
         $file_content = trim($file_content);

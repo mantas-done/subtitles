@@ -41,16 +41,16 @@ class VttConverter implements ConverterContract {
 
     public function internalFormatToFileContent(array $internal_format)
     {
-        $file_content = "WEBVTT\r\n\r\n";
+        $file_content = "WEBVTT\n\n";
 
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToVtt($block['start']);
             $end = static::internalTimeToVtt($block['end']);
-            $lines = implode("\r\n", $block['lines']);
+            $lines = implode("\n", $block['lines']);
 
-            $file_content .= $start . ' --> ' . $end . "\r\n";
-            $file_content .= $lines . "\r\n";
-            $file_content .= "\r\n";
+            $file_content .= $start . ' --> ' . $end . "\n";
+            $file_content .= $lines . "\n";
+            $file_content .= "\n";
         }
 
         $file_content = trim($file_content);
