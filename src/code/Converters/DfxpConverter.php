@@ -1,85 +1,112 @@
-<?php namespace Done\Subtitles;
+<?php
+
+namespace Done\Subtitles;
 
 class DfxpConverter implements ConverterContract
 {
+    /**
+     * @var int The number of milliseconds in a second. This is the multiplier
+     * used to convert seconds to milliseconds.
+     */
+    private const SECOND           = 1000;
+    /**
+     * @var int Time fraction for Netflix. This is the multiplier used
+     * to multiply the milliseconds value of the timestamp for a given subtitles
+     * text
+     */
+    private const NETFLIX_FRACTION = 10000;
+
+    /**
+     * 
+     * @see ConverterContract::fileContentToInternalFormat()
+     */
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
+        // Load the XML as DOM
+        $domDocument = new \DOMDocument('1.0', 'UTF-8');
+        $domDocument->loadXML($file_content);
 
+        // Prepare the internal format array
         $internal_format = [];
-        foreach ($matches as $block) {
+
+        // Load subtiles lines
+        $subtitlesList = $domDocument->getElementsByTagName('p');
+        foreach ($subtitlesList as $subLine) {
+            // Get begin time
+            $beginTime = trim($subLine->getAttribute('begin'), 't');
+            // Get end time
+            $endTime   = trim($subLine->getAttribute('end'), 't');
+
             $internal_format[] = [
-                'start' => static::dfxpTimeToInternal($block['start']),
-                'end' => static::dfxpTimeToInternal($block['end']),
-                'lines' => explode('<br/>', $block['text']),
+                'start' => $beginTime / (static::SECOND * static::NETFLIX_FRACTION),
+                'end'   => $endTime / (static::SECOND * static::NETFLIX_FRACTION),
+                'lines' => explode('<br/>', $subLine->nodeValue)
             ];
         }
-
+        
         return $internal_format;
     }
 
+    /**
+     * @see ConverterContract::internalFormatToFileContent()
+     */
     public function internalFormatToFileContent(array $internal_format)
     {
-        $file_content = '<?xml version="1.0" encoding="utf-8"?>
-<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <head>
-    <metadata>
-      <ttm:title>Netflix Subtitle</ttm:title>
-    </metadata>
-    <styling>
-      <style tts:fontStyle="normal" tts:fontWeight="normal" xml:id="s1" tts:color="white" tts:fontFamily="Arial" tts:fontSize="100%"></style>
-    </styling>
-    <layout>
-      <region tts:extent="80% 40%" tts:origin="10% 10%" tts:displayAlign="before" tts:textAlign="center" xml:id="topCenter" />
-      <region tts:extent="80% 40%" tts:origin="10% 50%" tts:displayAlign="after" tts:textAlign="center" xml:id="bottomCenter" />
-    </layout>
-  </head>
-  <body>
-    <div style="s1" xml:id="d1">
-';
+        $subtitlesString = '';
+        // Iterate through all lines and generate the corresponding DFXP entries
+        foreach ($internal_format as $entry) {
+            // Convert the start time to DFXP time
+            $beginTime = $entry['start'] * static::SECOND * static::NETFLIX_FRACTION;
+            // Convert the end time to DFXP time
+            $endTime   = $entry['end'] * static::SECOND * static::NETFLIX_FRACTION;
+            // Join all the lines into a single string
+            $text      = implode('<br/>', $entry['lines']);
 
-        foreach ($internal_format as $k => $block) {
-            $nr = $k + 1;
-            $start = static::internalTimeToDfxp($block['start']);
-            $end = static::internalTimeToDfxp($block['end']);
-            $lines = implode("<br/>", $block['lines']);
-
-            $file_content .= "    <p xml:id=\"p{$nr}\" begin=\"{$start}\" end=\"{$end}\" region=\"bottomCenter\">{$lines}</p>\n";
+            $subtitlesString .= sprintf('<p begin="%dt" end="%dt">%s</p>', $beginTime, $endTime, $text) . "\n";
         }
 
-        $file_content .= '  </div>
-  </body>
-</tt>';
 
-
-        $file_content = str_replace("\r", "", $file_content);
-        $file_content = str_replace("\n", "\r\n", $file_content);
-
-        return $file_content;
+        // Get the wrapper for the XML and  put the subtitles line in it
+        $wrapperXML = static::getWRapperDFXPWrapper();
+        return str_replace('@@SUBTITLES GO HERE', $subtitlesString, $wrapperXML);
     }
 
-    // ---------------------------------- private ----------------------------------------------------------------------
-
-    protected static function internalTimeToDfxp($internal_time)
+    private static function getWRapperDFXPWrapper()
     {
-        $parts = explode('.', $internal_time); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
-
-        $srt_time = gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
-
-        return $srt_time;
+        return '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tt xmlns:tt="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:tts="http://www.w3.org/ns/ttml#styling" ttp:cellResolution="40 19" ttp:pixelAspectRatio="1 1" ttp:tickRate="10000000" ttp:timeBase="media" tts:extent="640px 480px" xmlns="http://www.w3.org/ns/ttml">
+	<head>
+		<ttp:profile use="http://netflix.com/ttml/profile/dfxp-ls-sdh"/>
+		<styling>
+			<style tts:color="white" tts:fontFamily="monospaceSansSerif" tts:fontSize="100%" xml:id="bodyStyle"/>
+			<style tts:color="white" tts:fontFamily="monospaceSansSerif" tts:fontSize="100%" tts:fontStyle="italic" xml:id="style_0"/>
+		</styling>
+		<layout>
+			<region xml:id="region_00">
+				<style tts:textAlign="left"/>
+				<style tts:displayAlign="center"/>
+			</region>
+			<region xml:id="region_01">
+				<style tts:textAlign="left"/>
+				<style tts:displayAlign="center"/>
+			</region>
+			<region xml:id="region_02">
+				<style tts:textAlign="left"/>
+				<style tts:displayAlign="center"/>
+			</region>
+		</layout>
+	</head>
+	<body style="bodyStyle">
+		<div xml:space="preserve">
+			
+			
+			@@SUBTITLES GO HERE
+			
+			
+		</div>
+	</body>
+</tt>
+';
     }
 
-    protected static function dfxpTimeToInternal($dfxp_time)
-    {
-        $parts = explode(',', $dfxp_time);
-
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float)('0.' . $parts[1]);
-
-        $time = $only_seconds + $milliseconds;
-
-        return $time;
-    }
 }
