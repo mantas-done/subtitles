@@ -46,12 +46,12 @@ class TxtConverter implements ConverterContract {
         foreach ($internal_format as $block) {
             $start = static::fromInternalTime($block['start'], self::$fps);
             $end = static::fromInternalTime($block['end'], self::$fps);
-            $lines = implode("\r\n", $block['lines']);
+            $lines = implode("\n", $block['lines']);
 
-            $file_content .= $start . "\r\n";
-            $file_content .= $lines . "\r\n";
-            $file_content .= $end . "\r\n";
-            $file_content .= "\r\n";
+            $file_content .= $start . "\n";
+            $file_content .= $lines . "\n";
+            $file_content .= $end . "\n";
+            $file_content .= "\n";
         }
 
         return $file_content;

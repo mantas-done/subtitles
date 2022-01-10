@@ -40,7 +40,7 @@ class DfxpConverter implements ConverterContract
             $internal_format[] = [
                 'start' => $beginTime / (static::SECOND * static::NETFLIX_FRACTION),
                 'end'   => $endTime / (static::SECOND * static::NETFLIX_FRACTION),
-                'lines' => explode('<br/>', $subLine->nodeValue)
+                'lines' => explode('<br/>', strip_tags($subLine->ownerDocument->saveXML($subLine), '<br>'))
             ];
         }
         

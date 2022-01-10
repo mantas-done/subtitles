@@ -1,4 +1,6 @@
-<?php namespace Done\Subtitles;
+<?php
+
+namespace Done\Subtitles;
 
 class TtmlConverter implements ConverterContract
 {
@@ -10,7 +12,7 @@ class TtmlConverter implements ConverterContract
         foreach ($matches as $block) {
             $internal_format[] = [
                 'start' => static::ttmlTimeToInternal($block['start']),
-                'end' => static::ttmlTimeToInternal($block['end']),
+                'end'   => static::ttmlTimeToInternal($block['end']),
                 'lines' => explode('<br />', $block['text']),
             ];
         }
@@ -36,7 +38,7 @@ class TtmlConverter implements ConverterContract
 
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToTtml($block['start']);
-            $end = static::internalTimeToTtml($block['end']);
+            $end   = static::internalTimeToTtml($block['end']);
             $lines = implode("<br />", $block['lines']);
 
             $file_content .= "      <p begin=\"{$start}s\" id=\"p{$k}\" end=\"{$end}s\">{$lines}</p>\n";
@@ -47,7 +49,6 @@ class TtmlConverter implements ConverterContract
 </tt>';
 
         $file_content = str_replace("\r", "", $file_content);
-        $file_content = str_replace("\n", "\r\n", $file_content);
 
         return $file_content;
     }
@@ -63,4 +64,5 @@ class TtmlConverter implements ConverterContract
     {
         return rtrim($ttml_time, 's');
     }
+
 }

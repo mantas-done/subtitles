@@ -39,7 +39,7 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode('\N', $block['lines']);
 
-            $file_content .= "Dialogue: 0,{$start},{$end},Default,,0,0,0,,{$lines}\r\n";
+            $file_content .= "Dialogue: 0,{$start},{$end},Default,,0,0,0,,{$lines}\n";
         }
 
         $file_content = trim($file_content);

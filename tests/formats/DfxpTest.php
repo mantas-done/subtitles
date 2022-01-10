@@ -31,6 +31,7 @@ class DfxpTest extends TestCase {
         $dfxp_object = Subtitles::load($dfxp_path);
         $stl_internal_format = $dfxp_object->getInternalFormat();
 
+        
         $srt_object = Subtitles::load($srt_path);
         $srt_internal_format = $srt_object->getInternalFormat();
 
