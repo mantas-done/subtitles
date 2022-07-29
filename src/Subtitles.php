@@ -176,7 +176,7 @@ class Subtitles implements SubtitleContract {
     }
 
     protected function shouldBlockBeRemoved($block, $from, $till) {
-        return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
+        return ($from <= $block['start'] && $block['start'] <= $till) || ($from <= $block['end'] && $block['end'] <= $till);
     }
 
     public static function loadFile($path, $extension = null)
