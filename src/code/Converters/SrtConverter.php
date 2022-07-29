@@ -70,10 +70,22 @@ class SrtConverter implements ConverterContract {
      */
     protected static function srtTimeToInternal($srt_time)
     {
+        //suggesting, that between seconds and milliseconds ','
         $parts = explode(',', $srt_time);
+        if (count($parts) === 1) {
+            //suggesting, that between seconds and milliseconds '.'
+            $milliseconds_part = explode('.', $srt_time);
+            if (count($parts) === 1) {
+                //suggesting, seconds and milliseconds devide last ':' (total of 4) - format 00:00:00:105
+                $milliseconds_part = explode(':', $srt_time);
+                if (count($parts) == 4) {
+                    $milliseconds_part = $parts[3]; //milliseconds part here
+                }
+            }
+        }
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float)('0.' . $parts[1]);
+        $milliseconds = (float)('0.' . $milliseconds_part);
 
         $time = $only_seconds + $milliseconds;
 
