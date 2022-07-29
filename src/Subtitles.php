@@ -35,8 +35,11 @@ class Subtitles implements SubtitleContract {
 
     public static function load($file_name_or_file_content, $extension = null)
     {
-        if (file_exists($file_name_or_file_content)) {
-            return static::loadFile($file_name_or_file_content);
+        //only check file existing if second argument skipped
+        if ($extension === null) {
+            if (file_exists($file_name_or_file_content)) {
+                return static::loadFile($file_name_or_file_content);
+            }  
         }
 
         return static::loadString($file_name_or_file_content, $extension);
