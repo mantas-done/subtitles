@@ -23,7 +23,7 @@ class Subtitles implements SubtitleContract {
     protected $input;
     protected $input_format;
 
-    protected $internal_format; // data in internal format (when file is converted)
+    protected array $internal_format = []; // data in internal format (when file is converted)
 
     protected $converter;
     protected $output;
