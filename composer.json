@@ -1,5 +1,5 @@
 {
-    "name": "mantas-done/subtitles",
+    "name": "djlimix/subtitles",
     "description": "Subtitle converter and generator for PHP",
     "type": "library",
     "minimum-stability": "dev",
