@@ -39,8 +39,11 @@ class VttConverter implements ConverterContract {
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent($internal_format = null)
     {
+        if (empty($internal_format)) {
+            throw new Exception("Wrong file.");
+        }
         $file_content = "WEBVTT\r\n\r\n";
 
         foreach ($internal_format as $k => $block) {
