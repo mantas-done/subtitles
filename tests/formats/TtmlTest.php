@@ -1,9 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use Done\Subtitles\Test\Helpers\AdditionalAssertions;
 use PHPUnit\Framework\TestCase;
 
-class TtmlTest extends TestCase {
+class TtmlTest extends TestCase
+{
 
     use AdditionalAssertions;
 
@@ -47,5 +49,4 @@ class TtmlTest extends TestCase {
             }
         }
     }
-
 }

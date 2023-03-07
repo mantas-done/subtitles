@@ -1,9 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use Done\Subtitles\Test\Helpers\AdditionalAssertions;
 use PHPUnit\Framework\TestCase;
 
-class SrtTest extends TestCase {
+class SrtTest extends TestCase
+{
 
     use AdditionalAssertions;
 
@@ -53,7 +55,6 @@ TEXT;
             ->add(3, 4, ['Very good, Lieutenant.'])
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
-
     }
 
     // ---------------------------------- private ----------------------------------------------------------------------
@@ -80,5 +81,4 @@ TEXT;
             ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])
             ->add(3740.476, 3742.501, ['Very good, Lieutenant.']);
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Done\Subtitles;
+<?php
+
+namespace Done\Subtitles;
 
 class Helpers
 {
@@ -36,7 +38,8 @@ class Helpers
         return new $full_class_name();
     }
 
-    public static function fileExtension($filename) {
+    public static function fileExtension($filename)
+    {
         $parts = explode('.', $filename);
         $extension = end($parts);
         $extension = strtolower($extension);

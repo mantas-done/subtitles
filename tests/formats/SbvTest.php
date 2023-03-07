@@ -1,9 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use Done\Subtitles\Test\Helpers\AdditionalAssertions;
 use PHPUnit\Framework\TestCase;
 
-class SbvTest extends TestCase {
+class SbvTest extends TestCase
+{
 
     use AdditionalAssertions;
 

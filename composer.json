@@ -6,14 +6,17 @@
     "autoload": {
         "classmap": [
             "src"
-        ]
+        ],
+        "psr-4": {
+            "Done\\Subtitles\\": "src/"
+        }
     },
     "autoload-dev": {
-      "files": [
-        "./tests/helpers/AdditionalAssertions.php"
-      ]
+        "psr-4": {
+            "Done\\Subtitles\\Tests\\": "tests/"
+        }
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0"
+        "phpunit/phpunit": "^10.0"
     }
 }

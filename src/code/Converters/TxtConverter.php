@@ -1,7 +1,10 @@
-<?php namespace Done\Subtitles;
+<?php
+
+namespace Done\Subtitles;
 
 // qt.txt
-class TxtConverter implements ConverterContract {
+class TxtConverter implements ConverterContract
+{
 
     private static $fps = 23;
 

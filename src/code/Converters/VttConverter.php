@@ -1,6 +1,9 @@
-<?php namespace Done\Subtitles;
+<?php
 
-class VttConverter implements ConverterContract {
+namespace Done\Subtitles;
+
+class VttConverter implements ConverterContract
+{
 
     public function fileContentToInternalFormat($file_content)
     {
@@ -11,12 +14,12 @@ class VttConverter implements ConverterContract {
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
 
         foreach ($blocks as $block) {
-            if(preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
+            if (preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
                 continue;
             }
-            
+
             $lines = explode("\n", $block); // separate all block lines
-            
+
             if (strpos($lines[0], '-->') === false) { // first line not containing '-->', must be cue id
                 unset($lines[0]); // not supporting cue id
                 $lines = array_values($lines);
@@ -63,9 +66,9 @@ class VttConverter implements ConverterContract {
     protected static function vttTimeToInternal($vtt_time)
     {
         $parts = explode('.', $vtt_time);
-        
+
         // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
-        $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:'.$parts[0];
+        $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:' . $parts[0];
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float)('0.' . $parts[1]);
@@ -88,7 +91,7 @@ class VttConverter implements ConverterContract {
 
     protected static function fixLine()
     {
-        return function($line) {
+        return function ($line) {
             if (substr($line, 0, 3) == '<v ') {
                 $line = substr($line, 3);
                 $line = str_replace('>', ' ', $line);
