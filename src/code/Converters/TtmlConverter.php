@@ -63,6 +63,20 @@ class TtmlConverter implements ConverterContract
 
     protected static function ttmlTimeToInternal($ttml_time)
     {
+        // Check to see if the file uses clock-time or offset-time format
+        // Eg `hours:minutes:seconds.fraction` or `seconds.fraction`
+        // When using offset-time we only support `s` endings even though the spec supports h,m,s since h & m are uncommon
+        preg_match('/(?<hours>[0-9]{1,2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})\.(?<fraction>[0-9]{1,2})/', $ttml_time, $clock_time);
+
+        // Convert clock time to offset time
+        if (!empty($clock_time)) {
+            $seconds = 0;
+            $seconds += intval($clock_time['hours']) * 3600;
+            $seconds += intval($clock_time['minutes']) * 60;
+            $seconds += intval($clock_time['seconds']);
+
+            $ttml_time = "{$seconds}." . $clock_time['fraction'] . "s";
+        }
         return rtrim($ttml_time, 's');
     }
 }
