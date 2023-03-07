@@ -1,9 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use Done\Subtitles\Test\Helpers\AdditionalAssertions;
 use PHPUnit\Framework\TestCase;
 
-class StlTest extends TestCase {
+class StlTest extends TestCase
+{
 
     use AdditionalAssertions;
 
@@ -66,5 +68,4 @@ class StlTest extends TestCase {
         $subtitles->add(0, 3600 * 24 * 10, 'text');
         $subtitles->content('stl');
     }
-
 }

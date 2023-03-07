@@ -1,10 +1,11 @@
 <?php
 
 use Done\Subtitles\Subtitles;
+use Done\Subtitles\Test\Helpers\AdditionalAssertions;
 use PHPUnit\Framework\TestCase;
 
-class VttSubtitle extends TestCase {
-
+class VttTest extends TestCase
+{
     use AdditionalAssertions;
 
     public function testConvertFromVttToSrt()
@@ -13,6 +14,7 @@ class VttSubtitle extends TestCase {
         $srt_path = './tests/files/srt.srt';
 
         $expected = (new Subtitles())->load($vtt_path)->content('srt');
+
         $actual = file_get_contents($srt_path);
 
         $this->assertEquals($expected, $actual);
@@ -74,18 +76,19 @@ TEXT;
                 'end' => 1,
                 'lines' => [
                     'one',
-            ], [
-                'start' => 2,
-                'end' => 3,
-                'lines' => [
-                    'three',
-                ],
+                ], [
+                    'start' => 2,
+                    'end' => 3,
+                    'lines' => [
+                        'three',
+                    ],
+                ]
             ]
-        ]];
+        ];
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-        public function testFileContainingMultipleNewLinesBetweenBlocks()
+    public function testFileContainingMultipleNewLinesBetweenBlocks()
     {
         $given = <<< TEXT
 WEBVTT

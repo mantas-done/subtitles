@@ -1,5 +1,7 @@
 <?php
 
+namespace Done\Subtitles\Test\Helpers;
+
 trait AdditionalAssertions
 {
     public function assertInternalFormatsEqual($expected, $actual, $allowable_error = 0.01)

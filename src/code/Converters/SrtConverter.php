@@ -1,6 +1,9 @@
-<?php namespace Done\Subtitles;
+<?php
 
-class SrtConverter implements ConverterContract {
+namespace Done\Subtitles;
+
+class SrtConverter implements ConverterContract
+{
 
     /**
      * Converts file's content (.srt) to library's "internal format" (array)

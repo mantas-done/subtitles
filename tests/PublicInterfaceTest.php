@@ -2,8 +2,10 @@
 
 use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
+use Done\Subtitles\Test\Helpers\AdditionalAssertions;
 
-class PublicInterfaceTest extends TestCase {
+class PublicInterfaceTest extends TestCase
+{
 
     use AdditionalAssertions;
 
@@ -90,7 +92,6 @@ our final approach into Coruscant.
 
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
         Subtitles::load($srt_path)->content('exe');
-
     }
 
     public function testAdd()
@@ -110,14 +111,14 @@ our final approach into Coruscant.
     public function testAddOrdersSubtitlesByTime()
     {
         $expected_internal_format = [[
-                'start' => 0,
-                'end' => 5,
-                'lines' => ['text 1'],
-            ], [
-                'start' => 10,
-                'end' => 15,
-                'lines' => ['text 2'],
-            ]];
+            'start' => 0,
+            'end' => 5,
+            'lines' => ['text 1'],
+        ], [
+            'start' => 10,
+            'end' => 15,
+            'lines' => ['text 2'],
+        ]];
 
         $subtitles = new Subtitles();
         $subtitles->add(10, 15, 'text 2');

@@ -1,6 +1,9 @@
-<?php namespace Done\Subtitles;
+<?php
 
-interface SubtitleContract {
+namespace Done\Subtitles;
+
+interface SubtitleContract
+{
 
     public static function convert($from_file_path, $to_file_path);
 
@@ -18,7 +21,8 @@ interface SubtitleContract {
 }
 
 
-class Subtitles implements SubtitleContract {
+class Subtitles implements SubtitleContract
+{
 
     protected $input;
     protected $input_format;
@@ -119,7 +123,7 @@ class Subtitles implements SubtitleContract {
 
         $converter = Helpers::getConverter($format);
         $content = $converter->internalFormatToFileContent($this->internal_format);
-
+        $content = Helpers::normalizeNewLines(trim($content));
         return $content;
     }
 
@@ -149,7 +153,7 @@ class Subtitles implements SubtitleContract {
 
     protected function sortInternalFormat()
     {
-        usort($this->internal_format, function($item1, $item2) {
+        usort($this->internal_format, function ($item1, $item2) {
             if ($item2['start'] == $item1['start']) {
                 return 0;
             } elseif ($item2['start'] < $item1['start']) {
@@ -172,7 +176,8 @@ class Subtitles implements SubtitleContract {
         return $max_time;
     }
 
-    protected function shouldBlockBeRemoved($block, $from, $till) {
+    protected function shouldBlockBeRemoved($block, $from, $till)
+    {
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
