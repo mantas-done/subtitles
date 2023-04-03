@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+
+    <arg name="basepath" value="."/>
+    <arg name="cache" value="tmp/.phpcs-cache"/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="80"/>
+
+    <!-- Show progress -->
+    <arg value="p"/>
+
+    <!-- Paths to check -->
+    <file>src</file>
+
+    <!-- Include all rules from the Laminas Coding Standard -->
+    <rule ref="LaminasCodingStandard">
+        <exclude name="Generic.Formatting.MultipleStatementAlignment"/>
+        <exclude name="Generic.Formatting.SpaceAfterNot"/>
+        <exclude name="WebimpressCodingStandard.Arrays.DoubleArrow"/>
+        <exclude name="SlevomatCodingStandard.Commenting.EmptyComment.EmptyComment"/>
+        <exclude name="WebimpressCodingStandard.Formatting.Reference.UnexpectedSpace"/>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="220"/>
+            <property name="absoluteLineLimit" value="220"/>
+        </properties>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint">
+        <exclude-pattern>**Factory.php</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
+        <exclude-pattern>**Factory.php</exclude-pattern>
+    </rule>
+
+    <rule ref="WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCapsProperty">
+        <exclude-pattern>**/Entity/**</exclude-pattern>
+    </rule>
+
+
+</ruleset>

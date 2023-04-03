@@ -1,11 +1,27 @@
-<?php namespace Done\Subtitles;
+<?php
 
-class SbvConverter implements ConverterContract {
+declare(strict_types=1);
 
+namespace Done\Subtitles\Converters;
+
+use function explode;
+use function floor;
+use function fmod;
+use function gmdate;
+use function implode;
+use function round;
+use function str_pad;
+use function strtotime;
+use function trim;
+
+use const STR_PAD_RIGHT;
+
+class SubConverter implements ConverterInterface
+{
     /**
      * Converts file's content (.srt) to library's "internal format" (array)
      *
-     * @param string $file_content      Content of file that will be converted
+     * @param string $file_content Content of file that will be converted
      * @return array                    Internal format
      */
     public function fileContentToInternalFormat($file_content)
@@ -20,7 +36,7 @@ class SbvConverter implements ConverterContract {
             $internal_format[] = [
                 'start' => static::srtTimeToInternal($times[0]),
                 'end' => static::srtTimeToInternal($times[1]),
-                'lines' => array_slice($lines, 1), // get all the remaining lines from block (if multiple lines of text)
+                'lines' => explode('[br]', $lines[1]), // get all the remaining lines from block (if multiple lines of text)
             ];
         }
 
@@ -30,7 +46,7 @@ class SbvConverter implements ConverterContract {
     /**
      * Convert library's "internal format" (array) to file's content
      *
-     * @param array $internal_format    Internal format
+     * @param array $internal_format Internal format
      * @return string                   Converted file content
      */
     public function internalFormatToFileContent(array $internal_format)
@@ -40,11 +56,11 @@ class SbvConverter implements ConverterContract {
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToSrt($block['start']);
             $end = static::internalTimeToSrt($block['end']);
-            $lines = implode("\n", $block['lines']);
+            $lines = implode("[br]", $block['lines']);
 
-            $file_content .= $start . ',' . $end . "\n";
-            $file_content .= $lines . "\n";
-            $file_content .= "\n";
+            $file_content .= $start . ',' . $end . "\r\n";
+            $file_content .= $lines . "\r\n";
+            $file_content .= "\r\n";
         }
 
         $file_content = trim($file_content);
@@ -58,20 +74,17 @@ class SbvConverter implements ConverterContract {
      * Convert .srt file format to internal time format (float in seconds)
      * Example: 00:02:17,440 -> 137.44
      *
-     * @param $srt_time
-     *
+     * @param $sub_time
      * @return float
      */
-    protected static function srtTimeToInternal($srt_time)
+    protected static function srtTimeToInternal($sub_time)
     {
-        $parts = explode('.', $srt_time);
+        $parts = explode('.', $sub_time);
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float)('0.' . $parts[1]);
+        $milliseconds = (float) '0.' . $parts[1];
 
-        $time = $only_seconds + $milliseconds;
-
-        return $time;
+        return $only_seconds + $milliseconds;
     }
 
     /**
@@ -79,17 +92,15 @@ class SbvConverter implements ConverterContract {
      * Example: 137.44 -> 00:02:17,440
      *
      * @param float $internal_time
-     *
      * @return string
      */
     protected static function internalTimeToSrt($internal_time)
     {
-        $parts = explode('.', $internal_time); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
+        $seconds = floor($internal_time);
+        $remainder = fmod($internal_time, 1);
+        $remainder_string = round($remainder, 2) * 100;
+        $remainder_string = str_pad($remainder_string, 2, '0', STR_PAD_RIGHT);
 
-        $srt_time = gmdate("0:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
-
-        return $srt_time;
+        return gmdate("H:i:s", $seconds) . '.' . $remainder_string;
     }
 }

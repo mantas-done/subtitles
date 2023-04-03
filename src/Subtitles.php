@@ -1,25 +1,23 @@
-<?php namespace Done\Subtitles;
+<?php
 
-interface SubtitleContract {
+declare(strict_types=1);
 
-    public static function convert($from_file_path, $to_file_path);
+namespace Done\Subtitles;
 
-    public static function load($file_name_or_file_content, $extension = null); // load file
-    public function save($file_name); // save file
-    public function content($format); // output file content (instead of saving to file)
+use Done\Subtitles\Providers\SubtitleInterface;
+use Exception;
 
-    public function add($start, $end, $text); // add one line or several
-    public function remove($from, $till); // delete text from subtitles
-    public function shiftTime($seconds, $from = 0, $till = null); // add or subtract some amount of seconds from all times
-    public function shiftTimeGradually($seconds_to_shift, $from = 0, $till = null);
+use function array_values;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function is_array;
+use function strtolower;
+use function trim;
+use function usort;
 
-    public function getInternalFormat();
-    public function setInternalFormat(array $internal_format);
-}
-
-
-class Subtitles implements SubtitleContract {
-
+class Subtitles implements SubtitleInterface
+{
     protected $input;
     protected $input_format;
 
@@ -118,9 +116,7 @@ class Subtitles implements SubtitleContract {
         $format = strtolower(trim($format, '.'));
 
         $converter = Helpers::getConverter($format);
-        $content = $converter->internalFormatToFileContent($this->internal_format);
-
-        return $content;
+        return $converter->internalFormatToFileContent($this->internal_format);
     }
 
     // for testing only
@@ -149,7 +145,7 @@ class Subtitles implements SubtitleContract {
 
     protected function sortInternalFormat()
     {
-        usort($this->internal_format, function($item1, $item2) {
+        usort($this->internal_format, function ($item1, $item2) {
             if ($item2['start'] == $item1['start']) {
                 return 0;
             } elseif ($item2['start'] < $item1['start']) {
@@ -172,14 +168,15 @@ class Subtitles implements SubtitleContract {
         return $max_time;
     }
 
-    protected function shouldBlockBeRemoved($block, $from, $till) {
+    protected function shouldBlockBeRemoved($block, $from, $till)
+    {
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
     public static function loadFile($path, $extension = null)
     {
         if (!file_exists($path)) {
-            throw new \Exception("file doesn't exist: " . $path);
+            throw new Exception("file doesn't exist: " . $path);
         }
 
         $string = file_get_contents($path);
@@ -192,7 +189,7 @@ class Subtitles implements SubtitleContract {
 
     public static function loadString($text, $extension)
     {
-        $converter = new static;
+        $converter = new static();
         $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
 
         $converter->input_format = $extension;

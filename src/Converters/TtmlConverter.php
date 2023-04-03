@@ -1,6 +1,19 @@
-<?php namespace Done\Subtitles;
+<?php
 
-class TtmlConverter implements ConverterContract
+declare(strict_types=1);
+
+namespace Done\Subtitles\Converters;
+
+use function explode;
+use function implode;
+use function number_format;
+use function preg_match_all;
+use function rtrim;
+use function str_replace;
+
+use const PREG_SET_ORDER;
+
+class TtmlConverter implements ConverterInterface
 {
     public function fileContentToInternalFormat($file_content)
     {

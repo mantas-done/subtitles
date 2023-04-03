@@ -1,7 +1,24 @@
-<?php namespace Done\Subtitles;
+<?php
 
-class AssConverter implements ConverterContract {
+declare(strict_types=1);
 
+namespace Done\Subtitles\Converters;
+
+use function date_parse;
+use function explode;
+use function floor;
+use function gmdate;
+use function implode;
+use function preg_match_all;
+use function str_pad;
+use function substr;
+use function trim;
+
+use const PREG_SET_ORDER;
+use const STR_PAD_RIGHT;
+
+class AssConverter implements ConverterInterface
+{
     public function fileContentToInternalFormat($file_content)
     {
         preg_match_all('/Dialogue: \d+,([^,]*),([^,]*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(.*)/', $file_content, $blocks, PREG_SET_ORDER);
@@ -54,15 +71,12 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
      * Example: 00:02:17,440 -> 137.44
      *
      * @param $srt_time
-     *
      * @return float
      */
     protected static function assTimeToInternal($srt_time)
     {
         $parsed = date_parse("1970-01-01 $srt_time UTC");
-        $time = $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'] + $parsed['fraction'];
-
-        return $time;
+        return $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'] + $parsed['fraction'];
     }
 
     /**
@@ -70,7 +84,6 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
      * Example: 137.44 -> 00:02:17,440
      *
      * @param float $internal_time
-     *
      * @return string
      */
     protected static function internalTimeToSrt($internal_time)
@@ -79,8 +92,6 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
         $whole = $parts[0]; // 1
         $decimal = isset($parts[1]) ? substr($parts[1], 0, 2) : 0;
 
-        $srt_time = gmdate("G:i:s", floor($whole)) . '.' . str_pad($decimal, 2, '0', STR_PAD_RIGHT);
-
-        return $srt_time;
+        return gmdate("G:i:s", floor($whole)) . '.' . str_pad($decimal, 2, '0', STR_PAD_RIGHT);
     }
 }

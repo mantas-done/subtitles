@@ -1,7 +1,31 @@
-<?php namespace Done\Subtitles;
+<?php
 
-class VttConverter implements ConverterContract {
+declare(strict_types=1);
 
+namespace Done\Subtitles\Converters;
+
+use function array_map;
+use function array_slice;
+use function array_values;
+use function count;
+use function explode;
+use function floor;
+use function gmdate;
+use function implode;
+use function preg_match;
+use function preg_replace;
+use function str_pad;
+use function str_replace;
+use function strpos;
+use function strtotime;
+use function substr;
+use function substr_count;
+use function trim;
+
+use const STR_PAD_RIGHT;
+
+class VttConverter implements ConverterInterface
+{
     public function fileContentToInternalFormat($file_content)
     {
         $internal_format = []; // array - where file content will be stored
@@ -11,12 +35,12 @@ class VttConverter implements ConverterContract {
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
 
         foreach ($blocks as $block) {
-            if(preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
+            if (preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
                 continue;
             }
-            
+
             $lines = explode("\n", $block); // separate all block lines
-            
+
             if (strpos($lines[0], '-->') === false) { // first line not containing '-->', must be cue id
                 unset($lines[0]); // not supporting cue id
                 $lines = array_values($lines);
@@ -63,16 +87,14 @@ class VttConverter implements ConverterContract {
     protected static function vttTimeToInternal($vtt_time)
     {
         $parts = explode('.', $vtt_time);
-        
-        // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
-        $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:'.$parts[0];
+
+    // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
+        $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:' . $parts[0];
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float)('0.' . $parts[1]);
+        $milliseconds = (float) '0.' . $parts[1];
 
-        $time = $only_seconds + $milliseconds;
-
-        return $time;
+        return $only_seconds + $milliseconds;
     }
 
     protected static function internalTimeToVtt($internal_time)
@@ -81,14 +103,12 @@ class VttConverter implements ConverterContract {
         $whole = $parts[0]; // 1
         $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
 
-        $srt_time = gmdate("H:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
-
-        return $srt_time;
+        return gmdate("H:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
     }
 
     protected static function fixLine()
     {
-        return function($line) {
+        return function ($line) {
             if (substr($line, 0, 3) == '<v ') {
                 $line = substr($line, 3);
                 $line = str_replace('>', ' ', $line);

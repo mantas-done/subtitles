@@ -1,4 +1,19 @@
-<?php namespace Done\Subtitles;
+<?php
+
+declare(strict_types=1);
+
+namespace Done\Subtitles;
+
+use Exception;
+
+use function end;
+use function explode;
+use function file_exists;
+use function pack;
+use function preg_replace;
+use function str_replace;
+use function strtolower;
+use function ucfirst;
 
 class Helpers
 {
@@ -28,7 +43,7 @@ class Helpers
         $class_name = ucfirst($extension) . 'Converter';
 
         if (!file_exists(__DIR__ . '/Converters/' . $class_name . '.php')) {
-            throw new \Exception('unknown format: ' . $extension);
+            throw new Exception('unknown format: ' . $extension);
         }
 
         $full_class_name = "\\Done\\Subtitles\\" . $class_name;
@@ -36,7 +51,8 @@ class Helpers
         return new $full_class_name();
     }
 
-    public static function fileExtension($filename) {
+    public static function fileExtension($filename)
+    {
         $parts = explode('.', $filename);
         $extension = end($parts);
         $extension = strtolower($extension);
@@ -73,6 +89,6 @@ class Helpers
 
     public static function blockTimesWithinRange($block, $from, $till)
     {
-        return ($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till);
+        return $from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till;
     }
 }

@@ -1,6 +1,23 @@
-<?php namespace Done\Subtitles;
+<?php
 
-class DfxpConverter implements ConverterContract
+declare(strict_types=1);
+
+namespace Done\Subtitles\Converters;
+
+use function explode;
+use function floor;
+use function gmdate;
+use function implode;
+use function preg_match_all;
+use function str_pad;
+use function str_replace;
+use function strtotime;
+use function substr;
+
+use const PREG_SET_ORDER;
+use const STR_PAD_RIGHT;
+
+class DfxpConverter implements ConverterInterface
 {
     public function fileContentToInternalFormat($file_content)
     {
@@ -51,7 +68,6 @@ class DfxpConverter implements ConverterContract
   </body>
 </tt>';
 
-
         $file_content = str_replace("\r", "", $file_content);
         $file_content = str_replace("\n", "\r\n", $file_content);
 
@@ -66,9 +82,7 @@ class DfxpConverter implements ConverterContract
         $whole = $parts[0]; // 1
         $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
 
-        $srt_time = gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
-
-        return $srt_time;
+        return gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
     }
 
     protected static function dfxpTimeToInternal($dfxp_time)
@@ -76,10 +90,8 @@ class DfxpConverter implements ConverterContract
         $parts = explode(',', $dfxp_time);
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float)('0.' . $parts[1]);
+        $milliseconds = (float) '0.' . $parts[1];
 
-        $time = $only_seconds + $milliseconds;
-
-        return $time;
+        return $only_seconds + $milliseconds;
     }
 }
