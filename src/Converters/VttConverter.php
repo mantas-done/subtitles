@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Done\Subtitles\Converters;
 
+use Closure;
+
 use function array_map;
 use function array_slice;
 use function array_values;
@@ -26,13 +28,13 @@ use const STR_PAD_RIGHT;
 
 class VttConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat(string $fileContent): array
     {
-        $internal_format = []; // array - where file content will be stored
+        $internalFormat = []; // array - where file content will be stored
 
-        $file_content = preg_replace('/\n\n+/', "\n\n", $file_content); // replace if there are more than 2 new lines
+        $fileContent = preg_replace('/\n\n+/', "\n\n", $fileContent); // replace if there are more than 2 new lines
 
-        $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
+        $blocks = explode("\n\n", trim($fileContent)); // each block contains: start and end times + text
 
         foreach ($blocks as $block) {
             if (preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
@@ -48,68 +50,67 @@ class VttConverter implements ConverterInterface
 
             $times = explode(' --> ', $lines[0]);
 
-            $lines_array = array_map(static::fixLine(), array_slice($lines, 1)); // get all the remaining lines from block (if multiple lines of text)
-            if (count($lines_array) === 0) {
+            $linesArray = array_map(static::fixLine(), array_slice($lines, 1)); // get all the remaining lines from block (if multiple lines of text)
+            if (count($linesArray) === 0) {
                 continue;
             }
 
-            $internal_format[] = [
+            $internalFormat[] = [
                 'start' => static::vttTimeToInternal($times[0]),
                 'end' => static::vttTimeToInternal($times[1]),
-                'lines' => $lines_array,
+                'lines' => $linesArray,
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internalFormat): string
     {
-        $file_content = "WEBVTT\r\n\r\n";
+        $fileContent = "WEBVTT\r\n\r\n";
 
-        foreach ($internal_format as $k => $block) {
+        foreach ($internalFormat as $k => $block) {
             $start = static::internalTimeToVtt($block['start']);
             $end = static::internalTimeToVtt($block['end']);
             $lines = implode("\r\n", $block['lines']);
 
-            $file_content .= $start . ' --> ' . $end . "\r\n";
-            $file_content .= $lines . "\r\n";
-            $file_content .= "\r\n";
+            $fileContent .= $start . ' --> ' . $end . "\r\n";
+            $fileContent .= $lines . "\r\n";
+            $fileContent .= "\r\n";
         }
 
-        $file_content = trim($file_content);
+        $fileContent = trim($fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
-    // ------------------------------ private --------------------------------------------------------------------------
-
-    protected static function vttTimeToInternal($vtt_time)
+    /** private */
+    protected static function vttTimeToInternal(string $vttTime): float
     {
-        $parts = explode('.', $vtt_time);
+        $parts = explode('.', $vttTime);
 
     // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
-        $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:' . $parts[0];
+        $parts[0] = substr_count($parts[0], ':') === 2 ? $parts[0] : '00:' . $parts[0];
 
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
+        $onlySeconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float) '0.' . $parts[1];
 
-        return $only_seconds + $milliseconds;
+        return $onlySeconds + $milliseconds;
     }
 
-    protected static function internalTimeToVtt($internal_time)
+    protected static function internalTimeToVtt(string $internalTime): string
     {
-        $parts = explode('.', $internal_time); // 1.23
+        $parts = explode('.', $internalTime); // 1.23
         $whole = $parts[0]; // 1
         $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
 
-        return gmdate("H:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
+        return gmdate("H:i:s", (int) floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
     }
 
-    protected static function fixLine()
+    protected static function fixLine(): Closure
     {
         return function ($line) {
-            if (substr($line, 0, 3) == '<v ') {
+            if (substr($line, 0, 3) === '<v ') {
                 $line = substr($line, 3);
                 $line = str_replace('>', ' ', $line);
             }

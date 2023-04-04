@@ -6,23 +6,24 @@ namespace Done\Subtitles\Providers;
 
 interface SubtitleInterface
 {
-    public static function convert($from_file_path, $to_file_path);
+    public static function convert(string $fromFilePath, string $toFilePath);
 
-    public static function load($file_name_or_file_content, $extension = null); // load file
+    public static function load(string $fileNameOrFileContent, ?string $extension = null); // load file
 
-    public function save($file_name); // save file
+    public function save(string $fileName); // save file
 
-    public function content($format); // output file content (instead of saving to file)
+    public function content(string $format); // output file content (instead of saving to file)
 
-    public function add($start, $end, $text); // add one line or several
+    /** @param string|array|mixed $text */
+    public function add(int $start, int $end, $text); // add one line or several
 
-    public function remove($from, $till); // delete text from subtitles
+    public function remove(int $from, int $till); // delete text from subtitles
 
-    public function shiftTime($seconds, $from = 0, $till = null); // add or subtract some amount of seconds from all times
+    public function shiftTime(int $seconds, ?float $from = 0, ?float $till = null); // add or subtract some amount of seconds from all times
 
-    public function shiftTimeGradually($seconds_to_shift, $from = 0, $till = null);
+    public function shiftTimeGradually(int $secondsToShift, ?float $from = 0, ?float $till = null);
 
     public function getInternalFormat();
 
-    public function setInternalFormat(array $internal_format);
+    public function setInternalFormat(array $internalFormat);
 }

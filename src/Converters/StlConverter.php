@@ -23,152 +23,151 @@ use const STR_PAD_LEFT;
 
 class StlConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat(string $fileContent): array
     {
-        $not_trimmed_lines = explode("\n", $file_content);
-        $lines = array_map('trim', $not_trimmed_lines);
+        $notTrimmedLines = explode("\n", $fileContent);
+        $lines = array_map('trim', $notTrimmedLines);
 
-        $frames_per_seconds = static::framesPerSecond($lines);
+        $framesPerSeconds = static::framesPerSecond($lines);
 
-        $internal_format = [];
+        $internalFormat = [];
         foreach ($lines as $line) {
             if (!static::doesLineHaveTimestamp($line)) {
                 continue;
             }
 
-            $internal_format[] = [
-                'start' => static::convertFromSrtTime(static::getStartLine($line), $frames_per_seconds),
-                'end' => static::convertFromSrtTime(static::getEndLine($line), $frames_per_seconds),
+            $internalFormat[] = [
+                'start' => static::convertFromSrtTime(static::getStartLine($line), $framesPerSeconds),
+                'end' => static::convertFromSrtTime(static::getEndLine($line), $framesPerSeconds),
                 'lines' => static::getLines($line),
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internalFormat): string
     {
         $stl = '';
-        foreach ($internal_format as $row) {
-            $stl_start = static::toStlTime($row['start']);
-            $stl_end = static::toStlTime($row['end']);
-            $stt_lines = static::toStlLines($row['lines']);
+        foreach ($internalFormat as $row) {
+            $stlStart = static::toStlTime($row['start']);
+            $stlEnd = static::toStlTime($row['end']);
+            $sttLines = static::toStlLines($row['lines']);
 
-            $line = "$stl_start , $stl_end , $stt_lines\r\n";
+            $line = "$stlStart , $stlEnd , $sttLines\r\n";
             $stl .= $line;
         }
 
         return trim($stl);
     }
 
-    // ------------------------- private -------------------------------------------------------------------------------
-
-    protected static function getLines($original_line)
+    /** private */
+    protected static function getLines(string $originalLine): array
     {
-        $parts = explode(',', $original_line);
+        $parts = explode(',', $originalLine);
 
         // remove first two time elements
         array_shift($parts);
         array_shift($parts);
 
-        $lines_string = implode(',', $parts);
-        $not_trimmed_lines = explode('|', $lines_string);
-        return array_map('trim', $not_trimmed_lines);
+        $linesString = implode(',', $parts);
+        $notTrimmedLines = explode('|', $linesString);
+        return array_map('trim', $notTrimmedLines);
     }
 
-    protected static function getStartLine($line)
+    protected static function getStartLine(string $line): string
     {
         $parts = explode(',', $line);
         return trim($parts[0]);
     }
 
-    protected static function getEndLine($line)
+    protected static function getEndLine(string $line): string
     {
         $parts = explode(',', $line);
         return trim($parts[1]);
     }
 
-    protected static function convertFromSrtTime($srt_time, $frames_per_seconds)
+    protected static function convertFromSrtTime(string $srtTime, int $framesPerSeconds): float
     {
-        $parts = explode(':', $srt_time);
+        $parts = explode(':', $srtTime);
         $frames = array_pop($parts);
 
-        $tmp_time = implode(':', $parts); // '21:30:10'
-        $only_seconds = strtotime("1970-01-01 $tmp_time UTC");
+        $tmpTime = implode(':', $parts); // '21:30:10'
+        $onlySeconds = strtotime("1970-01-01 $tmpTime UTC");
 
-        if ($frames > $frames_per_seconds - 1) {
-            $frames = $frames_per_seconds - 1;
+        if ($frames > $framesPerSeconds - 1) {
+            $frames = $framesPerSeconds - 1;
         }
-        $milliseconds = $frames / $frames_per_seconds;
+        $milliseconds = $frames / $framesPerSeconds;
 
-        return $only_seconds + $milliseconds;
+        return $onlySeconds + $milliseconds;
     }
 
-    protected static function returnFramesFromTime($srt_time)
+    protected static function returnFramesFromTime(string $srtTime): string
     {
-        $parts = explode(':', $srt_time);
+        $parts = explode(':', $srtTime);
         return array_pop($parts);
     }
 
-    protected static function doesLineHaveTimestamp($line)
+    protected static function doesLineHaveTimestamp(string $line): bool
     {
-        $first_two_symbols = substr($line, 0, 2);
+        $firstTwoSymbols = substr($line, 0, 2);
 
-        return is_numeric($first_two_symbols);
+        return is_numeric($firstTwoSymbols);
     }
 
-    // stl counts frames at the end (25 - 30 frames)
-    protected static function toStlTime($seconds)
+    /** stl counts frames at the end (25 - 30 frames) */
+    protected static function toStlTime(float $seconds): string
     {
         if ($seconds >= 86400) {
             throw new Exception('conversion function doesnt support more than 1 day, edit the code');
         }
 
         $milliseconds = $seconds - (int) $seconds;
-        $frames_unpadded = floor(25 * $milliseconds); // 25 frames
-        $frames = str_pad($frames_unpadded, 2, '0', STR_PAD_LEFT);
+        $framesUnpadded = floor(25 * $milliseconds); // 25 frames
+        $frames = str_pad((string) $framesUnpadded, 2, '0', STR_PAD_LEFT);
 
         return gmdate("H:i:s:$frames", (int) $seconds);
     }
 
-    protected static function toStlLines($lines)
+    protected static function toStlLines(array $lines): string
     {
         return implode(' | ', $lines);
     }
 
-    protected static function framesPerSecond($lines)
+    protected static function framesPerSecond(array $lines): int
     {
-        $max_frames = 0;
+        $maxFrames = 0;
         foreach ($lines as $line) {
-            $max_frames = self::maxFrames($line, $max_frames);
+            $maxFrames = self::maxFrames($line, $maxFrames);
         }
 
-        if ($max_frames >= 30) {
-            return $max_frames + 1;
+        if ($maxFrames >= 30) {
+            return $maxFrames + 1;
         }
-        if ($max_frames >= 25) {
+        if ($maxFrames >= 25) {
             return 30;
         }
 
         return 25;
     }
 
-    private static function maxFrames($line, $max_frames)
+    private static function maxFrames(string $line, int $maxFrames): int
     {
         if (!static::doesLineHaveTimestamp($line)) {
-            return $max_frames;
+            return $maxFrames;
         }
 
         $frames1 = static::returnFramesFromTime(static::getStartLine($line));
         $frames2 = static::returnFramesFromTime(static::getEndLine($line));
 
-        if ($frames1 > $max_frames) {
-            $max_frames = $frames1;
+        if ($frames1 > $maxFrames) {
+            $maxFrames = $frames1;
         }
-        if ($frames2 > $max_frames) {
-            $max_frames = $frames2;
+        if ($frames2 > $maxFrames) {
+            $maxFrames = $frames2;
         }
 
-        return $max_frames;
+        return $maxFrames;
     }
 }

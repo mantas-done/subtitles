@@ -15,25 +15,25 @@ use const PREG_SET_ORDER;
 
 class TtmlConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat(string $fileContent): array
     {
-        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
+        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $fileContent, $matches, PREG_SET_ORDER);
 
-        $internal_format = [];
+        $internalFormat = [];
         foreach ($matches as $block) {
-            $internal_format[] = [
+            $internalFormat[] = [
                 'start' => static::ttmlTimeToInternal($block['start']),
                 'end' => static::ttmlTimeToInternal($block['end']),
                 'lines' => explode('<br />', $block['text']),
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internalFormat): string
     {
-        $file_content = '<?xml version="1.0" encoding="utf-8"?>
+        $fileContent = '<?xml version="1.0" encoding="utf-8"?>
 <tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" ttp:timeBase="media" xmlns:tts="http://www.w3.org/ns/ttml#style" xml:lang="en" xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
   <head>
     <metadata>
@@ -47,33 +47,32 @@ class TtmlConverter implements ConverterInterface
     <div>
 ';
 
-        foreach ($internal_format as $k => $block) {
+        foreach ($internalFormat as $k => $block) {
             $start = static::internalTimeToTtml($block['start']);
             $end = static::internalTimeToTtml($block['end']);
             $lines = implode("<br />", $block['lines']);
 
-            $file_content .= "      <p begin=\"{$start}s\" id=\"p{$k}\" end=\"{$end}s\">{$lines}</p>\n";
+            $fileContent .= "      <p begin=\"{$start}s\" id=\"p{$k}\" end=\"{$end}s\">{$lines}</p>\n";
         }
 
-        $file_content .= '    </div>
+        $fileContent .= '    </div>
   </body>
 </tt>';
 
-        $file_content = str_replace("\r", "", $file_content);
-        $file_content = str_replace("\n", "\r\n", $file_content);
+        $fileContent = str_replace("\r", "", $fileContent);
+        $fileContent = str_replace("\n", "\r\n", $fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
-    // ---------------------------------- private ----------------------------------------------------------------------
-
-    protected static function internalTimeToTtml($internal_time)
+    /** private */
+    protected static function internalTimeToTtml(float $internalTime): string
     {
-        return number_format($internal_time, 1, '.', '');
+        return number_format($internalTime, 1, '.', '');
     }
 
-    protected static function ttmlTimeToInternal($ttml_time)
+    protected static function ttmlTimeToInternal(string $ttmlTime): string
     {
-        return rtrim($ttml_time, 's');
+        return rtrim($ttmlTime, 's');
     }
 }

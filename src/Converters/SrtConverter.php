@@ -21,14 +21,14 @@ class SrtConverter implements ConverterInterface
     /**
      * Converts file's content (.srt) to library's "internal format" (array)
      *
-     * @param string $file_content Content of file that will be converted
+     * @param string $fileContent Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($fileContent)
     {
-        $internal_format = []; // array - where file content will be stored
+        $internalFormat = []; // array - where file content will be stored
 
-        $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
+        $blocks = explode("\n\n", trim($fileContent)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
             preg_match('/(?<start>.*) --> (?<end>.*)\n(?<text>(\n*.*)*)/m', $block, $matches);
 
@@ -37,41 +37,41 @@ class SrtConverter implements ConverterInterface
                 continue;
             }
 
-            $internal_format[] = [
+            $internalFormat[] = [
                 'start' => static::srtTimeToInternal($matches['start']),
                 'end' => static::srtTimeToInternal($matches['end']),
                 'lines' => explode("\n", $matches['text']),
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
     /**
      * Convert library's "internal format" (array) to file's content
      *
-     * @param array $internal_format Internal format
+     * @param array $internalFormat Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internalFormat)
     {
-        $file_content = '';
+        $fileContent = '';
 
-        foreach ($internal_format as $k => $block) {
+        foreach ($internalFormat as $k => $block) {
             $nr = $k + 1;
             $start = static::internalTimeToSrt($block['start']);
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode("\r\n", $block['lines']);
 
-            $file_content .= $nr . "\r\n";
-            $file_content .= $start . ' --> ' . $end . "\r\n";
-            $file_content .= $lines . "\r\n";
-            $file_content .= "\r\n";
+            $fileContent .= $nr . "\r\n";
+            $fileContent .= $start . ' --> ' . $end . "\r\n";
+            $fileContent .= $lines . "\r\n";
+            $fileContent .= "\r\n";
         }
 
-        $file_content = trim($file_content);
+        $fileContent = trim($fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
     // ------------------------------ private --------------------------------------------------------------------------
@@ -80,32 +80,32 @@ class SrtConverter implements ConverterInterface
      * Convert .srt file format to internal time format (float in seconds)
      * Example: 00:02:17,440 -> 137.44
      *
-     * @param $srt_time
+     * @param string $srtTime
      * @return float
      */
-    protected static function srtTimeToInternal($srt_time)
+    protected static function srtTimeToInternal($srtTime)
     {
-        $parts = explode(',', $srt_time);
+        $parts = explode(',', $srtTime);
 
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
+        $onlySeconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float) '0.' . $parts[1];
 
-        return $only_seconds + $milliseconds;
+        return $onlySeconds + $milliseconds;
     }
 
     /**
      * Convert internal time format (float in seconds) to .srt time format
      * Example: 137.44 -> 00:02:17,440
      *
-     * @param float $internal_time
+     * @param string $internalTime
      * @return string
      */
-    protected static function internalTimeToSrt($internal_time)
+    protected static function internalTimeToSrt($internalTime)
     {
-        $parts = explode('.', $internal_time); // 1.23
+        $parts = explode('.', $internalTime); // 1.23
         $whole = $parts[0]; // 1
         $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
 
-        return gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
+        return gmdate("H:i:s", (int) floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
     }
 }
