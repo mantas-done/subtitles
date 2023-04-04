@@ -23,9 +23,9 @@ use const STR_PAD_LEFT;
 
 class StlConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat(string $fileContent)
     {
-        $not_trimmed_lines = explode("\n", $file_content);
+        $not_trimmed_lines = explode("\n", $fileContent);
         $lines = array_map('trim', $not_trimmed_lines);
 
         $frames_per_seconds = static::framesPerSecond($lines);
@@ -46,10 +46,10 @@ class StlConverter implements ConverterInterface
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internalFormat)
     {
         $stl = '';
-        foreach ($internal_format as $row) {
+        foreach ($internalFormat as $row) {
             $stl_start = static::toStlTime($row['start']);
             $stl_end = static::toStlTime($row['end']);
             $stt_lines = static::toStlLines($row['lines']);
@@ -63,9 +63,9 @@ class StlConverter implements ConverterInterface
 
     // ------------------------- private -------------------------------------------------------------------------------
 
-    protected static function getLines($original_line)
+    protected static function getLines(string $originalLine)
     {
-        $parts = explode(',', $original_line);
+        $parts = explode(',', $originalLine);
 
         // remove first two time elements
         array_shift($parts);
@@ -76,41 +76,41 @@ class StlConverter implements ConverterInterface
         return array_map('trim', $not_trimmed_lines);
     }
 
-    protected static function getStartLine($line)
+    protected static function getStartLine(string $line)
     {
         $parts = explode(',', $line);
         return trim($parts[0]);
     }
 
-    protected static function getEndLine($line)
+    protected static function getEndLine(string $line)
     {
         $parts = explode(',', $line);
         return trim($parts[1]);
     }
 
-    protected static function convertFromSrtTime($srt_time, $frames_per_seconds)
+    protected static function convertFromSrtTime(string $srtTime, int $framesPerSeconds)
     {
-        $parts = explode(':', $srt_time);
+        $parts = explode(':', $srtTime);
         $frames = array_pop($parts);
 
         $tmp_time = implode(':', $parts); // '21:30:10'
         $only_seconds = strtotime("1970-01-01 $tmp_time UTC");
 
-        if ($frames > $frames_per_seconds - 1) {
-            $frames = $frames_per_seconds - 1;
+        if ($frames > $framesPerSeconds - 1) {
+            $frames = $framesPerSeconds - 1;
         }
-        $milliseconds = $frames / $frames_per_seconds;
+        $milliseconds = $frames / $framesPerSeconds;
 
         return $only_seconds + $milliseconds;
     }
 
-    protected static function returnFramesFromTime($srt_time)
+    protected static function returnFramesFromTime(string $srtTime)
     {
-        $parts = explode(':', $srt_time);
+        $parts = explode(':', $srtTime);
         return array_pop($parts);
     }
 
-    protected static function doesLineHaveTimestamp($line)
+    protected static function doesLineHaveTimestamp(string $line)
     {
         $first_two_symbols = substr($line, 0, 2);
 
@@ -118,7 +118,7 @@ class StlConverter implements ConverterInterface
     }
 
     // stl counts frames at the end (25 - 30 frames)
-    protected static function toStlTime($seconds)
+    protected static function toStlTime(float $seconds)
     {
         if ($seconds >= 86400) {
             throw new Exception('conversion function doesnt support more than 1 day, edit the code');
@@ -126,17 +126,17 @@ class StlConverter implements ConverterInterface
 
         $milliseconds = $seconds - (int) $seconds;
         $frames_unpadded = floor(25 * $milliseconds); // 25 frames
-        $frames = str_pad($frames_unpadded, 2, '0', STR_PAD_LEFT);
+        $frames = str_pad((string) $frames_unpadded, 2, '0', STR_PAD_LEFT);
 
         return gmdate("H:i:s:$frames", (int) $seconds);
     }
 
-    protected static function toStlLines($lines)
+    protected static function toStlLines(array $lines)
     {
         return implode(' | ', $lines);
     }
 
-    protected static function framesPerSecond($lines)
+    protected static function framesPerSecond(array $lines)
     {
         $max_frames = 0;
         foreach ($lines as $line) {
@@ -153,22 +153,22 @@ class StlConverter implements ConverterInterface
         return 25;
     }
 
-    private static function maxFrames($line, $max_frames)
+    private static function maxFrames(string $line, int $maxFrames)
     {
         if (!static::doesLineHaveTimestamp($line)) {
-            return $max_frames;
+            return $maxFrames;
         }
 
         $frames1 = static::returnFramesFromTime(static::getStartLine($line));
         $frames2 = static::returnFramesFromTime(static::getEndLine($line));
 
-        if ($frames1 > $max_frames) {
-            $max_frames = $frames1;
+        if ($frames1 > $maxFrames) {
+            $maxFrames = $frames1;
         }
-        if ($frames2 > $max_frames) {
-            $max_frames = $frames2;
+        if ($frames2 > $maxFrames) {
+            $maxFrames = $frames2;
         }
 
-        return $max_frames;
+        return $maxFrames;
     }
 }

@@ -15,9 +15,9 @@ use const PREG_SET_ORDER;
 
 class TtmlConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat(string $fileContent)
     {
-        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
+        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $fileContent, $matches, PREG_SET_ORDER);
 
         $internal_format = [];
         foreach ($matches as $block) {
@@ -31,7 +31,7 @@ class TtmlConverter implements ConverterInterface
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internalFormat)
     {
         $file_content = '<?xml version="1.0" encoding="utf-8"?>
 <tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" ttp:timeBase="media" xmlns:tts="http://www.w3.org/ns/ttml#style" xml:lang="en" xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
@@ -47,7 +47,7 @@ class TtmlConverter implements ConverterInterface
     <div>
 ';
 
-        foreach ($internal_format as $k => $block) {
+        foreach ($internalFormat as $k => $block) {
             $start = static::internalTimeToTtml($block['start']);
             $end = static::internalTimeToTtml($block['end']);
             $lines = implode("<br />", $block['lines']);
@@ -67,13 +67,13 @@ class TtmlConverter implements ConverterInterface
 
     // ---------------------------------- private ----------------------------------------------------------------------
 
-    protected static function internalTimeToTtml($internal_time)
+    protected static function internalTimeToTtml(float $internalTime)
     {
-        return number_format($internal_time, 1, '.', '');
+        return number_format($internalTime, 1, '.', '');
     }
 
-    protected static function ttmlTimeToInternal($ttml_time)
+    protected static function ttmlTimeToInternal(string $ttmlTime)
     {
-        return rtrim($ttml_time, 's');
+        return rtrim($ttmlTime, 's');
     }
 }
