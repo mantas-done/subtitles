@@ -26,7 +26,7 @@ class SrtConverter implements ConverterInterface
      */
     public function fileContentToInternalFormat($fileContent)
     {
-        $internal_format = []; // array - where file content will be stored
+        $internalFormat = []; // array - where file content will be stored
 
         $blocks = explode("\n\n", trim($fileContent)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
@@ -37,14 +37,14 @@ class SrtConverter implements ConverterInterface
                 continue;
             }
 
-            $internal_format[] = [
+            $internalFormat[] = [
                 'start' => static::srtTimeToInternal($matches['start']),
                 'end' => static::srtTimeToInternal($matches['end']),
                 'lines' => explode("\n", $matches['text']),
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
     /**
@@ -55,7 +55,7 @@ class SrtConverter implements ConverterInterface
      */
     public function internalFormatToFileContent(array $internalFormat)
     {
-        $file_content = '';
+        $fileContent = '';
 
         foreach ($internalFormat as $k => $block) {
             $nr = $k + 1;
@@ -63,15 +63,15 @@ class SrtConverter implements ConverterInterface
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode("\r\n", $block['lines']);
 
-            $file_content .= $nr . "\r\n";
-            $file_content .= $start . ' --> ' . $end . "\r\n";
-            $file_content .= $lines . "\r\n";
-            $file_content .= "\r\n";
+            $fileContent .= $nr . "\r\n";
+            $fileContent .= $start . ' --> ' . $end . "\r\n";
+            $fileContent .= $lines . "\r\n";
+            $fileContent .= "\r\n";
         }
 
-        $file_content = trim($file_content);
+        $fileContent = trim($fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
     // ------------------------------ private --------------------------------------------------------------------------
@@ -87,10 +87,10 @@ class SrtConverter implements ConverterInterface
     {
         $parts = explode(',', $srtTime);
 
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
+        $onlySeconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float) '0.' . $parts[1];
 
-        return $only_seconds + $milliseconds;
+        return $onlySeconds + $milliseconds;
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Done\Subtitles;
 
+use Done\Subtitles\Providers\ConverterInterface;
 use Done\Subtitles\Providers\SubtitleInterface;
 use Exception;
 
@@ -18,43 +19,44 @@ use function usort;
 
 class Subtitles implements SubtitleInterface
 {
-    protected $input;
-    protected $input_format;
+    protected string $input;
+    protected string $inputFormat;
 
-    protected $internal_format; // data in internal format (when file is converted)
+    protected array $internalFormat; // data in internal format (when file is converted)
 
-    protected $converter;
-    protected $output;
+    protected ConverterInterface $converter;
+    protected string $output;
 
-    public static function convert($from_file_path, $to_file_path)
+    public static function convert(string $fromFilePath, string $toFilePath): Subtitles
     {
-        static::load($from_file_path)->save($to_file_path);
+        static::load($fromFilePath)->save($toFilePath);
     }
 
-    public static function load($file_name_or_file_content, $extension = null)
+    public static function load(string $fileNameOrFileContent, ?string $extension = null): SubtitleInterface
     {
-        if (file_exists($file_name_or_file_content)) {
-            return static::loadFile($file_name_or_file_content);
+        if (file_exists($fileNameOrFileContent)) {
+            return static::loadFile($fileNameOrFileContent);
         }
 
-        return static::loadString($file_name_or_file_content, $extension);
+        return static::loadString($fileNameOrFileContent, $extension);
     }
 
-    public function save($path)
+    public function save(string $path): SubtitleInterface
     {
-        $file_extension = Helpers::fileExtension($path);
-        $content = $this->content($file_extension);
+        $fileExtension = Helpers::fileExtension($path);
+        $content = $this->content($fileExtension);
 
         file_put_contents($path, $content);
 
         return $this;
     }
 
-    public function add($start, $end, $text)
+    /** @param string|array|mixed $text */
+    public function add(int $start, int $end, $text): SubtitleInterface
     {
         // @TODO validation
         // @TODO check subtitles to not overlap
-        $this->internal_format[] = [
+        $this->internalFormat[] = [
             'start' => $start,
             'end' => $end,
             'lines' => is_array($text) ? $text : [$text],
@@ -65,22 +67,22 @@ class Subtitles implements SubtitleInterface
         return $this;
     }
 
-    public function remove($from, $till)
+    public function remove(int $from, int $till): SubtitleInterface
     {
-        foreach ($this->internal_format as $k => $block) {
+        foreach ($this->internalFormat as $k => $block) {
             if ($this->shouldBlockBeRemoved($block, $from, $till)) {
-                unset($this->internal_format[$k]);
+                unset($this->internalFormat[$k]);
             }
         }
 
-        $this->internal_format = array_values($this->internal_format); // reorder keys
+        $this->internalFormat = array_values($this->internalFormat); // reorder keys
 
         return $this;
     }
 
-    public function shiftTime($seconds, $from = 0, $till = null)
+    public function shiftTime(int $seconds, ?float $from = 0, ?float $till = null): SubtitleInterface
     {
-        foreach ($this->internal_format as &$block) {
+        foreach ($this->internalFormat as &$block) {
             if (!Helpers::shouldBlockTimeBeShifted($from, $till, $block['start'], $block['end'])) {
                 continue;
             }
@@ -95,13 +97,13 @@ class Subtitles implements SubtitleInterface
         return $this;
     }
 
-    public function shiftTimeGradually($seconds, $from = 0, $till = null)
+    public function shiftTimeGradually(int $seconds, ?float $from = 0, ?float $till = null): SubtitleInterface
     {
         if ($till === null) {
             $till = $this->maxTime();
         }
 
-        foreach ($this->internal_format as &$block) {
+        foreach ($this->internalFormat as &$block) {
             $block = Helpers::shiftBlockTime($block, $seconds, $from, $till);
         }
         unset($block);
@@ -111,24 +113,24 @@ class Subtitles implements SubtitleInterface
         return $this;
     }
 
-    public function content($format)
+    public function content(string $format): string
     {
         $format = strtolower(trim($format, '.'));
 
         $converter = Helpers::getConverter($format);
-        return $converter->internalFormatToFileContent($this->internal_format);
+        return $converter->internalFormatToFileContent($this->internalFormat);
     }
 
-    // for testing only
-    public function getInternalFormat()
+    /** for testing only */
+    public function getInternalFormat(): array
     {
-        return $this->internal_format;
+        return $this->internalFormat;
     }
 
-    // for testing only
-    public function setInternalFormat(array $internal_format)
+    /** for testing only */
+    public function setInternalFormat(array $internalFormat): SubtitleInterface
     {
-        $this->internal_format = $internal_format;
+        $this->internalFormat = $internalFormat;
 
         return $this;
     }
@@ -136,17 +138,16 @@ class Subtitles implements SubtitleInterface
     /**
      * @deprecated  Use shiftTime() instead
      */
-    public function time($seconds, $from = null, $till = null)
+    public function time(int $seconds, ?float $from = null, ?float $till = null): SubtitleInterface
     {
         return $this->shiftTime($seconds, $from, $till);
     }
 
-    // -------------------------------------- private ------------------------------------------------------------------
-
-    protected function sortInternalFormat()
+    /** private */
+    protected function sortInternalFormat(): void
     {
-        usort($this->internal_format, function ($item1, $item2) {
-            if ($item2['start'] == $item1['start']) {
+        usort($this->internalFormat, function ($item1, $item2) {
+            if ($item2['start'] === $item1['start']) {
                 return 0;
             } elseif ($item2['start'] < $item1['start']) {
                 return 1;
@@ -156,24 +157,24 @@ class Subtitles implements SubtitleInterface
         });
     }
 
-    protected function maxTime()
+    protected function maxTime(): int
     {
-        $max_time = 0;
-        foreach ($this->internal_format as $block) {
-            if ($max_time < $block['end']) {
-                $max_time = $block['end'];
+        $maxTime = 0;
+        foreach ($this->internalFormat as $block) {
+            if ($maxTime < $block['end']) {
+                $maxTime = $block['end'];
             }
         }
 
-        return $max_time;
+        return $maxTime;
     }
 
-    protected function shouldBlockBeRemoved($block, $from, $till)
+    protected function shouldBlockBeRemoved(array $block, float $from, float $till): bool
     {
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
-    public static function loadFile($path, $extension = null)
+    public static function loadFile(string $path, ?string $extension = null): SubtitleInterface
     {
         if (!file_exists($path)) {
             throw new Exception("file doesn't exist: " . $path);
@@ -187,15 +188,15 @@ class Subtitles implements SubtitleInterface
         return static::loadString($string, $extension);
     }
 
-    public static function loadString($text, $extension)
+    public static function loadString(string $text, string $extension): SubtitleInterface
     {
         $converter = new static();
         $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
 
-        $converter->input_format = $extension;
+        $converter->inputFormat = $extension;
 
-        $input_converter = Helpers::getConverter($extension);
-        $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
+        $inputConverter = Helpers::getConverter($extension);
+        $converter->internalFormat = $inputConverter->fileContentToInternalFormat($converter->input);
 
         return $converter;
     }

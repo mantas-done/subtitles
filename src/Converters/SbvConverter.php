@@ -26,21 +26,21 @@ class SbvConverter implements ConverterInterface
      */
     public function fileContentToInternalFormat($fileContent)
     {
-        $internal_format = []; // array - where file content will be stored
+        $internalFormat = []; // array - where file content will be stored
 
         $blocks = explode("\n\n", trim($fileContent)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
             $lines = explode("\n", $block); // separate all block lines
             $times = explode(',', $lines[0]); // one the second line there is start and end times
 
-            $internal_format[] = [
+            $internalFormat[] = [
                 'start' => static::srtTimeToInternal($times[0]),
                 'end' => static::srtTimeToInternal($times[1]),
                 'lines' => array_slice($lines, 1), // get all the remaining lines from block (if multiple lines of text)
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
     /**
@@ -51,21 +51,21 @@ class SbvConverter implements ConverterInterface
      */
     public function internalFormatToFileContent(array $internalFormat)
     {
-        $file_content = '';
+        $fileContent = '';
 
         foreach ($internalFormat as $k => $block) {
             $start = static::internalTimeToSrt($block['start']);
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode("\n", $block['lines']);
 
-            $file_content .= $start . ',' . $end . "\n";
-            $file_content .= $lines . "\n";
-            $file_content .= "\n";
+            $fileContent .= $start . ',' . $end . "\n";
+            $fileContent .= $lines . "\n";
+            $fileContent .= "\n";
         }
 
-        $file_content = trim($file_content);
+        $fileContent = trim($fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
     // ------------------------------ private --------------------------------------------------------------------------
@@ -81,10 +81,10 @@ class SbvConverter implements ConverterInterface
     {
         $parts = explode('.', $srtTime);
 
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
+        $onlySeconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float) '0.' . $parts[1];
 
-        return $only_seconds + $milliseconds;
+        return $onlySeconds + $milliseconds;
     }
 
     /**

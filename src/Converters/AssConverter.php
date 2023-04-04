@@ -19,24 +19,24 @@ use const STR_PAD_RIGHT;
 
 class AssConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat(string $fileContent)
+    public function fileContentToInternalFormat(string $fileContent): array
     {
         preg_match_all('/Dialogue: \d+,([^,]*),([^,]*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(.*)/', $fileContent, $blocks, PREG_SET_ORDER);
 
         foreach ($blocks as $block) {
-            $internal_format[] = [
+            $internalFormat[] = [
                 'start' => static::assTimeToInternal($block[1]),
                 'end' => static::assTimeToInternal($block[2]),
                 'lines' => explode('\N', $block[3]),
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internalFormat)
+    public function internalFormatToFileContent(array $internalFormat): string
     {
-        $file_content = '[Script Info]
+        $fileContent = '[Script Info]
 ; This is an Advanced Sub Station Alpha v4+ script.
 Title: subtitles
 ScriptType: v4.00+
@@ -44,7 +44,8 @@ Collisions: Normal
 PlayDepth: 0
 
 [V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, 
+StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Default,Arial,20,&H00FFFFFF,&H0300FFFF,&H00000000,&H02000000,0,0,0,0,100,100,0,0,1,2,1,2,10,10,10,1
 
 [Events]
@@ -56,12 +57,12 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode('\N', $block['lines']);
 
-            $file_content .= "Dialogue: 0,{$start},{$end},Default,,0,0,0,,{$lines}\r\n";
+            $fileContent .= "Dialogue: 0,{$start},{$end},Default,,0,0,0,,{$lines}\r\n";
         }
 
-        $file_content = trim($file_content);
+        $fileContent = trim($fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
     // ------------------------------ private --------------------------------------------------------------------------

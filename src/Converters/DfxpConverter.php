@@ -19,25 +19,25 @@ use const STR_PAD_RIGHT;
 
 class DfxpConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat(string $fileContent)
+    public function fileContentToInternalFormat(string $fileContent): array
     {
         preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $fileContent, $matches, PREG_SET_ORDER);
 
-        $internal_format = [];
+        $internalFormat = [];
         foreach ($matches as $block) {
-            $internal_format[] = [
+            $internalFormat[] = [
                 'start' => static::dfxpTimeToInternal($block['start']),
                 'end' => static::dfxpTimeToInternal($block['end']),
                 'lines' => explode('<br/>', $block['text']),
             ];
         }
 
-        return $internal_format;
+        return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internalFormat)
+    public function internalFormatToFileContent(array $internalFormat): string
     {
-        $file_content = '<?xml version="1.0" encoding="utf-8"?>
+        $fileContent = '<?xml version="1.0" encoding="utf-8"?>
 <tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <head>
     <metadata>
@@ -61,22 +61,21 @@ class DfxpConverter implements ConverterInterface
             $end = static::internalTimeToDfxp($block['end']);
             $lines = implode("<br/>", $block['lines']);
 
-            $file_content .= "    <p xml:id=\"p{$nr}\" begin=\"{$start}\" end=\"{$end}\" region=\"bottomCenter\">{$lines}</p>\n";
+            $fileContent .= "    <p xml:id=\"p{$nr}\" begin=\"{$start}\" end=\"{$end}\" region=\"bottomCenter\">{$lines}</p>\n";
         }
 
-        $file_content .= '  </div>
+        $fileContent .= '  </div>
   </body>
 </tt>';
 
-        $file_content = str_replace("\r", "", $file_content);
-        $file_content = str_replace("\n", "\r\n", $file_content);
+        $fileContent = str_replace("\r", "", $fileContent);
+        $fileContent = str_replace("\n", "\r\n", $fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
-    // ---------------------------------- private ----------------------------------------------------------------------
-
-    protected static function internalTimeToDfxp(string $internalTime)
+    /** private */
+    protected static function internalTimeToDfxp(string $internalTime): string
     {
         $parts = explode('.', $internalTime); // 1.23
         $whole = $parts[0]; // 1
@@ -85,13 +84,13 @@ class DfxpConverter implements ConverterInterface
         return gmdate("H:i:s", (int) floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
     }
 
-    protected static function dfxpTimeToInternal(string $dfxpTime)
+    protected static function dfxpTimeToInternal(string $dfxpTime): float
     {
         $parts = explode(',', $dfxpTime);
 
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
+        $onlySeconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float) '0.' . $parts[1];
 
-        return $only_seconds + $milliseconds;
+        return $onlySeconds + $milliseconds;
     }
 }

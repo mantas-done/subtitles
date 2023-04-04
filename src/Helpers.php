@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Done\Subtitles;
 
+use Done\Subtitles\Providers\ConverterInterface;
 use Exception;
 
 use function end;
@@ -17,9 +18,9 @@ use function ucfirst;
 
 class Helpers
 {
-    public static function shouldBlockTimeBeShifted($from, $till, $block_start, $block_end)
+    public static function shouldBlockTimeBeShifted(float $from, float $till, float $blockStart, float $blockEnd): bool
     {
-        if ($block_end < $from) {
+        if ($blockEnd < $from) {
             return false;
         }
 
@@ -27,10 +28,10 @@ class Helpers
             return true;
         }
 
-        return $till >= $block_start;
+        return $till >= $blockStart;
     }
 
-    public static function removeUtf8Bom($text)
+    public static function removeUtf8Bom(string $text): string
     {
         $bom = pack('H*', 'EFBBBF');
         $text = preg_replace("/^$bom/", '', $text);
@@ -38,20 +39,20 @@ class Helpers
         return $text;
     }
 
-    public static function getConverter($extension)
+    public static function getConverter(string $extension): ConverterInterface
     {
-        $class_name = ucfirst($extension) . 'Converter';
+        $className = ucfirst($extension) . 'Converter';
 
-        if (!file_exists(__DIR__ . '/Converters/' . $class_name . '.php')) {
+        if (!file_exists(__DIR__ . '/Converters/' . $className . '.php')) {
             throw new Exception('unknown format: ' . $extension);
         }
 
-        $full_class_name = "\\Done\\Subtitles\\" . $class_name;
+        $fullClassName = "\\Done\\Subtitles\\" . $className;
 
-        return new $full_class_name();
+        return new $fullClassName();
     }
 
-    public static function fileExtension($filename)
+    public static function fileExtension(string $filename): string
     {
         $parts = explode('.', $filename);
         $extension = end($parts);
@@ -60,34 +61,34 @@ class Helpers
         return $extension;
     }
 
-    public static function normalizeNewLines($file_content)
+    public static function normalizeNewLines(string $fileContent): string
     {
-        $file_content = str_replace("\r\n", "\n", $file_content);
-        $file_content = str_replace("\r", "\n", $file_content);
+        $fileContent = str_replace("\r\n", "\n", $fileContent);
+        $fileContent = str_replace("\r", "\n", $fileContent);
 
-        return $file_content;
+        return $fileContent;
     }
 
-    public static function shiftBlockTime($block, $seconds, $from, $till)
+    public static function shiftBlockTime(array $block, int $seconds, float $from, float $till): array
     {
         if (!static::blockTimesWithinRange($block, $from, $till)) {
             return $block;
         }
 
         // start
-        $tmp_from_start = $block['start'] - $from;
-        $start_percents = $tmp_from_start / ($till - $from);
-        $block['start'] += $seconds * $start_percents;
+        $tmpFromStart = $block['start'] - $from;
+        $startPercents = $tmpFromStart / ($till - $from);
+        $block['start'] += $seconds * $startPercents;
 
         // end
-        $tmp_from_start = $block['end'] - $from;
-        $end_percents = $tmp_from_start / ($till - $from);
-        $block['end'] += $seconds * $end_percents;
+        $tmpFromStart = $block['end'] - $from;
+        $endPercents = $tmpFromStart / ($till - $from);
+        $block['end'] += $seconds * $endPercents;
 
         return $block;
     }
 
-    public static function blockTimesWithinRange($block, $from, $till)
+    public static function blockTimesWithinRange(array $block, float $from, float $till): bool
     {
         return $from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till;
     }

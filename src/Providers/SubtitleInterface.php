@@ -21,9 +21,9 @@ interface SubtitleInterface
 
     public function shiftTime(int $seconds, ?float $from = 0, ?float $till = null); // add or subtract some amount of seconds from all times
 
-    public function shiftTimeGradually(int $seconds_to_shift, ?float $from = 0, ?float $till = null);
+    public function shiftTimeGradually(int $secondsToShift, ?float $from = 0, ?float $till = null);
 
     public function getInternalFormat();
 
-    public function setInternalFormat(array $internal_format);
+    public function setInternalFormat(array $internalFormat);
 }
