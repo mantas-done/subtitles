@@ -2,20 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
 
-use function explode;
-use function implode;
-use function number_format;
-use function preg_match_all;
-use function rtrim;
-use function str_replace;
+namespace converters;
 
-use const PREG_SET_ORDER;
+use Done\Subtitles\Providers\ConverterInterface;
 
 class TtmlConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat(string $fileContent): array
+    public function parseSubtitles(string $fileContent): array
     {
         preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $fileContent, $matches, PREG_SET_ORDER);
 
@@ -31,7 +25,7 @@ class TtmlConverter implements ConverterInterface
         return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internalFormat): string
+    public function toSubtitles(array $internalFormat): string
     {
         $fileContent = '<?xml version="1.0" encoding="utf-8"?>
 <tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" ttp:timeBase="media" xmlns:tts="http://www.w3.org/ns/ttml#style" xml:lang="en" xmlns:ttm="http://www.w3.org/ns/ttml#metadata">

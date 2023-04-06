@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
+namespace Circlical\Subtitles\Converters;
 
+use Carbon\CarbonInterval;
+use Circlical\Subtitles\Providers\ConstantsInterface;
+use Circlical\Subtitles\Providers\ConverterInterface;
 use Closure;
 
 use function array_map;
@@ -12,29 +15,22 @@ use function array_values;
 use function count;
 use function explode;
 use function floor;
-use function gmdate;
 use function implode;
 use function preg_match;
 use function preg_replace;
-use function str_pad;
+use function sprintf;
 use function str_replace;
 use function strpos;
-use function strtotime;
 use function substr;
-use function substr_count;
 use function trim;
-
-use const STR_PAD_RIGHT;
 
 class VttConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat(string $fileContent): array
+    public function parseSubtitles(string $fileContent): array
     {
-        $internalFormat = []; // array - where file content will be stored
-
-        $fileContent = preg_replace('/\n\n+/', "\n\n", $fileContent); // replace if there are more than 2 new lines
-
-        $blocks = explode("\n\n", trim($fileContent)); // each block contains: start and end times + text
+        $internalFormat = [];
+        $fileContent = preg_replace('/\n\n+/', "\n\n", $fileContent);
+        $blocks = explode("\n\n", trim($fileContent));
 
         foreach ($blocks as $block) {
             if (preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
@@ -56,8 +52,8 @@ class VttConverter implements ConverterInterface
             }
 
             $internalFormat[] = [
-                'start' => static::vttTimeToInternal($times[0]),
-                'end' => static::vttTimeToInternal($times[1]),
+                'start' => $this->toInternalTimeFormat($times[0]),
+                'end' => $this->toInternalTimeFormat($times[1]),
                 'lines' => $linesArray,
             ];
         }
@@ -65,46 +61,21 @@ class VttConverter implements ConverterInterface
         return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internalFormat): string
+    public function toSubtitles(array $internalFormat): string
     {
-        $fileContent = "WEBVTT\r\n\r\n";
+        $fileContent = "WEBVTT\n\n";
 
         foreach ($internalFormat as $k => $block) {
-            $start = static::internalTimeToVtt($block['start']);
-            $end = static::internalTimeToVtt($block['end']);
-            $lines = implode("\r\n", $block['lines']);
+            $start = $this->toSubtitleTimeFormat($block['start']);
+            $end = $this->toSubtitleTimeFormat($block['end']);
+            $lines = implode("\n", $block['lines']);
 
-            $fileContent .= $start . ' --> ' . $end . "\r\n";
-            $fileContent .= $lines . "\r\n";
-            $fileContent .= "\r\n";
+            $fileContent .= $start . ' --> ' . $end . "\n";
+            $fileContent .= $lines . "\n";
+            $fileContent .= "\n";
         }
 
-        $fileContent = trim($fileContent);
-
-        return $fileContent;
-    }
-
-    /** private */
-    protected static function vttTimeToInternal(string $vttTime): float
-    {
-        $parts = explode('.', $vttTime);
-
-    // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
-        $parts[0] = substr_count($parts[0], ':') === 2 ? $parts[0] : '00:' . $parts[0];
-
-        $onlySeconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float) '0.' . $parts[1];
-
-        return $onlySeconds + $milliseconds;
-    }
-
-    protected static function internalTimeToVtt(string $internalTime): string
-    {
-        $parts = explode('.', $internalTime); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
-
-        return gmdate("H:i:s", (int) floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
+        return trim($fileContent);
     }
 
     protected static function fixLine(): Closure
@@ -117,5 +88,36 @@ class VttConverter implements ConverterInterface
 
             return $line;
         };
+    }
+
+    /**
+     * 00:00:00.500 --> xx.yyy
+     */
+    public function toInternalTimeFormat(string $subtitleFormat): float
+    {
+        if (preg_match('/^(?<hours>\\d{2,5}):(?<minutes>\\d{2}):(?<seconds>\\d{2}).(?<fraction>\\d{3})$/us', $subtitleFormat, $matches) === false) {
+            throw new InvalidTimeFormatException($subtitleFormat);
+        }
+
+        return (int) $matches['hours'] * ConstantsInterface::HOURS_SECONDS
+            + (int) $matches['minutes'] * ConstantsInterface::MINUTES_SECONDS
+            + (int) $matches['seconds']
+            + (float) $matches['fraction'] / 1000;
+    }
+
+    /**
+     * xx.yyy -> 00:00:00.500
+     */
+    public function toSubtitleTimeFormat(float $internalFormat): string
+    {
+        $interval = CarbonInterval::createFromFormat("s.u", sprintf("%.3F", $internalFormat))->cascade();
+
+        return sprintf(
+            "%02d:%02d:%02d.%03d",
+            $interval->hours,
+            $interval->minutes,
+            $interval->seconds,
+            $interval->milliseconds
+        );
     }
 }

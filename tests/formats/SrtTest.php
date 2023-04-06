@@ -1,44 +1,37 @@
 <?php
 
-use Done\Subtitles\Subtitles;
+use Circlical\Subtitles\Providers\SubtitleInterface;
+use Circlical\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 
-class SrtTest extends TestCase {
-
+class SrtTest extends TestCase
+{
     use AdditionalAssertions;
 
-    protected $format = 'srt';
+    protected string $format = 'srt';
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()
     {
-        $srt_path = './tests/files/srt.srt';
-        $temporary_srt_path = './tests/files/tmp/srt.srt';
-
-        @unlink($temporary_srt_path);
-
-        Subtitles::convert($srt_path, $temporary_srt_path);
-        $this->assertFileEquals($srt_path, $temporary_srt_path);
-
-        unlink($temporary_srt_path);
+        $srtContent = file_get_contents('./tests/files/srt.srt');
+        $this->assertEquals(Subtitles::load($srtContent, 'srt')->content('srt'), $srtContent);
     }
 
     public function testFileToInternalFormat()
     {
-        $actual_internal_format = Subtitles::load(self::fileContent(), $this->format)->getInternalFormat();
+        $generatedFormat = Subtitles::load(self::fileContent(), $this->format)->getInternalFormat();
 
-        $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
+        $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $generatedFormat);
     }
 
     public function testConvertToFile()
     {
-        $actual_file_content = self::generatedSubtitles()->content($this->format);
-
-        $this->assertEquals(self::fileContent(), $actual_file_content);
+        $fileContent = self::generatedSubtitles()->content($this->format);
+        $this->assertEquals(self::fileContent(), $fileContent);
     }
 
     public function testRemovesEmptyLines()
     {
-        $content = <<< TEXT
+        $content = <<<TEXT
 1
 00:00:01,000 --> 00:00:02,000
 
@@ -48,19 +41,16 @@ class SrtTest extends TestCase {
 Very good, Lieutenant.
 TEXT;
 
-        $actual_format = Subtitles::load($content, 'srt')->getInternalFormat();
-        $expected_format = (new Subtitles())
+        $generatedFormat = Subtitles::load($content, 'srt')->getInternalFormat();
+        $expectedFormat = (new Subtitles())
             ->add(3, 4, ['Very good, Lieutenant.'])
             ->getInternalFormat();
-        $this->assertEquals($expected_format, $actual_format);
-
+        $this->assertEquals($expectedFormat, $generatedFormat);
     }
 
-    // ---------------------------------- private ----------------------------------------------------------------------
-
-    private static function fileContent()
+    private static function fileContent(): string
     {
-        $content = <<< TEXT
+        return <<<TEXT
 1
 00:02:17,440 --> 00:02:20,375
 Senator, we're making
@@ -70,11 +60,9 @@ our final approach into Coruscant.
 01:02:20,476 --> 01:02:22,501
 Very good, Lieutenant.
 TEXT;
-
-        return $content;
     }
 
-    private static function generatedSubtitles()
+    private static function generatedSubtitles(): SubtitleInterface
     {
         return (new Subtitles())
             ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])

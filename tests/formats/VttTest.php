@@ -1,93 +1,98 @@
 <?php
 
-use Done\Subtitles\Subtitles;
+use Circlical\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 
-class VttSubtitle extends TestCase {
-
+class VttTest extends TestCase
+{
     use AdditionalAssertions;
 
     public function testConvertFromVttToSrt()
     {
-        $vtt_path = './tests/files/vtt.vtt';
-        $srt_path = './tests/files/srt.srt';
+        $vttContent = file_get_contents('./tests/files/vtt.vtt');
+        $srtContent = file_get_contents('./tests/files/srt.srt');
 
-        $expected = (new Subtitles())->load($vtt_path)->content('srt');
-        $actual = file_get_contents($srt_path);
-
-        $this->assertEquals($expected, $actual);
+        $actual = (new Subtitles())->load($vttContent, 'vtt')->content('srt');
+        $this->assertEquals($actual, $srtContent);
     }
 
     public function testConvertFromSrtToVtt()
     {
-        $srt_path = './tests/files/srt.srt';
-        $vtt_path = './tests/files/vtt.vtt';
+        $vttContent = file_get_contents('./tests/files/vtt.vtt');
+        $srtContent = file_get_contents('./tests/files/srt.srt');
 
-        $expected = file_get_contents($vtt_path);
-        $actual = (new Subtitles())->load($srt_path)->content('vtt');
-
-        $this->assertEquals($expected, $actual);
+        $actual = (new Subtitles())->load($srtContent, 'srt')->content('vtt');
+        $this->assertEquals($vttContent, $actual);
     }
 
     public function testFileToInternalFormat()
     {
-        $vtt_path = './tests/files/vtt_with_name.vtt';
-        $expected_internal_format = [[
-            'start' => 9,
-            'end' => 11,
-            'lines' => ['Roger Bingham We are in New York City'],
-        ]];
+        $expected = [
+            [
+                'start' => 9.0,
+                'end' => 11.0,
+                'lines' => ['Roger Bingham We are in New York City'],
+            ],
+        ];
 
-        $actual_internal_format = Subtitles::load($vtt_path)->getInternalFormat();
+        $internalformat = Subtitles::load(file_get_contents('./tests/files/vtt_with_name.vtt'), 'vtt')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $internalformat);
+    }
 
-        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    public function timeTest()
+    {
+        $converter = new VttConverter();
+        $internalFormat = $converter->toInternalTimeFormat('00:00:11.000');
+        $this->assertEquals(11.0, $internalFormat);
     }
 
     public function testConvertToInternalFormatWhenFileContainsNumbers() // numbers are optional in webvtt format
     {
-        $input_vtt_file_content = <<< TEXT
+        $inputVttContent = <<<TEXT
 WEBVTT
 
 1
 00:00:09.000 --> 00:00:11.000
 Roger Bingham We are in New York City
 TEXT;
-        $expected_vtt_file_content = <<< TEXT
+
+        $expectedVttContent = <<<TEXT
 WEBVTT
 
 00:00:09.000 --> 00:00:11.000
 Roger Bingham We are in New York City
 TEXT;
 
-        $actual_vtt_file_content = (new Subtitles())->load($input_vtt_file_content, 'vtt')->content('vtt');
-
-        $this->assertEquals($expected_vtt_file_content, $actual_vtt_file_content);
+        $generatedVttContent = (new Subtitles())->load($inputVttContent, 'vtt')->content('vtt');
+        $this->assertEquals($expectedVttContent, $generatedVttContent);
     }
 
     public function testParsesFileWithMissingText()
     {
-        $vtt_path = './tests/files/vtt_with_missing_text.vtt';
-        $actual = (new Subtitles())->load($vtt_path)->getInternalFormat();
+        $vttContent = file_get_contents('./tests/files/vtt_with_missing_text.vtt');
+        $actual = (new Subtitles())->load($vttContent, 'vtt')->getInternalFormat();
         $expected = [
             [
                 'start' => 0,
                 'end' => 1,
                 'lines' => [
                     'one',
-            ], [
-                'start' => 2,
-                'end' => 3,
-                'lines' => [
-                    'three',
                 ],
-            ]
-        ]];
+                [
+                    'start' => 2,
+                    'end' => 3,
+                    'lines' => [
+                        'three',
+                    ],
+                ],
+            ],
+        ];
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-        public function testFileContainingMultipleNewLinesBetweenBlocks()
+    public function testFileContainingMultipleNewLinesBetweenBlocks()
     {
-        $given = <<< TEXT
+        $given = <<<TEXT
 WEBVTT
 
 00:00:00.000 --> 00:00:01.000

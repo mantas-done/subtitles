@@ -1,50 +1,49 @@
-[![Build Status](https://scrutinizer-ci.com/g/mantas-done/subtitles/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mantas-done/subtitles/build-status/master)
-
 # Caption And Subtitle Converter for PHP
 
 Convert and edit subtitles and captions.
 
 ## Supported formats
 
-| Format | Extension |
-| --- | --- |
-| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
-| [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
-| [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ) | .stl |
-| [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
-| [SubViewer](https://wiki.videolan.org/SubViewer) | .sub |
-| Advanced Sub Station | .ass |
-| [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp |
-| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml |
-| QuickTime | .qt.txt |
+| Format                                                                                                | Extension |
+|-------------------------------------------------------------------------------------------------------|-----------|
+| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format)                                | .srt      |
+| [WebVTT](https://en.wikipedia.org/wiki/WebVTT)                                                        | .vtt      |
+| [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv      |
 
 ## Installation
+
 ```
-composer require mantas-done/subtitles
+composer require saeven/subtitles
 ```
+
+## Fork Notes
+
+This package was forked from `mantas-done/subtitles` (thank you) to become more opinionated, to implement strict types and new interfaces, and to implement proper PSR-4 loading.
+What's more, this version of that package removes all ability to manipulate files directly or to attempt to infer the existence of converters by scanning the filesystem
+with file_exists and so forth. It also resorts to pattern matching in cases where the original implementation would split strings. Lastly, it adds Carbon to perform
+time conversions.
 
 ## Usage
-Convert .srt file to .vtt:
+
+Convert .srt content to .vtt:
+
 ```php
 // add namespace
-use \Done\Subtitles\Subtitles;
+use \Circlical\Subtitles\Subtitles;
 
-Subtitles::convert('subtitles.srt', 'subtitles.vtt');
+(new Subtitles())->load($srtContent, 'srt')->content('vtt');
 ```
 
-Manually create file
+Manually create VTT
+
 ```php
 $subtitles = new Subtitles();
 $subtitles->add(0, 5, 'This text is shown in the beggining of video for 5 seconds');
-$subtitles->save('subtitles.vtt');
-```
-
-Load subtitles from existing file
-```php
-$subtitles = Subtitles::load('subtitles.srt');
+file_put_contents( './foo', $subtitles->content('subtitles.vtt'));
 ```
 
 Load subtitles from string
+
 ```php
 $string = "
 1
@@ -55,17 +54,14 @@ Senator, we're making our final approach
 $subtitles = Subtitles::load($string, 'srt');
 ```
 
-Save subtitles to file
-```php
-$subtitles->save('subtitler.vtt');
-```
-
 Get file content without saving to file
+
 ```php
 echo $subtitles->content('vtt');
 ```
 
 Add subtitles
+
 ```php
 $subtitles->add(0, 5, 'some text'); // from 0, till 5 seconds  
 
@@ -77,47 +73,36 @@ $subtitles->add(0, 5, [
 ````
 
 Remove subtitles
+
 ```php
 $subtitles->remove(0, 5); // from 0, till 5 seconds
 ```
 
 Add 1 second to all subtitles
+
 ```php
 $subtitles->shiftTime(1);
 ```
 
 Subtract 0.5 second
+
 ```php
 $subtitles->shiftTime(-0.5);
 ```
 
-Add 5 second to subtitles starting from 1 minute till 2 mintes 
+Add 5 second to subtitles starting from 1 minute till 2 mintes
+
 ```php
 $subtitles->shiftTime(5, 60, 120);
 ```
 
 Example: shift time gradually by 2 seconds over 1 hour video. At the beginning of the video don't change time, in the middle shift time by 1 second. By the end of video, shift time by 2 seconds.
+
 ```php
 $subtitles->shiftTimeGradually(2, 0, 3600);
 ```
 
-## How to add new subtitle format?
-
-You need to implement ConverterContract.php interface. It has two methods.
-```php
-fileContentToInternalFormat($file_content)  
-  
-internalFormatToFileContent($internal_format)
-```
-
-Basically what your implementation should be able to do, is convert subtitle file to "internal library's format", and from internal library's format back to subtitle file.
-
-"Internal library's" format is used like middle ground, to be able to convert between different formats.
-
-Best example is to look how [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) is implemented.  
-And this is example of [.srt file](https://github.com/mantas783/subtitle-converter/blob/master/tests/files/srt.srt).
-
-### "Internal Format" 
+### "Internal Format"
 
 "Internal Format" is just a PHP array. It is used internally in library to be able to convert between different formats.
 
@@ -145,6 +130,7 @@ Array
         )
 )
 ```
+
 ```
 [start] - when to start showing text (float - seconds)
 [end] - when to stop showing text (float -seconds)
@@ -153,23 +139,13 @@ Array
 
 ## Running Tests
 
-Simplest way is to download and put phpunit.phar file into the main directory of the project. Then run the command:
-
 ```
-php phpunit.phar
+./vendor/bin/phpunit
 ```
 
 ## Contribution
 
-You can contribute in any way you want. If you need some guidance, choose something from this table:
-
-| Task | Difficulty | Description |
-| --- | --- | --- |
-| Add new formats | Medium | Supporting more formats is nice. Some popular formats: .mcc, .cap |
-| Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
-| Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
-
-For now library should support only basic features (several lines of text). No need to support different text styles or positioning of text.
+Not all original converters from the fork have been corrected. Feel free to convert one from the 'todo' folder and open a PR!
 
 ## Report Bugs
 

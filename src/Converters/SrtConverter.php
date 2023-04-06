@@ -2,29 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
+namespace Circlical\Subtitles\Converters;
+
+use Carbon\CarbonInterval;
+use Circlical\Subtitles\Providers\ConstantsInterface;
+use Circlical\Subtitles\Providers\ConverterInterface;
 
 use function explode;
-use function floor;
-use function gmdate;
 use function implode;
 use function preg_match;
-use function str_pad;
-use function strtotime;
-use function substr;
+use function sprintf;
 use function trim;
-
-use const STR_PAD_RIGHT;
 
 class SrtConverter implements ConverterInterface
 {
     /**
      * Converts file's content (.srt) to library's "internal format" (array)
-     *
-     * @param string $fileContent Content of file that will be converted
-     * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($fileContent)
+    public function parseSubtitles(string $fileContent): array
     {
         $internalFormat = []; // array - where file content will be stored
 
@@ -38,8 +33,8 @@ class SrtConverter implements ConverterInterface
             }
 
             $internalFormat[] = [
-                'start' => static::srtTimeToInternal($matches['start']),
-                'end' => static::srtTimeToInternal($matches['end']),
+                'start' => $this->toInternalTimeFormat($matches['start']),
+                'end' => $this->toInternalTimeFormat($matches['end']),
                 'lines' => explode("\n", $matches['text']),
             ];
         }
@@ -49,63 +44,50 @@ class SrtConverter implements ConverterInterface
 
     /**
      * Convert library's "internal format" (array) to file's content
-     *
-     * @param array $internalFormat Internal format
-     * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internalFormat)
+    public function toSubtitles(array $internalFormat): string
     {
         $fileContent = '';
 
         foreach ($internalFormat as $k => $block) {
             $nr = $k + 1;
-            $start = static::internalTimeToSrt($block['start']);
-            $end = static::internalTimeToSrt($block['end']);
-            $lines = implode("\r\n", $block['lines']);
+            $start = $this->toSubtitleTimeFormat($block['start']);
+            $end = $this->toSubtitleTimeFormat($block['end']);
+            $lines = implode("\n", $block['lines']);
 
-            $fileContent .= $nr . "\r\n";
-            $fileContent .= $start . ' --> ' . $end . "\r\n";
-            $fileContent .= $lines . "\r\n";
-            $fileContent .= "\r\n";
+            $fileContent .= $nr . "\n";
+            $fileContent .= $start . ' --> ' . $end . "\n";
+            $fileContent .= $lines . "\n";
+            $fileContent .= "\n";
         }
 
-        $fileContent = trim($fileContent);
-
-        return $fileContent;
+        return trim($fileContent);
     }
 
-    // ------------------------------ private --------------------------------------------------------------------------
-
-    /**
-     * Convert .srt file format to internal time format (float in seconds)
-     * Example: 00:02:17,440 -> 137.44
-     *
-     * @param string $srtTime
-     * @return float
-     */
-    protected static function srtTimeToInternal($srtTime)
+    public function toInternalTimeFormat(string $subtitleFormat): float
     {
-        $parts = explode(',', $srtTime);
+        if (preg_match('/^(?<hours>\\d{2,5}):(?<minutes>\\d{2}):(?<seconds>\\d{2}),(?<fraction>\\d{3})$/us', $subtitleFormat, $matches) === false) {
+            throw new InvalidTimeFormatException($subtitleFormat);
+        }
 
-        $onlySeconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float) '0.' . $parts[1];
+        $abc = 123;
 
-        return $onlySeconds + $milliseconds;
+        return (int) $matches['hours'] * ConstantsInterface::HOURS_SECONDS
+            + (int) $matches['minutes'] * ConstantsInterface::MINUTES_SECONDS
+            + (int) $matches['seconds']
+            + (float) $matches['fraction'] / 1000;
     }
 
-    /**
-     * Convert internal time format (float in seconds) to .srt time format
-     * Example: 137.44 -> 00:02:17,440
-     *
-     * @param string $internalTime
-     * @return string
-     */
-    protected static function internalTimeToSrt($internalTime)
+    public function toSubtitleTimeFormat(float $internalFormat): string
     {
-        $parts = explode('.', $internalTime); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
+        $interval = CarbonInterval::createFromFormat("s.u", sprintf("%.3F", $internalFormat))->cascade();
 
-        return gmdate("H:i:s", (int) floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
+        return sprintf(
+            "%02d:%02d:%02d,%03d",
+            $interval->hours,
+            $interval->minutes,
+            $interval->seconds,
+            $interval->milliseconds
+        );
     }
 }

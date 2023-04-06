@@ -2,23 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles;
+namespace Circlical\Subtitles;
 
-use Done\Subtitles\Providers\ConverterInterface;
+use Circlical\Subtitles\Providers\ConverterInterface;
 use Exception;
 
+use function class_exists;
 use function end;
 use function explode;
-use function file_exists;
 use function pack;
 use function preg_replace;
+use function sprintf;
 use function str_replace;
 use function strtolower;
 use function ucfirst;
 
 class Helpers
 {
-    public static function shouldBlockTimeBeShifted(float $from, float $till, float $blockStart, float $blockEnd): bool
+    public static function shouldBlockTimeBeShifted(float $from, ?float $till, float $blockStart, float $blockEnd): bool
     {
         if ($blockEnd < $from) {
             return false;
@@ -41,15 +42,16 @@ class Helpers
 
     public static function getConverter(string $extension): ConverterInterface
     {
-        $className = ucfirst($extension) . 'Converter';
+        $className = sprintf(
+            '\\Circlical\\Subtitles\\Converters\\%sConverter',
+            ucfirst($extension)
+        );
 
-        if (!file_exists(__DIR__ . '/Converters/' . $className . '.php')) {
-            throw new Exception('unknown format: ' . $extension);
+        if (!class_exists($className)) {
+            throw new Exception("No converter exists for extension type $extension");
         }
 
-        $fullClassName = "\\Done\\Subtitles\\" . $className;
-
-        return new $fullClassName();
+        return new $className();
     }
 
     public static function fileExtension(string $filename): string

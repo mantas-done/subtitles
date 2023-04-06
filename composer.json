@@ -5,11 +5,12 @@
   "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
-      "Done\\Subtitles\\": "src/"
+      "Circlical\\Subtitles\\": "src/"
     }
   },
   "require": {
-    "php": "^7.4.0 || ~8.0.12 || ~8.1.0 || ~8.2.0"
+    "php": "^7.4.0 || ~8.0.12 || ~8.1.0 || ~8.2.0",
+    "nesbot/carbon": "^2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.0",

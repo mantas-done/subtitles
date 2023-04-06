@@ -2,28 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
 
-use Exception;
+namespace converters;
 
-use function array_map;
-use function array_pop;
-use function array_shift;
-use function explode;
-use function floor;
-use function gmdate;
-use function implode;
-use function is_numeric;
-use function str_pad;
-use function strtotime;
-use function substr;
-use function trim;
-
-use const STR_PAD_LEFT;
+use Done\Subtitles\Providers\ConverterInterface;
 
 class StlConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat(string $fileContent): array
+    public function parseSubtitles(string $fileContent): array
     {
         $notTrimmedLines = explode("\n", $fileContent);
         $lines = array_map('trim', $notTrimmedLines);
@@ -46,7 +32,7 @@ class StlConverter implements ConverterInterface
         return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internalFormat): string
+    public function toSubtitles(array $internalFormat): string
     {
         $stl = '';
         foreach ($internalFormat as $row) {
@@ -72,18 +58,21 @@ class StlConverter implements ConverterInterface
 
         $linesString = implode(',', $parts);
         $notTrimmedLines = explode('|', $linesString);
+
         return array_map('trim', $notTrimmedLines);
     }
 
     protected static function getStartLine(string $line): string
     {
         $parts = explode(',', $line);
+
         return trim($parts[0]);
     }
 
     protected static function getEndLine(string $line): string
     {
         $parts = explode(',', $line);
+
         return trim($parts[1]);
     }
 
@@ -106,6 +95,7 @@ class StlConverter implements ConverterInterface
     protected static function returnFramesFromTime(string $srtTime): string
     {
         $parts = explode(':', $srtTime);
+
         return array_pop($parts);
     }
 

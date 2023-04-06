@@ -2,24 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
 
-use function date_parse;
-use function explode;
-use function floor;
-use function gmdate;
-use function implode;
-use function preg_match_all;
-use function str_pad;
-use function substr;
-use function trim;
+namespace converters;
 
-use const PREG_SET_ORDER;
-use const STR_PAD_RIGHT;
+use Done\Subtitles\Providers\ConverterInterface;
 
 class AssConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat(string $fileContent): array
+    public function parseSubtitles(string $fileContent): array
     {
         preg_match_all('/Dialogue: \d+,([^,]*),([^,]*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(.*)/', $fileContent, $blocks, PREG_SET_ORDER);
 
@@ -34,7 +24,7 @@ class AssConverter implements ConverterInterface
         return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internalFormat): string
+    public function toSubtitles(array $internalFormat): string
     {
         $fileContent = '[Script Info]
 ; This is an Advanced Sub Station Alpha v4+ script.
@@ -70,24 +60,19 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
     /**
      * Convert .srt file format to internal time format (float in seconds)
      * Example: 00:02:17,440 -> 137.44
-     *
-     * @param string $srtTime
-     * @return float
      */
-    protected static function assTimeToInternal($srtTime)
+    protected static function assTimeToInternal(string $srtTime): float
     {
         $parsed = date_parse("1970-01-01 $srtTime UTC");
+
         return $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'] + $parsed['fraction'];
     }
 
     /**
      * Convert internal time format (float in seconds) to .srt time format
      * Example: 137.44 -> 00:02:17,440
-     *
-     * @param string $internalTime
-     * @return string
      */
-    protected static function internalTimeToSrt($internalTime)
+    protected static function internalTimeToSrt(string $internalTime): string
     {
         $parts = explode('.', $internalTime);
         $whole = $parts[0]; // 1

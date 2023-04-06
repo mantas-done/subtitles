@@ -2,29 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
 
-use function array_slice;
-use function explode;
-use function floor;
-use function gmdate;
-use function implode;
-use function str_pad;
-use function strtotime;
-use function substr;
-use function trim;
+namespace converters;
 
-use const STR_PAD_RIGHT;
+use Done\Subtitles\Providers\ConverterInterface;
 
 class SbvConverter implements ConverterInterface
 {
-    /**
-     * Converts file's content (.srt) to library's "internal format" (array)
-     *
-     * @param string $fileContent Content of file that will be converted
-     * @return array                    Internal format
-     */
-    public function fileContentToInternalFormat($fileContent)
+    public function parseSubtitles(string $fileContent): array
     {
         $internalFormat = []; // array - where file content will be stored
 
@@ -43,13 +28,7 @@ class SbvConverter implements ConverterInterface
         return $internalFormat;
     }
 
-    /**
-     * Convert library's "internal format" (array) to file's content
-     *
-     * @param array $internalFormat Internal format
-     * @return string                   Converted file content
-     */
-    public function internalFormatToFileContent(array $internalFormat)
+    public function toSubtitles(array $internalFormat): string
     {
         $fileContent = '';
 
@@ -68,16 +47,11 @@ class SbvConverter implements ConverterInterface
         return $fileContent;
     }
 
-    // ------------------------------ private --------------------------------------------------------------------------
-
     /**
      * Convert .srt file format to internal time format (float in seconds)
-     * Example: 00:02:17,440 -> 137.44
-     *
-     * @param string $srtTime
-     * @return float
+     * Example: 00:02:17.440 -> 137.44
      */
-    protected static function srtTimeToInternal($srtTime)
+    protected static function srtTimeToInternal(string $srtTime): float
     {
         $parts = explode('.', $srtTime);
 
@@ -89,12 +63,9 @@ class SbvConverter implements ConverterInterface
 
     /**
      * Convert internal time format (float in seconds) to .srt time format
-     * Example: 137.44 -> 00:02:17,440
-     *
-     * @param string $internalTime
-     * @return string
+     * Example: 137.44 -> 00:02:17.440
      */
-    protected static function internalTimeToSrt($internalTime)
+    protected static function internalTimeToSrt(string $internalTime): string
     {
         $parts = explode('.', $internalTime); // 1.23
         $whole = $parts[0]; // 1

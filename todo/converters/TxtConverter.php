@@ -2,27 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
 
-use function date_parse;
-use function explode;
-use function floor;
-use function gmdate;
-use function implode;
-use function preg_match;
-use function round;
-use function str_pad;
-use function substr;
-use function trim;
+namespace converters;
 
-use const STR_PAD_LEFT;
+use Done\Subtitles\Providers\ConverterInterface;
 
 // qt.txt
 class TxtConverter implements ConverterInterface
 {
     private static int $fps = 23;
 
-    public function fileContentToInternalFormat(string $fileContent): array
+    public function parseSubtitles(string $fileContent): array
     {
         $internalFormat = [];
 
@@ -47,11 +37,8 @@ class TxtConverter implements ConverterInterface
 
     /**
      * Convert library's "internal format" (array) to file's content
-     *
-     * @param array $internalFormat Internal format
-     * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internalFormat)
+    public function toSubtitles(array $internalFormat): string
     {
         $fileContent = '{QTtext} {font:Tahoma}
 {plain} {size:20}
@@ -78,6 +65,7 @@ class TxtConverter implements ConverterInterface
     protected static function timeToInternal(string $srtTime, int $fps): float
     {
         $parsed = date_parse("1970-01-01 $srtTime UTC");
+
         return $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'] + $parsed['fraction'] / $fps * 100;
     }
 

@@ -2,24 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
 
-use function explode;
-use function floor;
-use function gmdate;
-use function implode;
-use function preg_match_all;
-use function str_pad;
-use function str_replace;
-use function strtotime;
-use function substr;
+namespace converters;
 
-use const PREG_SET_ORDER;
-use const STR_PAD_RIGHT;
+use Done\Subtitles\Providers\ConverterInterface;
 
 class DfxpConverter implements ConverterInterface
 {
-    public function fileContentToInternalFormat(string $fileContent): array
+    public function parseSubtitles(string $fileContent): array
     {
         preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $fileContent, $matches, PREG_SET_ORDER);
 
@@ -35,7 +25,7 @@ class DfxpConverter implements ConverterInterface
         return $internalFormat;
     }
 
-    public function internalFormatToFileContent(array $internalFormat): string
+    public function toSubtitles(array $internalFormat): string
     {
         $fileContent = '<?xml version="1.0" encoding="utf-8"?>
 <tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

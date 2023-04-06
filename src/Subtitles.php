@@ -2,16 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles;
+namespace Circlical\Subtitles;
 
-use Done\Subtitles\Providers\ConverterInterface;
-use Done\Subtitles\Providers\SubtitleInterface;
-use Exception;
+use Circlical\Subtitles\Providers\SubtitleInterface;
 
 use function array_values;
-use function file_exists;
-use function file_get_contents;
-use function file_put_contents;
 use function is_array;
 use function strtolower;
 use function trim;
@@ -23,39 +18,11 @@ class Subtitles implements SubtitleInterface
     protected string $inputFormat;
 
     protected array $internalFormat; // data in internal format (when file is converted)
-
-    protected ConverterInterface $converter;
     protected string $output;
 
-    public static function convert(string $fromFilePath, string $toFilePath): Subtitles
-    {
-        static::load($fromFilePath)->save($toFilePath);
-    }
-
-    public static function load(string $fileNameOrFileContent, ?string $extension = null): SubtitleInterface
-    {
-        if (file_exists($fileNameOrFileContent)) {
-            return static::loadFile($fileNameOrFileContent);
-        }
-
-        return static::loadString($fileNameOrFileContent, $extension);
-    }
-
-    public function save(string $path): SubtitleInterface
-    {
-        $fileExtension = Helpers::fileExtension($path);
-        $content = $this->content($fileExtension);
-
-        file_put_contents($path, $content);
-
-        return $this;
-    }
-
     /** @param string|array|mixed $text */
-    public function add(int $start, int $end, $text): SubtitleInterface
+    public function add(float $start, float $end, $text): SubtitleInterface
     {
-        // @TODO validation
-        // @TODO check subtitles to not overlap
         $this->internalFormat[] = [
             'start' => $start,
             'end' => $end,
@@ -116,31 +83,15 @@ class Subtitles implements SubtitleInterface
     public function content(string $format): string
     {
         $format = strtolower(trim($format, '.'));
-
         $converter = Helpers::getConverter($format);
-        return $converter->internalFormatToFileContent($this->internalFormat);
+
+        return $converter->toSubtitles($this->internalFormat);
     }
 
     /** for testing only */
     public function getInternalFormat(): array
     {
         return $this->internalFormat;
-    }
-
-    /** for testing only */
-    public function setInternalFormat(array $internalFormat): SubtitleInterface
-    {
-        $this->internalFormat = $internalFormat;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated  Use shiftTime() instead
-     */
-    public function time(int $seconds, ?float $from = null, ?float $till = null): SubtitleInterface
-    {
-        return $this->shiftTime($seconds, $from, $till);
     }
 
     /** private */
@@ -157,7 +108,7 @@ class Subtitles implements SubtitleInterface
         });
     }
 
-    protected function maxTime(): int
+    protected function maxTime(): float
     {
         $maxTime = 0;
         foreach ($this->internalFormat as $block) {
@@ -174,33 +125,15 @@ class Subtitles implements SubtitleInterface
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
-    public static function loadFile(string $path, ?string $extension = null): SubtitleInterface
-    {
-        if (!file_exists($path)) {
-            throw new Exception("file doesn't exist: " . $path);
-        }
-
-        $string = file_get_contents($path);
-        if (!$extension) {
-            $extension = Helpers::fileExtension($path);
-        }
-
-        return static::loadString($string, $extension);
-    }
-
-    public static function loadString(string $text, string $extension): SubtitleInterface
+    public static function load(string $subtitleText, string $extension): SubtitleInterface
     {
         $converter = new static();
-        $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
-
+        $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($subtitleText));
         $converter->inputFormat = $extension;
 
         $inputConverter = Helpers::getConverter($extension);
-        $converter->internalFormat = $inputConverter->fileContentToInternalFormat($converter->input);
+        $converter->internalFormat = $inputConverter->parseSubtitles($converter->input);
 
         return $converter;
     }
 }
-
-// https://github.com/captioning/captioning has potential, but :(
-// https://github.com/snikch/captions-php too small

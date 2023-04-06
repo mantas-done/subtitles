@@ -2,19 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Done\Subtitles\Converters;
 
-use function explode;
-use function floor;
-use function fmod;
-use function gmdate;
-use function implode;
-use function round;
-use function str_pad;
-use function strtotime;
-use function trim;
+namespace converters;
 
-use const STR_PAD_RIGHT;
+use Done\Subtitles\Providers\ConverterInterface;
 
 class SubConverter implements ConverterInterface
 {
@@ -22,9 +13,10 @@ class SubConverter implements ConverterInterface
      * Converts file's content (.srt) to library's "internal format" (array)
      *
      * @param string $fileContent Content of file that will be converted
+     *
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($fileContent)
+    public function parseSubtitles(string $fileContent): array
     {
         $internalFormat = []; // array - where file content will be stored
 
@@ -47,9 +39,10 @@ class SubConverter implements ConverterInterface
      * Convert library's "internal format" (array) to file's content
      *
      * @param array $internalFormat Internal format
+     *
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internalFormat)
+    public function toSubtitles(array $internalFormat): string
     {
         $fileContent = '';
 
@@ -58,9 +51,9 @@ class SubConverter implements ConverterInterface
             $end = static::internalTimeToSrt($block['end']);
             $lines = implode("[br]", $block['lines']);
 
-            $fileContent .= $start . ',' . $end . "\r\n";
-            $fileContent .= $lines . "\r\n";
-            $fileContent .= "\r\n";
+            $fileContent .= $start . ',' . $end . "\n";
+            $fileContent .= $lines . "\n";
+            $fileContent .= "\n";
         }
 
         $fileContent = trim($fileContent);
@@ -71,11 +64,8 @@ class SubConverter implements ConverterInterface
     /**
      * Convert .srt file format to internal time format (float in seconds)
      * Example: 00:02:17,440 -> 137.44
-     *
-     * @param string $subTime
-     * @return float
      */
-    protected static function srtTimeToInternal($subTime)
+    protected static function srtTimeToInternal(string $subTime): float
     {
         $parts = explode('.', $subTime);
 
@@ -88,11 +78,8 @@ class SubConverter implements ConverterInterface
     /**
      * Convert internal time format (float in seconds) to .srt time format
      * Example: 137.44 -> 00:02:17,440
-     *
-     * @param float $internalTime
-     * @return string
      */
-    protected static function internalTimeToSrt($internalTime)
+    protected static function internalTimeToSrt(float $internalTime): string
     {
         $seconds = floor($internalTime);
         $remainder = fmod($internalTime, 1);
