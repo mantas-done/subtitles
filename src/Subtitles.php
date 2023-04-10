@@ -16,7 +16,6 @@ class Subtitles implements SubtitleInterface
 {
     protected string $input;
     protected string $inputFormat;
-
     protected array $internalFormat; // data in internal format (when file is converted)
     protected string $output;
 
@@ -92,6 +91,13 @@ class Subtitles implements SubtitleInterface
     public function getInternalFormat(): array
     {
         return $this->internalFormat;
+    }
+
+    public function setInternalFormat(array $internalFormat): Subtitles
+    {
+        $this->internalFormat = $internalFormat;
+
+        return $this;
     }
 
     /** private */
