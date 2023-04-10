@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Circlical\Subtitles\Converters;
+namespace Circlical\Subtitles\Exception;
 
 use Exception;
 

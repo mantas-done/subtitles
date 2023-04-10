@@ -1,5 +1,6 @@
 <?php
 
+use Circlical\Subtitles\Exception\InvalidSubtitleContentsException;
 use Circlical\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 
@@ -113,5 +114,12 @@ TEXT;
             ->getInternalFormat();
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testThrowsAnExceptionWhenFilesContainGarbage()
+    {
+        $this->expectException(InvalidSubtitleContentsException::class);
+        $vttContent = file_get_contents('./tests/files/garbage.vtt');
+        (new Subtitles())->load($vttContent, 'vtt')->getInternalFormat();
     }
 }

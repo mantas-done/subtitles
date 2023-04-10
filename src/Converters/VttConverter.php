@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Circlical\Subtitles\Converters;
 
 use Carbon\CarbonInterval;
+use Circlical\Subtitles\Exception\InvalidSubtitleContentsException;
+use Circlical\Subtitles\Exception\InvalidTimeFormatException;
 use Circlical\Subtitles\Providers\ConstantsInterface;
 use Circlical\Subtitles\Providers\ConverterInterface;
 use Closure;
@@ -14,7 +16,6 @@ use function array_slice;
 use function array_values;
 use function count;
 use function explode;
-use function floor;
 use function implode;
 use function preg_match;
 use function preg_replace;
@@ -42,6 +43,10 @@ class VttConverter implements ConverterInterface
             if (strpos($lines[0], '-->') === false) { // first line not containing '-->', must be cue id
                 unset($lines[0]); // not supporting cue id
                 $lines = array_values($lines);
+            }
+
+            if (empty($lines[0]) || strpos($lines[0], '-->') === false) {
+                throw new InvalidSubtitleContentsException();
             }
 
             $times = explode(' --> ', $lines[0]);

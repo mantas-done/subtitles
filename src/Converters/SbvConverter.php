@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Circlical\Subtitles\Converters;
 
 use Carbon\CarbonInterval;
+use Circlical\Subtitles\Exception\InvalidSubtitleContentsException;
+use Circlical\Subtitles\Exception\InvalidTimeFormatException;
 use Circlical\Subtitles\Providers\ConstantsInterface;
 use Circlical\Subtitles\Providers\ConverterInterface;
 
@@ -24,6 +26,11 @@ class SbvConverter implements ConverterInterface
         $blocks = explode("\n\n", trim($fileContent)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
             $lines = explode("\n", $block); // separate all block lines
+
+            if (empty($lines[0]) || empty($lines[1])) {
+                throw new InvalidSubtitleContentsException();
+            }
+
             $times = explode(',', $lines[0]); // one the second line there is start and end times
 
             $internalFormat[] = [

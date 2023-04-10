@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Circlical\Subtitles\Converters;
 
 use Carbon\CarbonInterval;
+use Circlical\Subtitles\Exception\InvalidTimeFormatException;
 use Circlical\Subtitles\Providers\ConstantsInterface;
 use Circlical\Subtitles\Providers\ConverterInterface;
 
