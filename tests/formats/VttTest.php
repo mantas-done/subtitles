@@ -3,7 +3,7 @@
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 
-class VttSubtitle extends TestCase {
+class VttTest extends TestCase {
 
     use AdditionalAssertions;
 
