@@ -6,17 +6,18 @@ Convert and edit subtitles and captions.
 
 ## Supported formats
 
-| Format | Extension |
-| --- | --- |
-| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt |
-| [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt |
-| [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ) | .stl |
-| [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv |
-| [SubViewer](https://wiki.videolan.org/SubViewer) | .sub |
-| Advanced Sub Station | .ass |
-| [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp |
-| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml |
-| QuickTime | .qt.txt |
+| Format | Extension | Internal format name |
+| --- | --- | --- |
+| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt | srt |
+| [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt | vtt |
+| [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ) | .stl | stl |
+| [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv | sbv |
+| [SubViewer](https://wiki.videolan.org/SubViewer) | .sub | sub |
+| Advanced Sub Station | .ass | ass |
+| [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp | dfxp |
+| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml | ttml |
+| Plaintext | .txt | txt |
+| QuickTime | .qt.txt | txt_quicktime |
 
 ## Installation
 ```

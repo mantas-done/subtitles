@@ -27,7 +27,7 @@ Very good, Lieutenant.
     {
         $content = $this->qttxt;
         $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === \Done\Subtitles\TxtQuickTimeConverter::class);
+        $this->assertEquals(\Done\Subtitles\TxtQuickTimeConverter::class, $converter::class);
     }
 
     public function testConvertingToFormat()
@@ -35,14 +35,14 @@ Very good, Lieutenant.
         $actual = (new Subtitles())
             ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])
             ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])
-            ->content('txt');
+            ->content('txt_quicktime');
 
         $this->assertEquals($this->qttxt, $actual);
     }
 
     public function testConvertingToInternalFormat()
     {
-        $actual = Subtitles::load($this->qttxt, 'txt')->getInternalFormat();
+        $actual = Subtitles::load($this->qttxt, 'txt_quicktime')->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])

@@ -3,7 +3,6 @@
 class Subtitles {
 
     protected $input;
-    protected $input_format;
 
     protected $internal_format; // data in internal format (when file is converted)
 
@@ -20,6 +19,7 @@ class Subtitles {
         ['extension' => 'sub',  'format' => 'sub',              'name' => '????',                       'class' => 'SubConverter'], // MicroDVD, SubViewer2.0
         ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
         ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
+        ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => 'TxtConverter'],
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => 'TxtQuickTimeConverter'],
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => 'VttConverter'],
     ];
@@ -29,13 +29,13 @@ class Subtitles {
         static::load($from_file_path)->save($to_file_path, $to_format);
     }
 
-    public static function load($file_name_or_file_content, $extension = null)
+    public static function load($file_name_or_file_content, $format = null)
     {
         if (file_exists($file_name_or_file_content)) {
             return static::loadFile($file_name_or_file_content);
         }
 
-        return static::loadString($file_name_or_file_content, $extension);
+        return static::loadString($file_name_or_file_content, $format);
     }
 
     public function save($path, $format = null)
@@ -190,14 +190,12 @@ class Subtitles {
         return static::loadString($string, $extension);
     }
 
-    public static function loadString($text, $extension)
+    public static function loadString($text, $format)
     {
         $converter = new static;
         $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
 
-        $converter->input_format = $extension;
-
-        $input_converter = Helpers::getConverterByExtension($extension);
+        $input_converter = Helpers::getConverterByFormat($format);
         $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
 
         return $converter;
