@@ -11,6 +11,7 @@ class Subtitles {
 
     public static $formats = [
         ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => 'AssConverter'],
+        ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => 'CsvConverter'],
         ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => 'AssConverter'],
         ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => 'DfxpConverter'],
         ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => 'SbvConverter'],
@@ -38,10 +39,14 @@ class Subtitles {
         return static::loadString($file_name_or_file_content, $format);
     }
 
+
     public function save($path, $format = null)
     {
         $file_extension = Helpers::fileExtension($path);
-        $content = $this->content($file_extension, $format);
+        if ($format === null) {
+            $format = $file_extension;
+        }
+        $content = $this->content($format);
 
         file_put_contents($path, $content);
 
@@ -109,15 +114,9 @@ class Subtitles {
         return $this;
     }
 
-    public function content($extension, $format = null)
+    public function content($format)
     {
-        $extension = strtolower(trim($extension, '.'));
-
-        if ($format) {
-            $converter = Helpers::getConverterByFormat($format);
-        } else {
-            $converter = Helpers::getConverterByExtension($extension);
-        }
+        $converter = Helpers::getConverterByFormat($format);
         $content = $converter->internalFormatToFileContent($this->internal_format);
 
         return $content;
