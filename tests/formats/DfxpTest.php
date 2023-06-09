@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests\Formats;
+
+use Done\Subtitles\Code\Converters\DfxpConverter;
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
+use Tests\Helpers\AdditionalAssertionsTrait;
 
 class DfxpTest extends TestCase {
 
@@ -10,8 +15,8 @@ class DfxpTest extends TestCase {
     public function testRecognizesDfxp()
     {
         $content = file_get_contents('./tests/files/dfxp.dfxp');
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === \Done\Subtitles\DfxpConverter::class);
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === DfxpConverter::class);
     }
 
     public function testConvertFromSrtToDfxp()

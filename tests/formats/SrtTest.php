@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests\Formats;
+
+use Done\Subtitles\Code\Converters\SrtConverter;
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
+use Tests\Helpers\AdditionalAssertionsTrait;
 
 class SrtTest extends TestCase {
 
@@ -12,8 +17,8 @@ class SrtTest extends TestCase {
     public function testRecognizesSrt()
     {
         $content = file_get_contents('./tests/files/srt.srt');
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === \Done\Subtitles\SrtConverter::class);
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === SrtConverter::class);
     }
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()

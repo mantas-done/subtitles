@@ -1,4 +1,6 @@
-<?php namespace Done\Subtitles;
+<?php
+
+namespace Done\Subtitles\Code\Converters;
 
 class AssConverter implements ConverterContract
 {

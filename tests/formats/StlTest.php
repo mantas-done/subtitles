@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests\Formats;
+
+use Done\Subtitles\Code\Converters\StlConverter;
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
+use Tests\Helpers\AdditionalAssertionsTrait;
 
 class StlTest extends TestCase {
 
@@ -10,8 +15,8 @@ class StlTest extends TestCase {
     public function testRecognizesStl()
     {
         $content = file_get_contents('./tests/files/stl.stl');
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === \Done\Subtitles\StlConverter::class);
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === StlConverter::class);
     }
 
     public function testConvertFromSrtToStl()
@@ -67,7 +72,7 @@ class StlTest extends TestCase {
 
     public function testTimesBiggerThan24HoursThrowException()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
 
         $subtitles = new Subtitles();
         $subtitles->add(0, 3600 * 24 * 10, 'text');

@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests;
+
+use Done\Subtitles\Code\Converters\VttConverter;
+use Done\Subtitles\Code\Helpers;
 use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
+use Tests\Helpers\AdditionalAssertionsTrait;
 
 class PublicInterfaceTest extends TestCase
 {
@@ -26,10 +31,10 @@ class PublicInterfaceTest extends TestCase
         @unlink($temporary_srt_path);
 
         Subtitles::convert($srt_path, $temporary_srt_path, 'vtt');
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path));
+        $converter = Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path));
         unlink($temporary_srt_path);
 
-        $this->assertEquals(\Done\Subtitles\VttConverter::class, $converter::class);
+        $this->assertEquals(VttConverter::class, $converter::class);
     }
 
     public function testLoadFromFile()
@@ -56,21 +61,21 @@ our final approach into Coruscant.
 
     public function testLoadWithoutExtensionThrowsException()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
 
         Subtitles::load("normal file\nnormal file");
     }
 
     public function testLoadFileThatDoesNotExist()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
 
         Subtitles::load("some_random_name.srt");
     }
 
     public function testLoadFileWithNotSupportedExtension()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
 
         Subtitles::load("subtitles.exe");
     }
@@ -99,7 +104,7 @@ our final approach into Coruscant.
 
     public function testNonExistentFormatThrowsError()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
 
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
         Subtitles::load($srt_path)->content('exe');

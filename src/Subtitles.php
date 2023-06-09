@@ -1,8 +1,22 @@
-<?php namespace Done\Subtitles;
+<?php
 
+namespace Done\Subtitles;
 
+use Done\Subtitles\Code\Converters\AssConverter;
+use Done\Subtitles\Code\Converters\CsvConverter;
+use Done\Subtitles\Code\Converters\DfxpConverter;
+use Done\Subtitles\Code\Converters\SbvConverter;
+use Done\Subtitles\Code\Converters\SmiConverter;
+use Done\Subtitles\Code\Converters\SrtConverter;
+use Done\Subtitles\Code\Converters\StlConverter;
+use Done\Subtitles\Code\Converters\SubConverter;
+use Done\Subtitles\Code\Converters\TtmlConverter;
+use Done\Subtitles\Code\Converters\TxtConverter;
+use Done\Subtitles\Code\Converters\TxtQuickTimeConverter;
+use Done\Subtitles\Code\Converters\VttConverter;
+use Done\Subtitles\Code\Helpers;
 
-class Subtitles 
+class Subtitles
 {
     protected $input;
 
@@ -12,20 +26,20 @@ class Subtitles
     protected $output;
 
     public static $formats = [
-        ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => 'AssConverter'],
-        ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => 'CsvConverter'],
-        ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => 'AssConverter'],
-        ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => 'DfxpConverter'],
-        ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => 'SbvConverter'],
-        ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => 'SrtConverter'],
-        ['extension' => 'stl',  'format' => 'stl',              'name' => 'Spruce Subtitle File',       'class' => 'StlConverter'],
-        ['extension' => 'sub',  'format' => 'sub',              'name' => '????',                       'class' => 'SubConverter'], // MicroDVD, SubViewer2.0
-        ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
-        ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
-        ['extension' => 'smi',  'format' => 'smi',              'name' => 'SAMI',                       'class' => 'SmiConverter'],
-        ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => 'TxtConverter'],
-        ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => 'TxtQuickTimeConverter'],
-        ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => 'VttConverter'],
+        ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
+        ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
+        ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class],
+        ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => DfxpConverter::class],
+        ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => SbvConverter::class],
+        ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => SrtConverter::class],
+        ['extension' => 'stl',  'format' => 'stl',              'name' => 'Spruce Subtitle File',       'class' => StlConverter::class],
+        ['extension' => 'sub',  'format' => 'sub',              'name' => '????',                       'class' => SubConverter::class], // MicroDVD, SubViewer2.0
+        ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
+        ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
+        ['extension' => 'smi',  'format' => 'smi',              'name' => 'SAMI',                       'class' => SmiConverter::class],
+        ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class],
+        ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
+        ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
     ];
 
     public static function convert($from_file_path, $to_file_path, $to_format = null)

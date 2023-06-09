@@ -1,4 +1,9 @@
-<?php namespace Done\Subtitles;
+<?php
+
+namespace Done\Subtitles\Code;
+
+use Done\Subtitles\Code\Converters\ConverterContract;
+use Done\Subtitles\Subtitles;
 
 class Helpers
 {
@@ -27,7 +32,7 @@ class Helpers
     {
         foreach (Subtitles::$formats as $row) {
             if ($row['extension'] === $extension) {
-                $full_class_name = "\\Done\\Subtitles\\" . $row['class'];
+                $full_class_name = $row['class'];
                 return new $full_class_name();
             }
         }
@@ -39,7 +44,7 @@ class Helpers
     {
         foreach (Subtitles::$formats as $row) {
             if ($row['format'] === $format) {
-                $full_class_name = "\\Done\\Subtitles\\" . $row['class'];
+                $full_class_name = $row['class'];
                 /** @var ConverterContract $converter */
                 $converter = new $full_class_name();
                 return $converter;
@@ -53,7 +58,7 @@ class Helpers
     {
         foreach (Subtitles::$formats as $row) {
             $class_name = $row['class'];
-            $full_class_name = "\\Done\\Subtitles\\" . $class_name;
+            $full_class_name = $class_name;
             /** @var ConverterContract $converter */
             $converter = new $full_class_name();
             if ($converter->canParseFileContent($file_content)) {

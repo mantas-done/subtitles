@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests\Formats;
+
+use Done\Subtitles\Code\Converters\VttConverter;
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
+use Tests\Helpers\AdditionalAssertionsTrait;
 
 class VttTest extends TestCase {
 
@@ -10,8 +15,8 @@ class VttTest extends TestCase {
     public function testRecognizesSrt()
     {
         $content = file_get_contents('./tests/files/vtt.vtt');
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === \Done\Subtitles\VttConverter::class);
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === VttConverter::class);
     }
 
     public function testConvertFromVttToSrt()

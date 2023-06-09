@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests\Formats;
+
+use Done\Subtitles\Code\Converters\TtmlConverter;
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
+use Tests\Helpers\AdditionalAssertionsTrait;
 
 class TtmlTest extends TestCase {
 
@@ -10,8 +15,8 @@ class TtmlTest extends TestCase {
     public function testRecognizesTtml()
     {
         $content = file_get_contents('./tests/files/ttml.ttml');
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertEquals(\Done\Subtitles\TtmlConverter::class, $converter::class);
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertEquals(TtmlConverter::class, $converter::class);
     }
 
     public function testConvertFromSrtToTtml()

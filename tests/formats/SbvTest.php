@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests\Formats;
+
+use Done\Subtitles\Code\Converters\SbvConverter;
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
+use Tests\Helpers\AdditionalAssertionsTrait;
 
 class SbvTest extends TestCase {
 
@@ -14,8 +19,8 @@ class SbvTest extends TestCase {
 Don’t think that you can just ignore them
 because they’re not your children or relatives.
 TEXT;
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === \Done\Subtitles\SbvConverter::class);
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === SbvConverter::class);
         $this->assertTrue(true);
     }
 

@@ -1,7 +1,12 @@
 <?php
 
+namespace Tests\Formats;
+
+use Done\Subtitles\Code\Converters\AssConverter;
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
+use \Tests\Helpers\AdditionalAssertionsTrait;
 
 class AssTest extends TestCase {
 
@@ -10,8 +15,8 @@ class AssTest extends TestCase {
     public function testAss()
     {
         $content = file_get_contents('./tests/files/ass.ass');
-        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === \Done\Subtitles\AssConverter::class);
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === AssConverter::class);
     }
 
     public function testConvertFromAssToInternalFormat()
