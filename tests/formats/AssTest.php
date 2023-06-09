@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class AssTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     public function testAss()
     {

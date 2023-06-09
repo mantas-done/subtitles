@@ -5,7 +5,7 @@ use Done\Subtitles\Subtitles;
 
 class PublicInterfaceTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     public function testConvert()
     {

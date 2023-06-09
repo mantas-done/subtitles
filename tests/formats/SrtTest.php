@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class SrtTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     protected $format = 'srt';
 

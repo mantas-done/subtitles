@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class SubTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     public function testRecognizesSub()
     {

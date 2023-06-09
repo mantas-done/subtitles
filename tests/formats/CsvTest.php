@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class CsvTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     public function testFileToInternalFormat()
     {
@@ -14,8 +14,8 @@ class CsvTest extends TestCase {
 3740.476,3742.501,"Very good, Lieutenant."';
         $actual_internal_format = Subtitles::load($csv, 'csv')->getInternalFormat();
         $expected_internal_format = (new Subtitles())
-        ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])
-        ->add(3740.476, 3742.501, ['Very good, Lieutenant.']);
+        ->add(137.44, 140.375, ['Senator, we\'re making our final approach into Coruscant.'])
+        ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }

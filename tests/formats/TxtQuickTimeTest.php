@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class TxtQuickTimeTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     private $qttxt = "{QTtext} {font:Tahoma}
 {plain} {size:20}
@@ -37,7 +37,7 @@ Very good, Lieutenant.
             ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])
             ->content('txt_quicktime');
 
-        $this->assertEquals($this->qttxt, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($this->qttxt, $actual);
     }
 
     public function testConvertingToInternalFormat()

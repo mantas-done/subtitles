@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class StlTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     public function testRecognizesStl()
     {

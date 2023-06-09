@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class VttTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     public function testRecognizesSrt()
     {

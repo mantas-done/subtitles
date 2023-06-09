@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class SbvTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     public function testRecognizesSbv()
     {

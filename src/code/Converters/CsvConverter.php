@@ -33,7 +33,7 @@ class CsvConverter implements ConverterContract
             $internal_format[] = [
                 'start' => $row[0],
                 'end' => $row[1],
-                'lines' => $row[2],
+                'lines' => [$row[2]],
             ];
         }
 

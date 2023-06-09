@@ -1,6 +1,6 @@
 <?php
 
-trait AdditionalAssertions
+trait AdditionalAssertionsTrait
 {
     public function assertInternalFormatsEqual($expected, $actual, $allowable_error = 0.01)
     {
