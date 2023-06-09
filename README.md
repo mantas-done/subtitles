@@ -90,6 +90,11 @@ Remove subtitles
 $subtitles->remove(0, 5); // from 0, till 5 seconds
 ```
 
+Trim subtitles
+```php
+$subtitles->trim(3, 4); // get only from 3, till 4 seconds
+```
+
 Add 1 second to all subtitles
 ```php
 $subtitles->shiftTime(1);

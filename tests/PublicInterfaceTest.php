@@ -3,8 +3,8 @@
 use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
 
-class PublicInterfaceTest extends TestCase {
-
+class PublicInterfaceTest extends TestCase
+{
     use AdditionalAssertionsTrait;
 
     public function testConvert()
@@ -103,7 +103,6 @@ our final approach into Coruscant.
 
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
         Subtitles::load($srt_path)->content('exe');
-
     }
 
     public function testAdd()
@@ -292,6 +291,23 @@ our final approach into Coruscant.
 
     // ------------------------------------ shiftTimeGradually ---------------------------------------------------------
 
+    public function testTrim()
+    {
+        $actual_internal_format = (new Subtitles())
+            ->add(0, 2, 'a')
+            ->add(2, 4, 'b')
+            ->add(4, 6, 'c')
+            ->add(6, 8, 'd')
+            ->add(8, 10, 'e')
+            ->trim(4, 8)
+            ->getInternalFormat();
 
+        $expected_internal_format = (new Subtitles())
+             ->add(4, 6, 'c')
+            ->add(6, 8, 'd')
+            ->add(8, 10, 'e')
+            ->getInternalFormat();
 
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
 }

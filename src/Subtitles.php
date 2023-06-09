@@ -1,7 +1,9 @@
 <?php namespace Done\Subtitles;
 
-class Subtitles {
 
+
+class Subtitles 
+{
     protected $input;
 
     protected $internal_format; // data in internal format (when file is converted)
@@ -64,6 +66,14 @@ class Subtitles {
         ];
 
         $this->sortInternalFormat();
+
+        return $this;
+    }
+
+    public function trim($startTime, $endTime)
+    {
+        $this->remove('0', $startTime);
+        $this->remove($endTime, $this->maxTime());
 
         return $this;
     }
@@ -148,7 +158,7 @@ class Subtitles {
 
     protected function sortInternalFormat()
     {
-        usort($this->internal_format, function($item1, $item2) {
+        usort($this->internal_format, function ($item1, $item2) {
             if ($item2['start'] == $item1['start']) {
                 return 0;
             } elseif ($item2['start'] < $item1['start']) {
@@ -171,7 +181,8 @@ class Subtitles {
         return $max_time;
     }
 
-    protected function shouldBlockBeRemoved($block, $from, $till) {
+    protected function shouldBlockBeRemoved($block, $from, $till)
+    {
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
