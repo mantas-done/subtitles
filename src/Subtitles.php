@@ -169,7 +169,7 @@ class Subtitles
         });
     }
 
-    protected function maxTime()
+    public function maxTime()
     {
         $max_time = 0;
         foreach ($this->internal_format as $block) {
