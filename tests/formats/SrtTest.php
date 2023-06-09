@@ -5,9 +5,16 @@ use PHPUnit\Framework\TestCase;
 
 class SrtTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
     protected $format = 'srt';
+
+    public function testRecognizesSrt()
+    {
+        $content = file_get_contents('./tests/files/srt.srt');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\SrtConverter::class);
+    }
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()
     {
@@ -17,7 +24,7 @@ class SrtTest extends TestCase {
         @unlink($temporary_srt_path);
 
         Subtitles::convert($srt_path, $temporary_srt_path);
-        $this->assertFileEquals($srt_path, $temporary_srt_path);
+        $this->assertFileEqualsIgnoringLineEndings($srt_path, $temporary_srt_path);
 
         unlink($temporary_srt_path);
     }
@@ -33,7 +40,7 @@ class SrtTest extends TestCase {
     {
         $actual_file_content = self::generatedSubtitles()->content($this->format);
 
-        $this->assertEquals(self::fileContent(), $actual_file_content);
+        $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
     }
 
     public function testRemovesEmptyLines()

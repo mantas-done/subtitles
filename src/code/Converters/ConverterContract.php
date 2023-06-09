@@ -1,6 +1,14 @@
 <?php namespace Done\Subtitles;
 
-interface ConverterContract {
+interface ConverterContract
+{
+    /**
+     * Check whether
+     *
+     * @param string $file_content
+     * @return bool
+     */
+    public function canParseFileContent($file_content);
 
     /**
      * Converts file content (.srt, .stl... file content) to library's "internal format"

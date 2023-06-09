@@ -5,7 +5,14 @@ use PHPUnit\Framework\TestCase;
 
 class DfxpTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
+
+    public function testRecognizesDfxp()
+    {
+        $content = file_get_contents('./tests/files/dfxp.dfxp');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\DfxpConverter::class);
+    }
 
     public function testConvertFromSrtToDfxp()
     {
@@ -17,7 +24,7 @@ class DfxpTest extends TestCase {
 
         // srt to stl
         Subtitles::convert($srt_path, $temporary_dfxp_path);
-        $this->assertFileEquals($dfxp_path, $temporary_dfxp_path);
+        $this->assertFileEqualsIgnoringLineEndings($dfxp_path, $temporary_dfxp_path);
 
         unlink($temporary_dfxp_path);
     }

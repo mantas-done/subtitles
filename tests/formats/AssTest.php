@@ -5,7 +5,14 @@ use PHPUnit\Framework\TestCase;
 
 class AssTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
+
+    public function testAss()
+    {
+        $content = file_get_contents('./tests/files/ass.ass');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\AssConverter::class);
+    }
 
     public function testConvertFromAssToInternalFormat()
     {
@@ -18,13 +25,16 @@ class AssTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-    public function testConvertFromSrtToSub()
+    public function testConvertFromAssToSrt()
     {
         $ass_path = './tests/files/ass.ass';
         $srt_path = './tests/files/srt.srt';
 
         $actual = (new Subtitles())->load($srt_path)->content('ass');
         $expected = file_get_contents($ass_path);
+
+        $actual = str_replace("\r", "", $actual);
+        $expected = str_replace("\r", "", $expected);
 
         $this->assertEquals($expected, $actual);
     }

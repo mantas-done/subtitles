@@ -2,6 +2,11 @@
 
 class DfxpConverter implements ConverterContract
 {
+    public function canParseFileContent($file_content)
+    {
+        return preg_match('/xmlns="http:\/\/www\.w3\.org\/ns\/ttml"/m', $file_content) === 1 && preg_match('/xml:id="d1"/m', $file_content) === 1;
+    }
+
     public function fileContentToInternalFormat($file_content)
     {
         preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);

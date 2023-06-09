@@ -1,6 +1,11 @@
 <?php namespace Done\Subtitles;
 
-class SubConverter implements ConverterContract {
+class SubConverter implements ConverterContract
+{
+    public function canParseFileContent($file_content)
+    {
+        return preg_match('/^(\d{2}:\d{2}:\d{2}\.\d{2}),(\d{2}:\d{2}:\d{2}\.\d{2})\R(.*)$/m', $file_content) === 1;
+    }
 
     /**
      * Converts file's content (.srt) to library's "internal format" (array)

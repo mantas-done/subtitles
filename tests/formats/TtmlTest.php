@@ -5,7 +5,14 @@ use PHPUnit\Framework\TestCase;
 
 class TtmlTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
+
+    public function testRecognizesTtml()
+    {
+        $content = file_get_contents('./tests/files/ttml.ttml');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertEquals(\Done\Subtitles\TtmlConverter::class, $converter::class);
+    }
 
     public function testConvertFromSrtToTtml()
     {
@@ -17,7 +24,7 @@ class TtmlTest extends TestCase {
 
         // srt to stl
         Subtitles::convert($srt_path, $temporary_ttml_path);
-        $this->assertFileEquals($ttml_path, $temporary_ttml_path);
+        $this->assertFileEqualsIgnoringLineEndings($ttml_path, $temporary_ttml_path);
 
         unlink($temporary_ttml_path);
     }

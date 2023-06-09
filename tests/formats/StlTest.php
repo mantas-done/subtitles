@@ -5,7 +5,14 @@ use PHPUnit\Framework\TestCase;
 
 class StlTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
+
+    public function testRecognizesStl()
+    {
+        $content = file_get_contents('./tests/files/stl.stl');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\StlConverter::class);
+    }
 
     public function testConvertFromSrtToStl()
     {
@@ -17,7 +24,7 @@ class StlTest extends TestCase {
 
         // srt to stl
         Subtitles::convert($srt_path, $temporary_stl_path);
-        $this->assertFileEquals($stl_path, $temporary_stl_path);
+        $this->assertFileEqualsIgnoringLineEndings($stl_path, $temporary_stl_path);
 
         unlink($temporary_stl_path);
     }

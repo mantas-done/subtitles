@@ -10,10 +10,10 @@
     },
     "autoload-dev": {
       "files": [
-        "./tests/helpers/AdditionalAssertions.php"
+        "./tests/helpers/AdditionalAssertionsTrait.php"
       ]
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0"
+        "phpunit/phpunit": "^10.0"
     }
 }

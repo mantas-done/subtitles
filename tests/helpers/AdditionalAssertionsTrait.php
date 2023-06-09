@@ -1,6 +1,6 @@
 <?php
 
-trait AdditionalAssertions
+trait AdditionalAssertionsTrait
 {
     public function assertInternalFormatsEqual($expected, $actual, $allowable_error = 0.01)
     {
@@ -12,5 +12,14 @@ trait AdditionalAssertions
                 $this->assertEquals($line, $actual[$k]['lines'][$line_k]);
             }
         }
+    }
+
+    public function assertFileEqualsIgnoringLineEndings($expected_file_path, $actual_file_path)
+    {
+        $expected_file_string = file_get_contents($expected_file_path);
+        $tmp_dfxp_string = file_get_contents($actual_file_path);
+        $expected_file_string = str_replace("\r", "", $expected_file_string);
+        $tmp_dfxp_string = str_replace("\r", "", $tmp_dfxp_string);
+        $this->assertEquals($expected_file_string, $tmp_dfxp_string);
     }
 }

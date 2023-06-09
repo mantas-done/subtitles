@@ -3,9 +3,16 @@
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 
-class VttSubtitle extends TestCase {
+class VttTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
+
+    public function testRecognizesSrt()
+    {
+        $content = file_get_contents('./tests/files/vtt.vtt');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\VttConverter::class);
+    }
 
     public function testConvertFromVttToSrt()
     {
@@ -15,7 +22,7 @@ class VttSubtitle extends TestCase {
         $expected = (new Subtitles())->load($vtt_path)->content('srt');
         $actual = file_get_contents($srt_path);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
     public function testConvertFromSrtToVtt()
@@ -26,7 +33,7 @@ class VttSubtitle extends TestCase {
         $expected = file_get_contents($vtt_path);
         $actual = (new Subtitles())->load($srt_path)->content('vtt');
 
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
     public function testFileToInternalFormat()
@@ -61,7 +68,7 @@ TEXT;
 
         $actual_vtt_file_content = (new Subtitles())->load($input_vtt_file_content, 'vtt')->content('vtt');
 
-        $this->assertEquals($expected_vtt_file_content, $actual_vtt_file_content);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected_vtt_file_content, $actual_vtt_file_content);
     }
 
     public function testParsesFileWithMissingText()

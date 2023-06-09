@@ -5,44 +5,43 @@ use PHPUnit\Framework\TestCase;
 
 class TxtTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
 
-    private $qttxt = "{QTtext} {font:Tahoma}
-{plain} {size:20}
-{timeScale:30}
-{width:160} {height:32}
-{timestamps:absolute} {language:0}
-[00:02:17.11]
-Senator, we're making
-our final approach into Coruscant.
-[00:02:20.09]
-
-[01:02:20.11]
-Very good, Lieutenant.
-[01:02:22.12]
-
-";
-
-    public function testConvertingToFormat()
+    public function testFileToInternalFormat()
     {
-        $actual = (new Subtitles())
-            ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])
-            ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])
-            ->content('txt');
+        $actual_internal_format = Subtitles::load(self::fileContent(), 'txt')->getInternalFormat();
 
-        $this->assertEquals($this->qttxt, $actual);
+        $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
 
-    public function testConvertingToInternalFormat()
+    public function testConvertToFile()
     {
-        $actual = Subtitles::load($this->qttxt, 'txt')->getInternalFormat();
+        $generated_subtitles = (new Subtitles())
+            ->add(0, 1, ['Senator, we\'re making our', 'final approach into Coruscant.'])
+            ->add(1, 2, ['Very good, Lieutenant.']);
 
-        $expected = (new Subtitles())
-            ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])
-            ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])
-            ->getInternalFormat();
+        $actual_file_content = $generated_subtitles->content('txt');
 
-        $this->assertInternalFormatsEqual($expected, $actual, 0.07);
+        $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
+    }
+
+    // ---------------------------------- private ----------------------------------------------------------------------
+
+    private static function fileContent()
+    {
+        $content = <<< TEXT
+Senator, we're making our final approach into Coruscant.
+Very good, Lieutenant.
+TEXT;
+
+        return $content;
+    }
+
+    private static function generatedSubtitles()
+    {
+        return (new Subtitles())
+            ->add(0, 1, ['Senator, we\'re making our final approach into Coruscant.'])
+            ->add(1, 2, ['Very good, Lieutenant.']);
     }
 
 }

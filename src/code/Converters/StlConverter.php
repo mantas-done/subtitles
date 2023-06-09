@@ -1,6 +1,11 @@
 <?php namespace Done\Subtitles;
 
-class StlConverter implements ConverterContract {
+class StlConverter implements ConverterContract
+{
+    public function canParseFileContent($file_content)
+    {
+        return preg_match('/\d{2}:\d{2}:\d{2}:\d{2} , \d{2}:\d{2}:\d{2}:\d{2} , .+/m', $file_content) === 1;
+    }
 
     public function fileContentToInternalFormat($file_content)
     {

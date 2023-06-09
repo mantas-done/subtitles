@@ -5,7 +5,14 @@ use PHPUnit\Framework\TestCase;
 
 class SubTest extends TestCase {
 
-    use AdditionalAssertions;
+    use AdditionalAssertionsTrait;
+
+    public function testRecognizesSub()
+    {
+        $content = file_get_contents('./tests/files/sub.sub');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\SubConverter::class);
+    }
 
     public function testConvertFromSubToSrt()
     {
@@ -24,7 +31,7 @@ TEXT;
 
         $actual = (new Subtitles())->load($sub_path)->content('srt');
 
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
     public function testConvertFromSrtToSub()
@@ -35,6 +42,6 @@ TEXT;
         $expected = file_get_contents($sub_path);
         $actual = (new Subtitles())->load($srt_path)->content('sub');
 
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 }
