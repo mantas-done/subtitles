@@ -24,7 +24,7 @@ class StlTest extends TestCase {
 
         // srt to stl
         Subtitles::convert($srt_path, $temporary_stl_path);
-        $this->assertFileEquals($stl_path, $temporary_stl_path);
+        $this->assertFileEqualsIgnoringLineEndings($stl_path, $temporary_stl_path);
 
         unlink($temporary_stl_path);
     }

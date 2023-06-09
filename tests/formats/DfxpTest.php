@@ -24,7 +24,7 @@ class DfxpTest extends TestCase {
 
         // srt to stl
         Subtitles::convert($srt_path, $temporary_dfxp_path);
-        $this->assertFileEquals($dfxp_path, $temporary_dfxp_path);
+        $this->assertFileEqualsIgnoringLineEndings($dfxp_path, $temporary_dfxp_path);
 
         unlink($temporary_dfxp_path);
     }

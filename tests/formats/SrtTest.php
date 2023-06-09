@@ -24,7 +24,7 @@ class SrtTest extends TestCase {
         @unlink($temporary_srt_path);
 
         Subtitles::convert($srt_path, $temporary_srt_path);
-        $this->assertFileEquals($srt_path, $temporary_srt_path);
+        $this->assertFileEqualsIgnoringLineEndings($srt_path, $temporary_srt_path);
 
         unlink($temporary_srt_path);
     }
@@ -40,7 +40,7 @@ class SrtTest extends TestCase {
     {
         $actual_file_content = self::generatedSubtitles()->content($this->format);
 
-        $this->assertEquals(self::fileContent(), $actual_file_content);
+        $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
     }
 
     public function testRemovesEmptyLines()

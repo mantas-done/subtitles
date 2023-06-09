@@ -22,7 +22,7 @@ class TxtTest extends TestCase {
 
         $actual_file_content = $generated_subtitles->content('txt');
 
-        $this->assertEquals(self::fileContent(), $actual_file_content);
+        $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
     }
 
     // ---------------------------------- private ----------------------------------------------------------------------

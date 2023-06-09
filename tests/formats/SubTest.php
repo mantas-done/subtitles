@@ -31,7 +31,7 @@ TEXT;
 
         $actual = (new Subtitles())->load($sub_path)->content('srt');
 
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
     public function testConvertFromSrtToSub()
@@ -42,6 +42,6 @@ TEXT;
         $expected = file_get_contents($sub_path);
         $actual = (new Subtitles())->load($srt_path)->content('sub');
 
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 }

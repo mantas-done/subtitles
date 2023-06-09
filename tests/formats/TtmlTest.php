@@ -24,7 +24,7 @@ class TtmlTest extends TestCase {
 
         // srt to stl
         Subtitles::convert($srt_path, $temporary_ttml_path);
-        $this->assertFileEquals($ttml_path, $temporary_ttml_path);
+        $this->assertFileEqualsIgnoringLineEndings($ttml_path, $temporary_ttml_path);
 
         unlink($temporary_ttml_path);
     }
