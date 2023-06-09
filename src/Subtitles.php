@@ -22,6 +22,7 @@ class Subtitles
         ['extension' => 'sub',  'format' => 'sub',              'name' => '????',                       'class' => 'SubConverter'], // MicroDVD, SubViewer2.0
         ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
         ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
+        ['extension' => 'smi',  'format' => 'smi',              'name' => 'SAMI',                       'class' => 'SmiConverter'],
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => 'TxtConverter'],
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => 'TxtQuickTimeConverter'],
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => 'VttConverter'],

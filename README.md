@@ -16,6 +16,7 @@ Convert and edit subtitles and captions.
 | Advanced Sub Station | .ass | ass |
 | [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp | dfxp |
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml | ttml |
+| [SAMI](https://en.wikipedia.org/wiki/SAMI) | .smi | smi |
 | Plaintext | .txt | txt |
 | Comma separated values | .csv | csv |
 | QuickTime | .qt.txt | txt_quicktime |
