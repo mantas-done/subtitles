@@ -23,17 +23,45 @@ class Helpers
         return $text;
     }
 
-    public static function getConverter($extension)
+    public static function getConverterByExtension($extension)
     {
-        $class_name = ucfirst($extension) . 'Converter';
-
-        if (!file_exists(__DIR__ . '/Converters/' . $class_name . '.php')) {
-            throw new \Exception('unknown format: ' . $extension);
+        foreach (Subtitles::$formats as $row) {
+            if ($row['extension'] === $extension) {
+                $full_class_name = "\\Done\\Subtitles\\" . $row['class'];
+                return new $full_class_name();
+            }
         }
 
-        $full_class_name = "\\Done\\Subtitles\\" . $class_name;
+        throw new \Exception('unknown format: ' . $extension);
+    }
 
-        return new $full_class_name();
+    public static function getConverterByFormat($format)
+    {
+        foreach (Subtitles::$formats as $row) {
+            if ($row['format'] === $format) {
+                $full_class_name = "\\Done\\Subtitles\\" . $row['class'];
+                /** @var ConverterContract $converter */
+                $converter = new $full_class_name();
+                return $converter;
+            }
+        }
+
+        throw new \Exception("Can't find suitable converter");
+    }
+
+    public static function getConverterByFileContent($file_content)
+    {
+        foreach (Subtitles::$formats as $row) {
+            $class_name = $row['class'];
+            $full_class_name = "\\Done\\Subtitles\\" . $class_name;
+            /** @var ConverterContract $converter */
+            $converter = new $full_class_name();
+            if ($converter->canParseFileContent($file_content)) {
+                return $converter;
+            }
+        }
+
+        throw new \Exception("Can't find suitable converter");
     }
 
     public static function fileExtension($filename) {

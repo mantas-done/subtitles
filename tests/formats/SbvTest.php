@@ -7,6 +7,18 @@ class SbvTest extends TestCase {
 
     use AdditionalAssertions;
 
+    public function testRecognizesSbv()
+    {
+        $content = <<< TEXT
+0:05:40.000,0:05:46.000
+Don’t think that you can just ignore them
+because they’re not your children or relatives.
+TEXT;
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\SbvConverter::class);
+        $this->assertTrue(true);
+    }
+
     public function testFileToInternalFormat()
     {
         $actual_file_content = <<< TEXT

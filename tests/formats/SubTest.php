@@ -7,6 +7,13 @@ class SubTest extends TestCase {
 
     use AdditionalAssertions;
 
+    public function testRecognizesSub()
+    {
+        $content = file_get_contents('./tests/files/sub.sub');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\SubConverter::class);
+    }
+
     public function testConvertFromSubToSrt()
     {
         $sub_path = './tests/files/sub.sub';

@@ -1,6 +1,11 @@
 <?php namespace Done\Subtitles;
 
-class AssConverter implements ConverterContract {
+class AssConverter implements ConverterContract
+{
+    public function canParseFileContent($file_content)
+    {
+        return preg_match('/^\[Script Info\]\R/m', $file_content) === 1;
+    }
 
     public function fileContentToInternalFormat($file_content)
     {

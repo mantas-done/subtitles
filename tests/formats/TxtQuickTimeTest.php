@@ -3,7 +3,7 @@
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 
-class TxtTest extends TestCase {
+class TxtQuickTimeTest extends TestCase {
 
     use AdditionalAssertions;
 
@@ -22,6 +22,13 @@ Very good, Lieutenant.
 [01:02:22.12]
 
 ";
+
+    public function testRecognizesTxtQuictime()
+    {
+        $content = $this->qttxt;
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\TxtQuickTimeConverter::class);
+    }
 
     public function testConvertingToFormat()
     {

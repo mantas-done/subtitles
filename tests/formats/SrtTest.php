@@ -9,6 +9,13 @@ class SrtTest extends TestCase {
 
     protected $format = 'srt';
 
+    public function testRecognizesSrt()
+    {
+        $content = file_get_contents('./tests/files/srt.srt');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\SrtConverter::class);
+    }
+
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()
     {
         $srt_path = './tests/files/srt.srt';

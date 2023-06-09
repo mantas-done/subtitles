@@ -7,6 +7,13 @@ class AssTest extends TestCase {
 
     use AdditionalAssertions;
 
+    public function testAss()
+    {
+        $content = file_get_contents('./tests/files/ass.ass');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\AssConverter::class);
+    }
+
     public function testConvertFromAssToInternalFormat()
     {
         $ass_path = './tests/files/ass.ass';

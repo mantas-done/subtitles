@@ -7,6 +7,13 @@ class TtmlTest extends TestCase {
 
     use AdditionalAssertions;
 
+    public function testRecognizesTtml()
+    {
+        $content = file_get_contents('./tests/files/ttml.ttml');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertEquals(\Done\Subtitles\TtmlConverter::class, $converter::class);
+    }
+
     public function testConvertFromSrtToTtml()
     {
         $srt_path = './tests/files/srt.srt';

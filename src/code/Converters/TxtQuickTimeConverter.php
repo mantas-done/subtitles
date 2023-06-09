@@ -1,7 +1,12 @@
 <?php namespace Done\Subtitles;
 
 // qt.txt
-class TxtConverter implements ConverterContract {
+class TxtQuickTimeConverter implements ConverterContract
+{
+    public function canParseFileContent($file_content)
+    {
+        return preg_match('/{QTtext}/m', $file_content) === 1;
+    }
 
     private static $fps = 23;
 

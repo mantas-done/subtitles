@@ -7,6 +7,13 @@ class VttTest extends TestCase {
 
     use AdditionalAssertions;
 
+    public function testRecognizesSrt()
+    {
+        $content = file_get_contents('./tests/files/vtt.vtt');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\VttConverter::class);
+    }
+
     public function testConvertFromVttToSrt()
     {
         $vtt_path = './tests/files/vtt.vtt';

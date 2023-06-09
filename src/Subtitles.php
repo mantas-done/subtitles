@@ -1,24 +1,6 @@
 <?php namespace Done\Subtitles;
 
-interface SubtitleContract {
-
-    public static function convert($from_file_path, $to_file_path);
-
-    public static function load($file_name_or_file_content, $extension = null); // load file
-    public function save($file_name); // save file
-    public function content($format); // output file content (instead of saving to file)
-
-    public function add($start, $end, $text); // add one line or several
-    public function remove($from, $till); // delete text from subtitles
-    public function shiftTime($seconds, $from = 0, $till = null); // add or subtract some amount of seconds from all times
-    public function shiftTimeGradually($seconds_to_shift, $from = 0, $till = null);
-
-    public function getInternalFormat();
-    public function setInternalFormat(array $internal_format);
-}
-
-
-class Subtitles implements SubtitleContract {
+class Subtitles {
 
     protected $input;
     protected $input_format;
@@ -28,9 +10,23 @@ class Subtitles implements SubtitleContract {
     protected $converter;
     protected $output;
 
-    public static function convert($from_file_path, $to_file_path)
+    public static $formats = [
+        ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => 'AssConverter'],
+        ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => 'AssConverter'],
+        ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => 'DfxpConverter'],
+        ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => 'SbvConverter'],
+        ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => 'SrtConverter'],
+        ['extension' => 'stl',  'format' => 'stl',              'name' => 'Spruce Subtitle File',       'class' => 'StlConverter'],
+        ['extension' => 'sub',  'format' => 'sub',              'name' => '????',                       'class' => 'SubConverter'], // MicroDVD, SubViewer2.0
+        ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
+        ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => 'TtmlConverter'],
+        ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => 'TxtQuickTimeConverter'],
+        ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => 'VttConverter'],
+    ];
+
+    public static function convert($from_file_path, $to_file_path, $to_format = null)
     {
-        static::load($from_file_path)->save($to_file_path);
+        static::load($from_file_path)->save($to_file_path, $to_format);
     }
 
     public static function load($file_name_or_file_content, $extension = null)
@@ -42,10 +38,10 @@ class Subtitles implements SubtitleContract {
         return static::loadString($file_name_or_file_content, $extension);
     }
 
-    public function save($path)
+    public function save($path, $format = null)
     {
         $file_extension = Helpers::fileExtension($path);
-        $content = $this->content($file_extension);
+        $content = $this->content($file_extension, $format);
 
         file_put_contents($path, $content);
 
@@ -113,11 +109,15 @@ class Subtitles implements SubtitleContract {
         return $this;
     }
 
-    public function content($format)
+    public function content($extension, $format = null)
     {
-        $format = strtolower(trim($format, '.'));
+        $extension = strtolower(trim($extension, '.'));
 
-        $converter = Helpers::getConverter($format);
+        if ($format) {
+            $converter = Helpers::getConverterByFormat($format);
+        } else {
+            $converter = Helpers::getConverterByExtension($extension);
+        }
         $content = $converter->internalFormatToFileContent($this->internal_format);
 
         return $content;
@@ -197,12 +197,9 @@ class Subtitles implements SubtitleContract {
 
         $converter->input_format = $extension;
 
-        $input_converter = Helpers::getConverter($extension);
+        $input_converter = Helpers::getConverterByExtension($extension);
         $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
 
         return $converter;
     }
 }
-
-// https://github.com/captioning/captioning has potential, but :(
-// https://github.com/snikch/captions-php too small

@@ -7,6 +7,13 @@ class StlTest extends TestCase {
 
     use AdditionalAssertions;
 
+    public function testRecognizesStl()
+    {
+        $content = file_get_contents('./tests/files/stl.stl');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class === \Done\Subtitles\StlConverter::class);
+    }
+
     public function testConvertFromSrtToStl()
     {
         $srt_path = './tests/files/srt.srt';

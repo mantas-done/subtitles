@@ -19,6 +19,19 @@ class PublicInterfaceTest extends TestCase {
         unlink($temporary_srt_path);
     }
 
+    public function testConvertUsingThirdParameter()
+    {
+        $srt_path = './tests/files/srt_for_public_interface_test.srt';
+        $temporary_srt_path = './tests/files/tmp/file.no_extension';
+        @unlink($temporary_srt_path);
+
+        Subtitles::convert($srt_path, $temporary_srt_path, 'vtt');
+        $converter = \Done\Subtitles\Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path));
+        unlink($temporary_srt_path);
+
+        $this->assertEquals(\Done\Subtitles\VttConverter::class, $converter::class);
+    }
+
     public function testLoadFromFile()
     {
         $srt_path = './tests/files/srt_for_public_interface_test.srt';

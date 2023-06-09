@@ -2,6 +2,11 @@
 
 class TtmlConverter implements ConverterContract
 {
+    public function canParseFileContent($file_content)
+    {
+        return strpos($file_content, 'xmlns="http://www.w3.org/ns/ttml"') !== false && strpos($file_content, 'xml:id="d1"') === false;
+    }
+
     public function fileContentToInternalFormat($file_content)
     {
         preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
