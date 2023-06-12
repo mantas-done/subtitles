@@ -29,8 +29,7 @@ class SmiTest extends TestCase {
     public function testConvertToFile()
     {
         $actual_file_content = self::generatedSubtitles()->content('smi');
-        $this->assertEquals(self::fileContent(), $actual_file_content);
-//        $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
+        $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
     }
 
     // ---------------------------------- private ----------------------------------------------------------------------
