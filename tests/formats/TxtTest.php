@@ -4,7 +4,7 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
-use Tests\Helpers\AdditionalAssertionsTrait;
+use Helpers\AdditionalAssertionsTrait;
 
 class TxtTest extends TestCase {
 

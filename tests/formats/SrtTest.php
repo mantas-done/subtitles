@@ -6,7 +6,7 @@ use Done\Subtitles\Code\Converters\SrtConverter;
 use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
-use Tests\Helpers\AdditionalAssertionsTrait;
+use Helpers\AdditionalAssertionsTrait;
 
 class SrtTest extends TestCase {
 
