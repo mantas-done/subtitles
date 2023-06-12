@@ -168,10 +168,8 @@ Array
 
 ## Running Tests
 
-Simplest way is to download and put phpunit.phar file into the main directory of the project. Then run the command:
-
 ```
-php phpunit.phar
+php vendor/bin/phpunit
 ```
 
 ## Contribution
