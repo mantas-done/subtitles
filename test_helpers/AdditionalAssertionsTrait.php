@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Helpers;
+namespace Helpers;
 
 trait AdditionalAssertionsTrait
 {

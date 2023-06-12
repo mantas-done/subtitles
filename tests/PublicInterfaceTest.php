@@ -6,7 +6,7 @@ use Done\Subtitles\Code\Converters\VttConverter;
 use Done\Subtitles\Code\Helpers;
 use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
-use Tests\Helpers\AdditionalAssertionsTrait;
+use Helpers\AdditionalAssertionsTrait;
 
 class PublicInterfaceTest extends TestCase
 {
