@@ -9,7 +9,7 @@ use Done\Subtitles\Code\Converters\SbvConverter;
 use Done\Subtitles\Code\Converters\SmiConverter;
 use Done\Subtitles\Code\Converters\SrtConverter;
 use Done\Subtitles\Code\Converters\StlConverter;
-use Done\Subtitles\Code\Converters\SubConverter;
+use Done\Subtitles\Code\Converters\SubViewerConverter;
 use Done\Subtitles\Code\Converters\TtmlConverter;
 use Done\Subtitles\Code\Converters\TxtConverter;
 use Done\Subtitles\Code\Converters\TxtQuickTimeConverter;
@@ -33,7 +33,8 @@ class Subtitles
         ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => SbvConverter::class],
         ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => SrtConverter::class],
         ['extension' => 'stl',  'format' => 'stl',              'name' => 'Spruce Subtitle File',       'class' => StlConverter::class],
-        ['extension' => 'sub',  'format' => 'sub',              'name' => '????',                       'class' => SubConverter::class], // MicroDVD, SubViewer2.0
+        ['extension' => 'sub',  'format' => 'sub',              'name' => 'SubViewer2.0',               'class' => SubViewerConverter::class],
+        ['extension' => 'sub',  'format' => 'sub',              'name' => 'MicroDVD',                   'class' => SubViewerConverter::class],
         ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
         ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
         ['extension' => 'smi',  'format' => 'smi',              'name' => 'SAMI',                       'class' => SmiConverter::class],

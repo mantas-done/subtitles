@@ -2,7 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
-class SubConverter implements ConverterContract
+class SubViewerConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
@@ -17,6 +17,8 @@ class SubConverter implements ConverterContract
      */
     public function fileContentToInternalFormat($file_content)
     {
+        $file_content = self::removeStyles($file_content);
+
         $internal_format = []; // array - where file content will be stored
 
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
@@ -99,5 +101,16 @@ class SubConverter implements ConverterContract
         $srt_time = gmdate("H:i:s", $seconds) . '.' . $remainder_string;
 
         return $srt_time;
+    }
+
+    protected static function removeStyles($content)
+    {
+        $lines = preg_split('/\R/', $content);
+        foreach ($lines as $k => $line) {
+            if (strpos($line, '[') === 0) {
+                unset($lines[$k]);
+            }
+        }
+        return implode("\n", $lines);
     }
 }
