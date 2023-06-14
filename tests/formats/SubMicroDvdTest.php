@@ -24,7 +24,6 @@ class SubMicroDvdTest extends TestCase {
         $sub_path = './tests/files/sub_microdvd.sub';
         $actual = (new Subtitles())->load($sub_path)->getInternalFormat();
         $expected = $this->defaultSubtitles()->getInternalFormat();
-//var_dump($expected, $actual); exit;
         $this->assertInternalFormatsEqual($expected, $actual, 0.25);
     }
 
@@ -34,5 +33,13 @@ class SubMicroDvdTest extends TestCase {
         $actual = (new Subtitles())->load($sub_path)->content('sub_microdvd');
         $expected = file_get_contents($sub_path);
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
+    }
+
+    public function testParsesStyles()
+    {
+        $sub_path = './tests/files/sub_microdvd_with_styles.sub';
+        $actual = (new Subtitles())->load($sub_path)->getInternalFormat();
+        $expected = $this->defaultSubtitles()->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual, 0.25);
     }
 }

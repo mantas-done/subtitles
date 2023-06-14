@@ -14,7 +14,7 @@ class SubMicroDvdConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        $pattern = "/\{(\d+)\}\{(\d+)\}(.*)/";
+        $pattern = "/\{(\d+)\}\{(\d+)\}(\{.*\})?(.+)/";
         preg_match_all($pattern, $file_content, $blocks, PREG_SET_ORDER);
 
         $internal_format = [];
@@ -23,7 +23,7 @@ class SubMicroDvdConverter implements ConverterContract
             $internal_format[] = [
                 'start' => static::timeToInternal($block[1]),
                 'end' => static::timeToInternal($block[2]),
-                'lines' => explode("|", $block[3]),
+                'lines' => explode("|", $block[4]),
             ];
         }
         return $internal_format;
