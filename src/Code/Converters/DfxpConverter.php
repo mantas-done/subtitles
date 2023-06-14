@@ -70,24 +70,24 @@ class DfxpConverter implements ConverterContract
 
     protected static function internalTimeToDfxp($internal_time)
     {
-        $parts = explode('.', $internal_time); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
-
-        $srt_time = gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
-
-        return $srt_time;
+        return ($internal_time * 10000000) . 't';
     }
 
     protected static function dfxpTimeToInternal($dfxp_time)
     {
-        $parts = explode(',', $dfxp_time);
+        if (substr($dfxp_time, -1) === 't') { // if last symbol is "t"
+            // parses 340400000t
+            return substr($dfxp_time, 0, -1) / 10000000;
+        } else {
+            // parses 00:00:34,040
+            $parts = explode(',', $dfxp_time);
 
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float)('0.' . $parts[1]);
+            $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
+            $milliseconds = (float)('0.' . $parts[1]);
 
-        $time = $only_seconds + $milliseconds;
+            $time = $only_seconds + $milliseconds;
 
-        return $time;
+            return $time;
+        }
     }
 }
