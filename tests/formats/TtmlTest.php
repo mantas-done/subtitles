@@ -41,23 +41,26 @@ class TtmlTest extends TestCase {
 
         // stl to srt
         $ttml_object = Subtitles::load($ttml_path);
-        $stl_internal_format = $ttml_object->getInternalFormat();
+        $actual = $ttml_object->getInternalFormat();
 
         $srt_object = Subtitles::load($srt_path);
-        $srt_internal_format = $srt_object->getInternalFormat();
+        $expected = $srt_object->getInternalFormat();
 
-        // compare both internal formats
-        foreach ($srt_internal_format as $block_key => $srt_block) {
-            $start_time_diff = abs($srt_block['start'] - $stl_internal_format[$block_key]['start']);
-            $this->assertLessThan(0.1, $start_time_diff);
+        $this->assertInternalFormatsEqual($actual, $expected);
+    }
 
-            $end_time_diff = abs($srt_block['end'] - $stl_internal_format[$block_key]['end']);
-            $this->assertLessThan(0.1, $end_time_diff);
-
-            foreach ($srt_block['lines'] as $line_key => $srt_line) {
-                $this->assertEquals($srt_line, $stl_internal_format[$block_key]['lines'][$line_key]);
-            }
-        }
+    public function testParses2()
+    {
+        $ttml_path = './tests/files/ttml2.ttml';
+        $actual = Subtitles::load($ttml_path)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 10, 'Hello I am your first line.')
+            ->add(2, 10, ['I am your second captions', 'but with two lines.'])
+            ->add(4, 10, ['Je suis le troisième sous-titre.'])
+            ->add(6, 10, ['I am another caption with Bold and Italic styles.'])
+            ->add(8, 10, ['I am the last caption displayed in red and centered.'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
     }
 
 }

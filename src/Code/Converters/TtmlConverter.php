@@ -11,6 +11,50 @@ class TtmlConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
+        $dom = new \DOMDocument();
+        $dom->loadXML($file_content);
+
+        $array = array();
+
+        $body = $dom->getElementsByTagName('body')->item(0);
+        if ($body) {
+            $div = $body->getElementsByTagName('div')->item(0);
+            if ($div) {
+                $pElements = $div->getElementsByTagName('p');
+                foreach ($pElements as $p) {
+                    $begin = $p->getAttribute('begin');
+                    $end = $p->getAttribute('end');
+                    $lines = '';
+
+                    $textNodes = $p->childNodes;
+                    foreach ($textNodes as $node) {
+                        if ($node->nodeType === XML_TEXT_NODE) {
+                            $lines .= $node->nodeValue;
+                        } else {
+                            $lines .= $dom->saveXML($node); // Preserve HTML tags
+                        }
+                    }
+
+                    $lines = preg_replace('/<br\s*\/?>/', '<br>', $lines); // normalize <br>*/
+                    $lines = explode('<br>', $lines);
+                    $lines = array_map('strip_tags', $lines);
+                    $lines = array_map('trim', $lines);
+
+                    $array[] = array(
+                        'start' => static::ttmlTimeToInternal($begin),
+                        'end' => static::ttmlTimeToInternal($end),
+                        'lines' => $lines,
+                    );
+                }
+            }
+        }
+
+        return $array;
+
+
+
+
+
         preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
 
         $internal_format = [];
@@ -68,6 +112,15 @@ class TtmlConverter implements ConverterContract
 
     protected static function ttmlTimeToInternal($ttml_time)
     {
-        return rtrim($ttml_time, 's');
+        if (substr($ttml_time, -1) === 's') {
+            return rtrim($ttml_time, 's');
+        } else {
+            $timeParts = explode(':', $ttml_time);
+            $hours = (int)$timeParts[0];
+            $minutes = (int)$timeParts[1];
+            $seconds = (int)$timeParts[2];
+            $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+            return $totalSeconds;
+        }
     }
 }
