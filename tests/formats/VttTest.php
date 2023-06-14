@@ -121,4 +121,28 @@ TEXT;
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testParsesFileWithStyles()
+    {
+        $given = file_get_contents('./tests/files/vtt_with_styles.vtt');
+        $actual = (new Subtitles())->load($given, 'vtt')->getInternalFormat();
+
+        $expected = (new Subtitles())
+            ->add(0, 10, 'Hello world.')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testParsesFileWithHtml()
+    {
+        $given = file_get_contents('./tests/files/vtt_with_html.vtt');
+        $actual = (new Subtitles())->load($given, 'vtt')->getInternalFormat();
+
+        $expected = (new Subtitles())
+            ->add(0.0, 10.0, 'Sur les playground, ici à Montpellier')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
 }

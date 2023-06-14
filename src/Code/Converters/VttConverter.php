@@ -11,34 +11,15 @@ class VttConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        $internal_format = []; // array - where file content will be stored
+        preg_match_all('/(\d{2}:\d{2}:\d{2}\.\d{3})\s-->\s(\d{2}:\d{2}:\d{2}\.\d{3})\s+(.*?)(?=\n\n|$)/s', $file_content, $matches, PREG_SET_ORDER);
 
-        $file_content = preg_replace('/\n\n+/', "\n\n", $file_content); // replace if there are more than 2 new lines
-
-        $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
-
-        foreach ($blocks as $block) {
-            if(preg_match('/^WEBVTT.{0,}/', $block, $matches)) {
-                continue;
-            }
-            
-            $lines = explode("\n", $block); // separate all block lines
-            
-            if (strpos($lines[0], '-->') === false) { // first line not containing '-->', must be cue id
-                unset($lines[0]); // not supporting cue id
-                $lines = array_values($lines);
-            }
-
-            $times = explode(' --> ', $lines[0]);
-
-            $lines_array = array_map(static::fixLine(), array_slice($lines, 1)); // get all the remaining lines from block (if multiple lines of text)
-            if (count($lines_array) === 0) {
-                continue;
-            }
+        foreach ($matches as $match) {
+            $lines = explode("\n", $match[3]);
+            $lines_array = array_map(static::fixLine(), $lines);
 
             $internal_format[] = [
-                'start' => static::vttTimeToInternal($times[0]),
-                'end' => static::vttTimeToInternal($times[1]),
+                'start' => static::vttTimeToInternal($match[1]),
+                'end' => static::vttTimeToInternal($match[2]),
                 'lines' => $lines_array,
             ];
         }
@@ -96,10 +77,14 @@ class VttConverter implements ConverterContract
     protected static function fixLine()
     {
         return function($line) {
+            // speaker
             if (substr($line, 0, 3) == '<v ') {
                 $line = substr($line, 3);
                 $line = str_replace('>', ' ', $line);
             }
+
+            // html
+            $line = strip_tags($line);
 
             return $line;
         };
