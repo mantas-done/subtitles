@@ -6,7 +6,10 @@ class DfxpConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
-        return preg_match('/xmlns="http:\/\/www\.w3\.org\/ns\/ttml"/m', $file_content) === 1 && preg_match('/xml:id="d1"/m', $file_content) === 1;
+        return
+            (preg_match('/xmlns="http:\/\/www\.w3\.org\/ns\/ttml"/m', $file_content) === 1 && preg_match('/xml:id="d1"/m', $file_content) === 1) // old netflix format;
+            || (strpos($file_content, 'http://netflix.com/ttml/profile/dfxp-ls-sdh') !== false) // new netflix format
+        ;
     }
 
     public function fileContentToInternalFormat($file_content)
@@ -28,22 +31,21 @@ class DfxpConverter implements ConverterContract
 
     public function internalFormatToFileContent(array $internal_format)
     {
-        $file_content = '<?xml version="1.0" encoding="utf-8"?>
-<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <head>
-    <metadata>
-      <ttm:title>Netflix Subtitle</ttm:title>
-    </metadata>
-    <styling>
-      <style tts:fontStyle="normal" tts:fontWeight="normal" xml:id="s1" tts:color="white" tts:fontFamily="Arial" tts:fontSize="100%"></style>
-    </styling>
-    <layout>
-      <region tts:extent="80% 40%" tts:origin="10% 10%" tts:displayAlign="before" tts:textAlign="center" xml:id="topCenter" />
-      <region tts:extent="80% 40%" tts:origin="10% 50%" tts:displayAlign="after" tts:textAlign="center" xml:id="bottomCenter" />
-    </layout>
-  </head>
-  <body>
-    <div style="s1" xml:id="d1">
+        $file_content = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tt xmlns:tt="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:tts="http://www.w3.org/ns/ttml#styling" ttp:tickRate="10000000" ttp:timeBase="media" xmlns="http://www.w3.org/ns/ttml">
+<head>
+<ttp:profile use="http://netflix.com/ttml/profile/dfxp-ls-sdh"/>
+<styling>
+<style tts:backgroundColor="transparent" tts:textAlign="center" xml:id="style0"/>
+<style tts:color="white" tts:fontSize="100%" tts:fontWeight="normal" xml:id="style1"/>
+<style tts:color="white" tts:fontSize="100%" tts:fontStyle="italic" tts:fontWeight="normal" xml:id="style2"/>
+</styling>
+<layout>
+<region tts:displayAlign="after" xml:id="region0"/>
+</layout>
+</head>
+<body>
+<div xml:space="preserve">
 ';
 
         foreach ($internal_format as $k => $block) {
