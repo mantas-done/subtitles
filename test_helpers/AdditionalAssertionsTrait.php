@@ -2,6 +2,8 @@
 
 namespace Helpers;
 
+use Done\Subtitles\Subtitles;
+
 trait AdditionalAssertionsTrait
 {
     public function assertInternalFormatsEqual($expected, $actual, $allowable_error = 0.01)
@@ -23,5 +25,12 @@ trait AdditionalAssertionsTrait
         $expected_file_string = str_replace("\r", "", $expected_file_string);
         $tmp_dfxp_string = str_replace("\r", "", $tmp_dfxp_string);
         $this->assertEquals($expected_file_string, $tmp_dfxp_string);
+    }
+
+    public function defaultSubtitles()
+    {
+        return (new Subtitles())
+            ->add(137.4, 140.4, ['Senator, we\'re making', 'our final approach into Coruscant.'])
+            ->add(3740.5, 3742.5, ['Very good, Lieutenant.']);
     }
 }

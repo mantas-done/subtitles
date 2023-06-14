@@ -51,7 +51,7 @@ class Helpers
             }
         }
 
-        throw new \Exception("Can't find suitable converter");
+        throw new \Exception("Can't find suitable converter, for format: $format");
     }
 
     public static function getConverterByFileContent($file_content)

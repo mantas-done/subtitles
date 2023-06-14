@@ -9,6 +9,7 @@ use Done\Subtitles\Code\Converters\SbvConverter;
 use Done\Subtitles\Code\Converters\SmiConverter;
 use Done\Subtitles\Code\Converters\SrtConverter;
 use Done\Subtitles\Code\Converters\StlConverter;
+use Done\Subtitles\Code\Converters\SubMicroDvdConverter;
 use Done\Subtitles\Code\Converters\SubViewerConverter;
 use Done\Subtitles\Code\Converters\TtmlConverter;
 use Done\Subtitles\Code\Converters\TxtConverter;
@@ -33,8 +34,8 @@ class Subtitles
         ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => SbvConverter::class],
         ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => SrtConverter::class],
         ['extension' => 'stl',  'format' => 'stl',              'name' => 'Spruce Subtitle File',       'class' => StlConverter::class],
-        ['extension' => 'sub',  'format' => 'sub',              'name' => 'SubViewer2.0',               'class' => SubViewerConverter::class],
-        ['extension' => 'sub',  'format' => 'sub',              'name' => 'MicroDVD',                   'class' => SubViewerConverter::class],
+        ['extension' => 'sub',  'format' => 'sub_microdvd',     'name' => 'MicroDVD',                   'class' => SubMicroDvdConverter::class],
+        ['extension' => 'sub',  'format' => 'sub_subviewer',    'name' => 'SubViewer2.0',               'class' => SubViewerConverter::class],
         ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
         ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
         ['extension' => 'smi',  'format' => 'smi',              'name' => 'SAMI',                       'class' => SmiConverter::class],
@@ -51,7 +52,7 @@ class Subtitles
     public static function load($file_name_or_file_content, $format = null)
     {
         if (file_exists($file_name_or_file_content)) {
-            return static::loadFile($file_name_or_file_content);
+            return static::loadFile($file_name_or_file_content, $format);
         }
 
         return static::loadString($file_name_or_file_content, $format);
@@ -202,26 +203,27 @@ class Subtitles
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
-    public static function loadFile($path, $extension = null)
+    public static function loadFile($path, $format = null)
     {
         if (!file_exists($path)) {
             throw new \Exception("file doesn't exist: " . $path);
         }
 
         $string = file_get_contents($path);
-        if (!$extension) {
-            $extension = Helpers::fileExtension($path);
-        }
 
-        return static::loadString($string, $extension);
+        return static::loadString($string, $format);
     }
 
-    public static function loadString($text, $format)
+    public static function loadString($text, $format = null)
     {
         $converter = new static;
         $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
 
-        $input_converter = Helpers::getConverterByFormat($format);
+        if ($format) {
+            $input_converter = Helpers::getConverterByFormat($format);
+        } else {
+            $input_converter = Helpers::getConverterByFileContent($converter->input);
+        }
         $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
 
         return $converter;
