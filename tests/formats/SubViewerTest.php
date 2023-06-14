@@ -45,7 +45,7 @@ TEXT;
         $sub_path = './tests/files/sub_viewer.sub';
 
         $expected = file_get_contents($sub_path);
-        $actual = (new Subtitles())->load($srt_path)->content('sub');
+        $actual = (new Subtitles())->load($srt_path)->content('sub_subviewer');
 
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
