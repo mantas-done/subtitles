@@ -12,14 +12,15 @@ Convert and edit subtitles and captions.
 | [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt | vtt |
 | [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ) | .stl | stl |
 | [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv | sbv |
-| [SubViewer](https://wiki.videolan.org/SubViewer) | .sub | sub |
+| [SubViewer](https://wiki.videolan.org/SubViewer) | .sub | sub_subviewer |
+| [MicroDVD](https://en.wikipedia.org/wiki/MicroDVD) | .sub | sub_microdvd |
 | Advanced Sub Station | .ass | ass |
 | [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp | dfxp |
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml | ttml |
 | [SAMI](https://en.wikipedia.org/wiki/SAMI) | .smi | smi |
-| Plaintext | .txt | txt |
-| Comma separated values | .csv | csv |
 | QuickTime | .qt.txt | txt_quicktime |
+| Comma separated values | .csv | csv |
+| Plaintext | .txt | txt |
 
 ## Installation
 ```
