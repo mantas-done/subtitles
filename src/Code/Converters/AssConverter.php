@@ -11,13 +11,27 @@ class AssConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all('/Dialogue: \d+,([^,]*),([^,]*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(.*)/', $file_content, $blocks, PREG_SET_ORDER);
+        // get column numbers (every file can have a different number of columns that is encoded in this string)
+        preg_match('/\[Events]\RFormat:(.*)/', $file_content, $formats);
+        $formats = explode(',', $formats[1]);
+        $formats = array_map('trim', $formats);
+        $array = array_flip($formats);
+        $start_position = $array['Start'];
+        $end_position = $array['End'];
+        $text_position = $array['Text'];
 
+        $count = count($formats);
+        $pattern = '';
+        for ($i = 0; $i < $count - 1; $i++) {
+            $pattern .= '([^,]*),';
+        }
+        $pattern = '/Dialogue: ' . $pattern . '(.*)/';
+        preg_match_all($pattern, $file_content, $blocks, PREG_SET_ORDER);
         foreach ($blocks as $block) {
             $internal_format[] = [
-                'start' => static::assTimeToInternal($block[1]),
-                'end' => static::assTimeToInternal($block[2]),
-                'lines' => explode('\N', $block[3]),
+                'start' => static::assTimeToInternal($block[$start_position + 1]),
+                'end' => static::assTimeToInternal($block[$end_position + 1]),
+                'lines' => explode('\N', self::removeHtmlLikeTags($block[$text_position + 1])),
             ];
         }
 
@@ -89,5 +103,10 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
         $srt_time = gmdate("G:i:s", floor($whole)) . '.' . str_pad($decimal, 2, '0', STR_PAD_RIGHT);
 
         return $srt_time;
+    }
+
+    private static function removeHtmlLikeTags($string)
+    {
+        return preg_replace('/\{[^}]+\}/', '', $string);
     }
 }

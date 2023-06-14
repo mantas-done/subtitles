@@ -65,4 +65,14 @@ class AssTest extends TestCase {
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testConvertFromAssWithDifferentFormatToInternalFormat3()
+    {
+        $ass_path = './tests/files/ass_different_format3.ass';
+        $actual = (new Subtitles())->load($ass_path)->getInternalFormat();
+
+        $expected = (new Subtitles())->add(0, 10, 'The quick brown fox jumps over a lazy dog.')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

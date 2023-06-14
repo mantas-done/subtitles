@@ -1,0 +1,12 @@
+[Script Info]
+PlayResX: 1280
+PlayResY: 720
+WrapStyle: 1
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Alignment, Encoding
+Style: S1, Arial,60,&HFFB0B0,&HFFFF00,&H998877,&H773030,7,0
+
+[Events]
+Format: Start, End, Style, Text
+Dialogue: 00:00:00.00,00:00:10.00,S1,{\pos(60,100)}The quick {\b1}brown{\b0} fox jumps over a lazy dog.
