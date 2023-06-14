@@ -15,10 +15,11 @@ class DfxpConverter implements ConverterContract
 
         $internal_format = [];
         foreach ($matches as $block) {
+            $block['text'] = preg_replace('/<br\s*\/?>/', '<br>', $block['text']); // normalize <br>
             $internal_format[] = [
                 'start' => static::dfxpTimeToInternal($block['start']),
                 'end' => static::dfxpTimeToInternal($block['end']),
-                'lines' => explode('<br/>', $block['text']),
+                'lines' => explode('<br>', $block['text']),
             ];
         }
 

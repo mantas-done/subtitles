@@ -60,4 +60,13 @@ class DfxpTest extends TestCase {
         }
     }
 
+    public function testParsesDifferentBr()
+    {
+        $dfxp_object = Subtitles::load('./tests/files/dfxp_with_different_br.dfxp');
+        $actual = $dfxp_object->getInternalFormat();
+
+        $expected = (new Subtitles())->add(0, 1, ['one', 'two', 'three', 'four'])->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
 }
