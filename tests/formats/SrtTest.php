@@ -36,7 +36,7 @@ class SrtTest extends TestCase {
 
     public function testFileToInternalFormat()
     {
-        $actual_internal_format = Subtitles::load(self::fileContent(), $this->format)->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString(self::fileContent(), $this->format)->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
@@ -60,7 +60,7 @@ class SrtTest extends TestCase {
 Very good, Lieutenant.
 TEXT;
 
-        $actual_format = Subtitles::load($content, 'srt')->getInternalFormat();
+        $actual_format = Subtitles::loadFromString($content, 'srt')->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(3, 4, ['Very good, Lieutenant.'])
             ->getInternalFormat();

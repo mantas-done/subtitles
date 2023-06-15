@@ -47,7 +47,7 @@ Very good, Lieutenant.
 
     public function testConvertingToInternalFormat()
     {
-        $actual = Subtitles::load($this->qttxt, 'txt_quicktime')->getInternalFormat();
+        $actual = Subtitles::loadFromString($this->qttxt, 'txt_quicktime')->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])

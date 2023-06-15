@@ -21,7 +21,7 @@ class SmiTest extends TestCase {
 
     public function testFileToInternalFormat()
     {
-        $actual_internal_format = Subtitles::load('./tests/files/smi.smi', 'smi')->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromFile('./tests/files/smi.smi', 'smi')->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }

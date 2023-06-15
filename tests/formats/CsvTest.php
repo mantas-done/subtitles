@@ -15,7 +15,7 @@ class CsvTest extends TestCase {
         $csv = 'Start,End,Text
 137.44,140.375,"Senator, we\'re making our final approach into Coruscant."
 3740.476,3742.501,"Very good, Lieutenant."';
-        $actual_internal_format = Subtitles::load($csv, 'csv')->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString($csv, 'csv')->getInternalFormat();
         $expected_internal_format = (new Subtitles())
         ->add(137.44, 140.375, ['Senator, we\'re making our final approach into Coruscant.'])
         ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])->getInternalFormat();

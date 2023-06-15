@@ -46,18 +46,8 @@ class Subtitles
 
     public static function convert($from_file_path, $to_file_path, $to_format = null)
     {
-        static::load($from_file_path)->save($to_file_path, $to_format);
+        static::loadFromFile($from_file_path)->save($to_file_path, $to_format);
     }
-
-    public static function load($file_name_or_file_content, $format = null)
-    {
-        if (file_exists($file_name_or_file_content)) {
-            return static::loadFile($file_name_or_file_content, $format);
-        }
-
-        return static::loadString($file_name_or_file_content, $format);
-    }
-
 
     public function save($path, $format = null)
     {
@@ -163,14 +153,6 @@ class Subtitles
         return $this;
     }
 
-    /**
-     * @deprecated  Use shiftTime() instead
-     */
-    public function time($seconds, $from = null, $till = null)
-    {
-        return $this->shiftTime($seconds, $from, $till);
-    }
-
     // -------------------------------------- private ------------------------------------------------------------------
 
     protected function sortInternalFormat()
@@ -203,7 +185,7 @@ class Subtitles
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
-    public static function loadFile($path, $format = null)
+    public static function loadFromFile($path, $format = null)
     {
         if (!file_exists($path)) {
             throw new \Exception("file doesn't exist: " . $path);
@@ -211,10 +193,10 @@ class Subtitles
 
         $string = file_get_contents($path);
 
-        return static::loadString($string, $format);
+        return static::loadFromString($string, $format);
     }
 
-    public static function loadString($text, $format = null)
+    public static function loadFromString($text, $format = null)
     {
         $converter = new static;
         $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));

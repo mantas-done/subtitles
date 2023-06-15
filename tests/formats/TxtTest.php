@@ -12,7 +12,7 @@ class TxtTest extends TestCase {
 
     public function testFileToInternalFormat()
     {
-        $actual_internal_format = Subtitles::load(self::fileContent(), 'txt')->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString(self::fileContent(), 'txt')->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }

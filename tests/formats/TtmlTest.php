@@ -40,10 +40,10 @@ class TtmlTest extends TestCase {
         $ttml_path = './tests/files/ttml.ttml';
 
         // stl to srt
-        $ttml_object = Subtitles::load($ttml_path);
+        $ttml_object = Subtitles::loadFromFile($ttml_path);
         $actual = $ttml_object->getInternalFormat();
 
-        $srt_object = Subtitles::load($srt_path);
+        $srt_object = Subtitles::loadFromFile($srt_path);
         $expected = $srt_object->getInternalFormat();
 
         $this->assertInternalFormatsEqual($actual, $expected);
@@ -52,7 +52,7 @@ class TtmlTest extends TestCase {
     public function testParses2()
     {
         $ttml_path = './tests/files/ttml2.ttml';
-        $actual = Subtitles::load($ttml_path)->getInternalFormat();
+        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(0, 10, 'Hello I am your first line.')
             ->add(2, 10, ['I am your second captions', 'but with two lines.'])

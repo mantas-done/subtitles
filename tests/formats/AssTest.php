@@ -24,8 +24,8 @@ class AssTest extends TestCase {
         $ass_path = './tests/files/ass.ass';
         $srt_path = './tests/files/srt.srt';
 
-        $actual = (new Subtitles())->load($ass_path)->getInternalFormat();
-        $expected = (new Subtitles())->load($srt_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ass_path)->getInternalFormat();
+        $expected = (new Subtitles())->loadFromFile($srt_path)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -35,7 +35,7 @@ class AssTest extends TestCase {
         $ass_path = './tests/files/ass.ass';
         $srt_path = './tests/files/srt.srt';
 
-        $actual = (new Subtitles())->load($srt_path)->content('ass');
+        $actual = (new Subtitles())->loadFromFile($srt_path)->content('ass');
         $expected = file_get_contents($ass_path);
 
         $actual = str_replace("\r", "", $actual);
@@ -49,8 +49,8 @@ class AssTest extends TestCase {
         $ass_path = './tests/files/ass_different_format.ass';
         $srt_path = './tests/files/srt.srt';
 
-        $actual = (new Subtitles())->load($ass_path)->getInternalFormat();
-        $expected = (new Subtitles())->load($srt_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ass_path)->getInternalFormat();
+        $expected = (new Subtitles())->loadFromFile($srt_path)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -60,8 +60,8 @@ class AssTest extends TestCase {
         $ass_path = './tests/files/ass_different_format2.ass';
         $srt_path = './tests/files/srt.srt';
 
-        $actual = (new Subtitles())->load($ass_path)->getInternalFormat();
-        $expected = (new Subtitles())->load($srt_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ass_path)->getInternalFormat();
+        $expected = (new Subtitles())->loadFromFile($srt_path)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -69,7 +69,7 @@ class AssTest extends TestCase {
     public function testConvertFromAssWithDifferentFormatToInternalFormat3()
     {
         $ass_path = './tests/files/ass_different_format3.ass';
-        $actual = (new Subtitles())->load($ass_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ass_path)->getInternalFormat();
 
         $expected = (new Subtitles())->add(0, 10, 'The quick brown fox jumps over a lazy dog.')->getInternalFormat();
 

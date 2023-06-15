@@ -41,10 +41,10 @@ class StlTest extends TestCase {
         $stl_path = './tests/files/stl.stl';
 
         // stl to srt
-        $stl_object = Subtitles::load($stl_path);
+        $stl_object = Subtitles::loadFromFile($stl_path);
         $stl_internal_format = $stl_object->getInternalFormat();
 
-        $srt_object = Subtitles::load($srt_path);
+        $srt_object = Subtitles::loadFromFile($srt_path);
         $srt_internal_format = $srt_object->getInternalFormat();
 
         // compare both internal formats
@@ -64,7 +64,7 @@ class StlTest extends TestCase {
     public function testParsesFilesWithComments()
     {
         // checking if no exceptions are thrown
-        Subtitles::load('./tests/files/stl_with_comments.stl')->content('stl');
+        Subtitles::loadFromFile('./tests/files/stl_with_comments.stl')->content('stl');
 
         // phpunit complains if no assertions are made
         $this->assertTrue(true);

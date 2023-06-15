@@ -52,7 +52,7 @@ $subtitles->save('subtitles.vtt');
 
 Load subtitles from existing file
 ```php
-$subtitles = Subtitles::load('subtitles.srt');
+$subtitles = Subtitles::loadFromFile('subtitles.srt');
 ```
 
 Load subtitles from string
@@ -63,7 +63,7 @@ $string = "
 Senator, we're making our final approach
 ";  
 
-$subtitles = Subtitles::load($string, 'srt');
+$subtitles = Subtitles::loadFromString($string, 'srt');
 ```
 
 Save subtitles to file

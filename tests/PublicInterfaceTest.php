@@ -41,7 +41,7 @@ class PublicInterfaceTest extends TestCase
     {
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
 
-        $subtitles = Subtitles::load($srt_path);
+        $subtitles = Subtitles::loadFromFile($srt_path);
 
         $this->assertTrue(!empty($subtitles->getInternalFormat()));
     }
@@ -54,7 +54,7 @@ class PublicInterfaceTest extends TestCase
 Senator, we're making
 our final approach into Coruscant.
     ";
-        $subtitles = Subtitles::load($string, 'srt');
+        $subtitles = Subtitles::loadFromString($string, 'srt');
 
         $this->assertTrue(!empty($subtitles->getInternalFormat()));
     }
@@ -63,21 +63,21 @@ our final approach into Coruscant.
     {
         $this->expectException(\Exception::class);
 
-        Subtitles::load("normal file\nnormal file");
+        Subtitles::loadFromFile("normal file\nnormal file");
     }
 
     public function testLoadFileThatDoesNotExist()
     {
         $this->expectException(\Exception::class);
 
-        Subtitles::load("some_random_name.srt");
+        Subtitles::loadFromFile("some_random_name.srt");
     }
 
     public function testLoadFileWithNotSupportedExtension()
     {
         $this->expectException(\Exception::class);
 
-        Subtitles::load("subtitles.exe");
+        Subtitles::loadFromFile("subtitles.exe");
     }
 
     public function saveFile()
@@ -86,7 +86,7 @@ our final approach into Coruscant.
         $temporary_srt_path = './tests/files/tmp/srt.srt';
         @unlink($temporary_srt_path);
 
-        Subtitles::load($srt_path)->save($temporary_srt_path);
+        Subtitles::loadFromFile($srt_path)->save($temporary_srt_path);
 
         $this->assertFileExists($temporary_srt_path);
 
@@ -97,7 +97,7 @@ our final approach into Coruscant.
     {
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
 
-        $content = Subtitles::load($srt_path)->content('srt');
+        $content = Subtitles::loadFromFile($srt_path)->content('srt');
 
         $this->assertTrue(strlen($content) > 10); // 10 - just random number
     }
@@ -107,7 +107,7 @@ our final approach into Coruscant.
         $this->expectException(\Exception::class);
 
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
-        Subtitles::load($srt_path)->content('exe');
+        Subtitles::loadFromFile($srt_path)->content('exe');
     }
 
     public function testAdd()

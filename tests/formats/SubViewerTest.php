@@ -34,7 +34,7 @@ our final approach into Coruscant.
 Very good, Lieutenant.
 TEXT;
 
-        $actual = (new Subtitles())->load($sub_path)->content('srt');
+        $actual = (new Subtitles())->loadFromFile($sub_path)->content('srt');
 
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
@@ -45,7 +45,7 @@ TEXT;
         $sub_path = './tests/files/sub_viewer.sub';
 
         $expected = file_get_contents($sub_path);
-        $actual = (new Subtitles())->load($srt_path)->content('sub_subviewer');
+        $actual = (new Subtitles())->loadFromFile($srt_path)->content('sub_subviewer');
 
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
@@ -53,7 +53,7 @@ TEXT;
     public function testParsesHeaders()
     {
         $sub_path = './tests/files/sub_viewer_with_headers.sub';
-        $actual = (new Subtitles())->load($sub_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($sub_path)->getInternalFormat();
         $expected =  (new Subtitles())
             ->add(137.44, 140.375, ['Senator, we\'re making', 'our final approach into Coruscant.'])
             ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])->getInternalFormat();

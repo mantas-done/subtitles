@@ -24,7 +24,7 @@ class VttTest extends TestCase {
         $vtt_path = './tests/files/vtt.vtt';
         $srt_path = './tests/files/srt.srt';
 
-        $expected = (new Subtitles())->load($vtt_path)->content('srt');
+        $expected = (new Subtitles())->loadFromFile($vtt_path)->content('srt');
         $actual = file_get_contents($srt_path);
 
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
@@ -36,7 +36,7 @@ class VttTest extends TestCase {
         $vtt_path = './tests/files/vtt.vtt';
 
         $expected = file_get_contents($vtt_path);
-        $actual = (new Subtitles())->load($srt_path)->content('vtt');
+        $actual = (new Subtitles())->loadFromFile($srt_path)->content('vtt');
 
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
@@ -50,7 +50,7 @@ class VttTest extends TestCase {
             'lines' => ['Roger Bingham We are in New York City'],
         ]];
 
-        $actual_internal_format = Subtitles::load($vtt_path)->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
@@ -71,7 +71,7 @@ WEBVTT
 Roger Bingham We are in New York City
 TEXT;
 
-        $actual_vtt_file_content = (new Subtitles())->load($input_vtt_file_content, 'vtt')->content('vtt');
+        $actual_vtt_file_content = (new Subtitles())->loadFromString($input_vtt_file_content, 'vtt')->content('vtt');
 
         $this->assertStringEqualsStringIgnoringLineEndings($expected_vtt_file_content, $actual_vtt_file_content);
     }
@@ -79,7 +79,7 @@ TEXT;
     public function testParsesFileWithMissingText()
     {
         $vtt_path = './tests/files/vtt_with_missing_text.vtt';
-        $actual = (new Subtitles())->load($vtt_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($vtt_path)->getInternalFormat();
         $expected = [
             [
                 'start' => 0,
@@ -112,7 +112,7 @@ text1
 00:00:01.000 --> 00:00:02.000
 text2
 TEXT;
-        $actual = (new Subtitles())->load($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(0, 1, 'text1')
@@ -125,7 +125,7 @@ TEXT;
     public function testParsesFileWithStyles()
     {
         $given = file_get_contents('./tests/files/vtt_with_styles.vtt');
-        $actual = (new Subtitles())->load($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(0, 10, 'Hello world.')
@@ -137,7 +137,7 @@ TEXT;
     public function testParsesFileWithHtml()
     {
         $given = file_get_contents('./tests/files/vtt_with_html.vtt');
-        $actual = (new Subtitles())->load($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(0.0, 10.0, 'Sur les playground, ici à Montpellier')

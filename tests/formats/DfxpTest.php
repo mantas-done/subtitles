@@ -40,10 +40,10 @@ class DfxpTest extends TestCase {
         $dfxp_path = './tests/files/dfxp.dfxp';
 
         // stl to srt
-        $dfxp_object = Subtitles::load($dfxp_path);
+        $dfxp_object = Subtitles::loadFromFile($dfxp_path);
         $stl_internal_format = $dfxp_object->getInternalFormat();
 
-        $srt_object = Subtitles::load($srt_path);
+        $srt_object = Subtitles::loadFromFile($srt_path);
         $srt_internal_format = $srt_object->getInternalFormat();
         // compare both internal formats
         foreach ($srt_internal_format as $block_key => $srt_block) {
@@ -61,7 +61,7 @@ class DfxpTest extends TestCase {
 
     public function testParsesDifferentBr()
     {
-        $dfxp_object = Subtitles::load('./tests/files/dfxp_with_different_br.dfxp');
+        $dfxp_object = Subtitles::loadFromFile('./tests/files/dfxp_with_different_br.dfxp');
         $actual = $dfxp_object->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, ['one', 'two', 'three', 'four'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
