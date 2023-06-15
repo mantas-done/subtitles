@@ -14,19 +14,7 @@ class DfxpConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
-
-        $internal_format = [];
-        foreach ($matches as $block) {
-            $block['text'] = preg_replace('/<br\s*\/?>/', '<br>', $block['text']); // normalize <br>
-            $internal_format[] = [
-                'start' => static::dfxpTimeToInternal($block['start']),
-                'end' => static::dfxpTimeToInternal($block['end']),
-                'lines' => explode('<br>', $block['text']),
-            ];
-        }
-
-        return $internal_format;
+        return (new TtmlConverter())->fileContentToInternalFormat($file_content);
     }
 
     public function internalFormatToFileContent(array $internal_format)
@@ -73,23 +61,5 @@ class DfxpConverter implements ConverterContract
     protected static function internalTimeToDfxp($internal_time)
     {
         return ($internal_time * 10000000) . 't';
-    }
-
-    protected static function dfxpTimeToInternal($dfxp_time)
-    {
-        if (substr($dfxp_time, -1) === 't') { // if last symbol is "t"
-            // parses 340400000t
-            return substr($dfxp_time, 0, -1) / 10000000;
-        } else {
-            // parses 00:00:34,040
-            $parts = explode(',', $dfxp_time);
-
-            $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-            $milliseconds = (float)('0.' . $parts[1]);
-
-            $time = $only_seconds + $milliseconds;
-
-            return $time;
-        }
     }
 }

@@ -17,36 +17,38 @@ class TtmlConverter implements ConverterContract
         $array = array();
 
         $body = $dom->getElementsByTagName('body')->item(0);
-        if ($body) {
-            $div = $body->getElementsByTagName('div')->item(0);
-            if ($div) {
-                $pElements = $div->getElementsByTagName('p');
-                foreach ($pElements as $p) {
-                    $begin = $p->getAttribute('begin');
-                    $end = $p->getAttribute('end');
-                    $lines = '';
+        if (!$body) {
+            throw new \Exception('no body');
+        }
+        $div = $body->getElementsByTagName('div')->item(0);
+        if (!$div) {
+            throw new \Exception('no div');
+        }
+        $pElements = $div->getElementsByTagName('p');
+        foreach ($pElements as $p) {
+            $begin = $p->getAttribute('begin');
+            $end = $p->getAttribute('end');
+            $lines = '';
 
-                    $textNodes = $p->childNodes;
-                    foreach ($textNodes as $node) {
-                        if ($node->nodeType === XML_TEXT_NODE) {
-                            $lines .= $node->nodeValue;
-                        } else {
-                            $lines .= $dom->saveXML($node); // Preserve HTML tags
-                        }
-                    }
-
-                    $lines = preg_replace('/<br\s*\/?>/', '<br>', $lines); // normalize <br>*/
-                    $lines = explode('<br>', $lines);
-                    $lines = array_map('strip_tags', $lines);
-                    $lines = array_map('trim', $lines);
-
-                    $array[] = array(
-                        'start' => static::ttmlTimeToInternal($begin),
-                        'end' => static::ttmlTimeToInternal($end),
-                        'lines' => $lines,
-                    );
+            $textNodes = $p->childNodes;
+            foreach ($textNodes as $node) {
+                if ($node->nodeType === XML_TEXT_NODE) {
+                    $lines .= $node->nodeValue;
+                } else {
+                    $lines .= $dom->saveXML($node); // Preserve HTML tags
                 }
             }
+
+            $lines = preg_replace('/<br\s*\/?>/', '<br>', $lines); // normalize <br>*/
+            $lines = explode('<br>', $lines);
+            $lines = array_map('strip_tags', $lines);
+            $lines = array_map('trim', $lines);
+
+            $array[] = array(
+                'start' => static::ttmlTimeToInternal($begin),
+                'end' => static::ttmlTimeToInternal($end),
+                'lines' => $lines,
+            );
         }
 
         return $array;
@@ -112,7 +114,10 @@ class TtmlConverter implements ConverterContract
 
     protected static function ttmlTimeToInternal($ttml_time)
     {
-        if (substr($ttml_time, -1) === 's') {
+        if (substr($ttml_time, -1) === 't') { // if last symbol is "t"
+            // parses 340400000t
+            return substr($ttml_time, 0, -1) / 10000000;
+        } elseif (substr($ttml_time, -1) === 's') {
             return rtrim($ttml_time, 's');
         } else {
             $timeParts = explode(':', $ttml_time);
