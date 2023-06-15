@@ -19,22 +19,55 @@ class SmiConverter implements ConverterContract
     {
         $internal_format = []; // array - where file content will be stored
 
-        $tmp_block = null;
-        $pattern = '/<SYNC Start=(\d+)><P Class=ENUSCC>(.*)/';
-        preg_match_all($pattern, $file_content, $matches, PREG_SET_ORDER);
-        foreach ($matches as $match) {
-            $time = $match[1];
-            $text = str_replace('<\P>', '', $match[2]);
+        if (strpos($file_content, '</SYNC>') === false) {
+            $file_content = str_replace('<SYNC ', '</SYNC><SYNC ', $file_content);
+        }
 
-            if ($text === '&nbsp;') {
-                $internal_format[] = [
-                    'start' => static::timeToInternal($tmp_block['start']),
-                    'end' => static::timeToInternal($time),
-                    'lines' => explode("<br>", $tmp_block['text']),
-                ];
-            } else {
-                $tmp_block = ['start' => $time, 'text' => $text];
+        $doc = new \DOMDocument();
+        @$doc->loadHTML($file_content); // silence warnings about invalid html
+
+        $syncElements = $doc->getElementsByTagName('sync');
+
+        foreach ($syncElements as $syncElement) {
+            $time = $syncElement->getAttribute('start');
+
+            foreach ($syncElement->childNodes as $childNode) {
+                $lines = [];
+                $line = '';
+                if ($childNode->nodeName === 'p') {
+                    $line = $doc->saveHTML($childNode);
+                    $line = preg_replace('/<br\s*\/?>/', '<br>', $line); // normalize <br>
+                    $line = str_replace("\u{00a0}", '', $line); // no brake space - &nbsp;
+                    $line = trim($line);
+                    $lines = explode('<br>', $line);
+                    $lines = array_map('strip_tags', $lines);
+                    $lines = array_map('trim', $lines);
+                    break;
+                }
             }
+
+            $data[] = [
+                'start' => static::timeToInternal($time),
+                'is_nbsp' => trim(strip_tags($line)) === '',
+                'lines' => $lines,
+            ];
+        }
+
+        $i = 0;
+        foreach ($data as $row) {
+            if (!isset($internal_format[$i - 1]['end']) && $i !== 0) {
+                $internal_format[$i - 1]['end'] = $row['start'];
+            }
+            if (!$row['is_nbsp']) {
+                $internal_format[$i] = [
+                    'start' => $row['start'],
+                    'lines' => $row['lines'],
+                ];
+                $i++;
+            }
+        }
+        if (!isset($internal_format[$i - 1]['end'])) {
+            $internal_format[$i - 1]['end'] = $internal_format[$i - 1]['start'] + 2.067; // SubtitleEdit adds this time if there is no last nbsp block
         }
 
         return $internal_format;

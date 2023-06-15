@@ -12,7 +12,7 @@ class SmiTest extends TestCase {
 
     use AdditionalAssertionsTrait;
 
-    public function testRecognizesSrt()
+    public function testRecognizesSmi()
     {
         $content = file_get_contents('./tests/files/smi.smi');
         $converter = Helpers::getConverterByFileContent($content);
@@ -21,15 +21,30 @@ class SmiTest extends TestCase {
 
     public function testFileToInternalFormat()
     {
-        $actual_internal_format = Subtitles::loadFromFile('./tests/files/smi.smi', 'smi')->getInternalFormat();
-
-        $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
+        $actual = Subtitles::loadFromFile('./tests/files/smi.smi', 'smi')->getInternalFormat();
+        $expected = self::generatedSubtitles()->getInternalFormat();
+            $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     public function testConvertToFile()
     {
         $actual_file_content = self::generatedSubtitles()->content('smi');
         $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
+    }
+
+    public function testFormatted()
+    {
+        $actual = Subtitles::loadFromFile('./tests/files/smi_formatted.smi')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(9.209, 12.312, '( clock ticking )')
+            ->add(14.848, 17.35, [
+                'MAN:',
+                'When we think',
+                'of E equals m c-squared,',
+            ])
+            ->add(17.35, 19.417, 'we have this vision of Einstein')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     // ---------------------------------- private ----------------------------------------------------------------------
