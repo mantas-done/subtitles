@@ -11,8 +11,8 @@ class VttConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all('/(\d{2}:\d{2}:\d{2}\.\d{3})\s-->\s(\d{2}:\d{2}:\d{2}\.\d{3})\s+(.*?)(?=\n\n|$)/s', $file_content, $matches, PREG_SET_ORDER);
-
+        preg_match_all('/((?:\d{2}:){1,2}\d{2}\.\d{3})\s-->\s((?:\d{2}:){1,2}\d{2}\.\d{3})\s+(.*?)(?=\n\n|$)/s', $file_content, $matches, PREG_SET_ORDER);
+        $internal_format = [];
         foreach ($matches as $match) {
             $lines = explode("\n", $match[3]);
             $lines_array = array_map(static::fixLine(), $lines);

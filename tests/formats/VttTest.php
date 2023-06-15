@@ -145,4 +145,16 @@ TEXT;
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testParsesFileWithoutHoursInTimestamp()
+    {
+        $given = file_get_contents('./tests/files/vtt_without_hours_in_timestamp.vtt');
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+
+        $expected = (new Subtitles())
+            ->add(0.0, 10.0, "I've spent nearly two decades")
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
 }
