@@ -105,13 +105,13 @@ class SmiConverter implements ConverterContract
         $last_time = null;
         foreach ($internal_format as $block) {
             if ($last_time !== null && $last_time !== $block['start']) {
-                $file_content .= '<SYNC Start=' . self::internalTimeToFormat($last_time) . '><P Class=ENUSCC>&nbsp;' . "\r\n";
+                $file_content .= '<SYNC Start=' . self::internalTimeToFormat($last_time) . '><P Class=ENUSCC>&nbsp;' . "</P></SYNC>\r\n";
             }
 
-            $file_content .= '<SYNC Start=' . self::internalTimeToFormat($block['start']) . '><P Class=ENUSCC>' . implode('<br>', $block['lines']) . "\r\n";
+            $file_content .= '<SYNC Start=' . self::internalTimeToFormat($block['start']) . '><P Class=ENUSCC>' . implode('<br>', $block['lines']) .  "</P></SYNC>\r\n";
             $last_time = $block['end'];
         }
-        $file_content .= '<SYNC Start=' . self::internalTimeToFormat($last_time) . '><P Class=ENUSCC>&nbsp;' . "\r\n";
+        $file_content .= '<SYNC Start=' . self::internalTimeToFormat($last_time) . '><P Class=ENUSCC>&nbsp;' . "</P></SYNC>\r\n";
 
         $file_content .= '</BODY>
 </SAMI>';

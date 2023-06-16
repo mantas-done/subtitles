@@ -15,7 +15,7 @@ Convert and edit subtitles and captions.
 | [SubViewer](https://wiki.videolan.org/SubViewer) | .sub | sub_subviewer |
 | [MicroDVD](https://en.wikipedia.org/wiki/MicroDVD) | .sub | sub_microdvd |
 | Advanced Sub Station | .ass | ass |
-| [DFXP](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp | dfxp |
+| [Netflix Timed Text](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp | dfxp |
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml | ttml |
 | [SAMI](https://en.wikipedia.org/wiki/SAMI) | .smi | smi |
 | QuickTime | .qt.txt | txt_quicktime |
