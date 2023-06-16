@@ -41,20 +41,6 @@ class VttTest extends TestCase {
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
-    public function testFileToInternalFormat()
-    {
-        $vtt_path = './tests/files/vtt_with_name.vtt';
-        $expected_internal_format = [[
-            'start' => 9,
-            'end' => 11,
-            'lines' => ['Roger Bingham We are in New York City'],
-        ]];
-
-        $actual_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
-
-        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
-    }
-
     public function testConvertToInternalFormatWhenFileContainsNumbers() // numbers are optional in webvtt format
     {
         $input_vtt_file_content = <<< TEXT
@@ -129,18 +115,6 @@ TEXT;
 
         $expected = (new Subtitles())
             ->add(0, 10, 'Hello world.')
-            ->getInternalFormat();
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testParsesFileWithHtml()
-    {
-        $given = file_get_contents('./tests/files/vtt_with_html.vtt');
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
-
-        $expected = (new Subtitles())
-            ->add(0.0, 10.0, 'Sur les playground, ici à Montpellier')
             ->getInternalFormat();
 
         $this->assertEquals($expected, $actual);

@@ -15,12 +15,11 @@ class VttConverter implements ConverterContract
         $internal_format = [];
         foreach ($matches as $match) {
             $lines = explode("\n", $match[3]);
-            $lines_array = array_map(static::fixLine(), $lines);
 
             $internal_format[] = [
                 'start' => static::vttTimeToInternal($match[1]),
                 'end' => static::vttTimeToInternal($match[2]),
-                'lines' => $lines_array,
+                'lines' => $lines,
             ];
         }
 
@@ -72,21 +71,5 @@ class VttConverter implements ConverterContract
         $srt_time = gmdate("H:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
 
         return $srt_time;
-    }
-
-    protected static function fixLine()
-    {
-        return function($line) {
-            // speaker
-            if (substr($line, 0, 3) == '<v ') {
-                $line = substr($line, 3);
-                $line = str_replace('>', ' ', $line);
-            }
-
-            // html
-            $line = strip_tags($line);
-
-            return $line;
-        };
     }
 }
