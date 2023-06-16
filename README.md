@@ -19,6 +19,7 @@ Convert and edit subtitles and captions.
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml | ttml |
 | [SAMI](https://en.wikipedia.org/wiki/SAMI) | .smi | smi |
 | QuickTime | .qt.txt | txt_quicktime |
+| [Scenarist](http://www.theneitherworld.com/mcpoodle/SCC_TOOLS/DOCS/SCC_FORMAT.HTML) (work in progress) | .scc | scc |
 | Comma separated values | .csv | csv |
 | Plaintext | .txt | txt |
 
@@ -181,7 +182,7 @@ You can contribute in any way you want. If you need some guidance, choose someth
 | --- | --- | --- |
 | Add new formats | Medium | Supporting more formats is nice. Some popular formats: .mcc, .cap |
 | Refactor [StlConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/StlConverter.php) file | Easy | .stl format is very similar to .srt. The only problem is that StlConverter.php code can be simplified a lot (check [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) as example) |
-| Add .scc format | Hard | [Format description](https://en.wikipedia.org/wiki/EIA-608) |
+| Add .scc format | Hard | [Format description](http://www.theneitherworld.com/mcpoodle/SCC_TOOLS/DOCS/SCC_FORMAT.HTML) |
 
 For now library should support only basic features (several lines of text). No need to support different text styles or positioning of text.
 

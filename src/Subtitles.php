@@ -6,6 +6,7 @@ use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
 use Done\Subtitles\Code\Converters\SbvConverter;
+use Done\Subtitles\Code\Converters\SccConverter;
 use Done\Subtitles\Code\Converters\SmiConverter;
 use Done\Subtitles\Code\Converters\SrtConverter;
 use Done\Subtitles\Code\Converters\StlConverter;
@@ -42,6 +43,7 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class],
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
+        ['extension' => 'scc',  'format' => 'scc',              'name' => 'Scenarist',                  'class' => SccConverter::class], // not finished
     ];
 
     public static function convert($from_file_path, $to_file_path, $to_format = null)
