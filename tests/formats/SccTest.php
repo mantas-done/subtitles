@@ -26,6 +26,47 @@ class SccTest extends TestCase {
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
+    public function testParsesScc()
+    {
+        $expected = (new Subtitles())->loadFromFile('./tests/files/scc.scc')->getInternalFormat();
+        $actual = (new Subtitles())
+        ->add(137.4, 140.4, ['Senator, we\'re making', 'our final approach into', 'Coruscant.'])
+        ->add(3740.5, 3742.5, ['Very good, Lieutenant.'])
+        ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testToSccMoreCharacters()
+    {
+        $actual = (new Subtitles())
+            ->add(0, 1, ['®', 'Á', 'a®', 'aÁ'])
+            ->content('scc');
+        $expected = "Scenarist_SCC V1.0
+
+00:00:00:00\t94ae 94ae 9420 9420 13d0 13d0 91b0 1370 1370 9220 94d0 94d0 6180 91b0 9470 9470 6180 9220 942f 942f
+
+00:00:01:00\t942c 942c
+
+";
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
+    }
+
+    public function testFromSccMoreCharacters()
+    {
+        $string = "Scenarist_SCC V1.0
+
+00:00:00:00\t94ae 94ae 9420 9420 13d0 13d0 91b0 1370 1370 9220 94d0 94d0 6180 91b0 9470 9470 6180 9220 942f 942f
+
+00:00:01:00\t942c 942c
+
+";
+        $actual = (new Subtitles())->loadFromString($string)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, ['®', 'Á', 'a®', 'aÁ'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testSplitLongLines()
     {
         $array = [
