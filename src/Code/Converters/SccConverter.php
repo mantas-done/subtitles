@@ -62,8 +62,9 @@ class SccConverter implements ConverterContract
     {
         $file_content = "Scenarist_SCC V1.0\r\n\r\n";
 
-        foreach ($internal_format as $block) {
-            $file_content .= self::textToSccLine($block['start'], $block['end'], $block['lines']);
+        foreach ($internal_format as $k => $block) {
+            $next_block = isset($internal_format[$k + 1]) ? $internal_format[$k + 1] : null;
+            $file_content .= self::textToSccLine($block['start'], $block['end'], $block['lines'], $next_block);
         }
 
         return $file_content;
@@ -113,7 +114,7 @@ class SccConverter implements ConverterContract
     // 94d0 above the last one
     // 1370 above the 94d0
     // 13d0 above the 1370
-    protected static function textToSccLine($start, $end, $lines)
+    protected static function textToSccLine($start, $end, $lines, $next_block)
     {
         $lines = self::splitLongLines($lines);
 
@@ -130,7 +131,16 @@ class SccConverter implements ConverterContract
             $output .= ' ' . self::lineToText($line);
         }
         $output .= ' 942f 942f' . "\r\n\r\n";
-        $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
+
+        // if the next block showing text right away, do not add the stop
+        if ($next_block !== null) {
+            if (($next_block['start'] - $end) * self::$fps > 1) { // add if more than 1 frame difference
+                $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
+            }
+        } else {
+            // add stop block at the end of file
+            $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
+        }
 
         return $output;
     }

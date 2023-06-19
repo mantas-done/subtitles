@@ -84,4 +84,18 @@ class SccTest extends TestCase {
 
     }
 
+    public function testDoesntAddStopLineIfTimesAreTouching()
+    {
+        $expected = "Scenarist_SCC V1.0
+
+00:00:01:00\t94ae 94ae 9420 9420 9470 9470 ef6e e580 942f 942f
+
+00:00:02:00\t94ae 94ae 9420 9420 9470 9470 f4f7 ef80 942f 942f
+
+00:00:03:00\t942c 942c
+
+";
+        $actual = (new Subtitles())->add(1, 2, 'one')->add(2.01, 3, 'two')->content('scc');
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
+    }
 }
