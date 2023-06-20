@@ -98,4 +98,23 @@ class SccTest extends TestCase {
         $actual = (new Subtitles())->add(1, 2, 'one')->add(2.01, 3, 'two')->content('scc');
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
+
+    public function testIgnoreErasedDisplayMemoryCodeAtStart()
+    {
+        $string = "Scenarist_SCC V1.0
+
+00:00:02:00\t942c 942c
+
+00:00:04:00\t94ae 94ae 9420 9420 9476 9476 97a1 97a1 c8e5 ecec ef80 942f 942f
+
+00:00:06:00\t942c 942c
+
+";
+        $actual = (new Subtitles())->loadFromString($string)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(4, 6, ['Hello'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+    }
 }

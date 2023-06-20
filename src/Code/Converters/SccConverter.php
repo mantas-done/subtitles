@@ -44,7 +44,7 @@ class SccConverter implements ConverterContract
                     'lines' => $row['lines'],
                 ];
                 $i++;
-            } else {
+            } elseif (isset($internal_format[$i - 1])) {
                 $internal_format[$i - 1]['end'] = $row['time'];
             }
         }
