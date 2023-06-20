@@ -47,7 +47,7 @@ class VttTest extends TestCase {
         $expected_internal_format = [[
             'start' => 9,
             'end' => 11,
-            'lines' => ['Roger Bingham We are in New York City'],
+            'lines' => ['Roger Bingham: We are in New York City'],
         ]];
 
         $actual_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
@@ -62,13 +62,13 @@ WEBVTT
 
 1
 00:00:09.000 --> 00:00:11.000
-Roger Bingham We are in New York City
+Roger Bingham: We are in New York City
 TEXT;
         $expected_vtt_file_content = <<< TEXT
 WEBVTT
 
 00:00:09.000 --> 00:00:11.000
-Roger Bingham We are in New York City
+Roger Bingham: We are in New York City
 TEXT;
 
         $actual_vtt_file_content = (new Subtitles())->loadFromString($input_vtt_file_content, 'vtt')->content('vtt');

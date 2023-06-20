@@ -80,7 +80,7 @@ class VttConverter implements ConverterContract
             // speaker
             if (substr($line, 0, 3) == '<v ') {
                 $line = substr($line, 3);
-                $line = str_replace('>', ' ', $line);
+                $line = str_replace('>', ': ', $line);
             }
 
             // html
