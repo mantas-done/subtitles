@@ -159,7 +159,18 @@ text
         $expected = (new Subtitles())->add(23, 25, 'text')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
 
+    public function testParsesNoNumbers()
+    {
+        $text = "
+00:00:00,000 --> 00:00:08,000
+text
+";
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 8, 'text')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     // ----------------------------------------- remove() --------------------------------------------------------------
