@@ -117,4 +117,19 @@ class SccTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
 
     }
+
+    public function testLastSubtitleEndTimeCorrection()
+    {
+        $string = "Scenarist_SCC V1.0
+
+00:00:02:00\t942c 942c
+
+00:00:04:00\t94ae 94ae 9420 9420 9476 9476 97a1 97a1 c8e5 ecec ef80 942f 942f
+
+";
+        $subtitle_set = (new Subtitles())->loadFromString($string)->getInternalFormat();
+        $last_subtitle = end($subtitle_set);
+
+        $this->assertEquals($last_subtitle['end'], $last_subtitle['start'] + 1);
+    }
 }

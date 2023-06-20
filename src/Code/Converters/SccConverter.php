@@ -34,7 +34,7 @@ class SccConverter implements ConverterContract
 
         $internal_format = [];
         $i = 0;
-        foreach ($parsed as $row) {
+        foreach ($parsed as $j => $row) {
             if (!empty($row['lines'])) {
                 if ($i !== 0 && !isset($internal_format[$i - 1]['end'])) {
                     $internal_format[$i - 1]['end'] = $row['time'];
@@ -43,6 +43,10 @@ class SccConverter implements ConverterContract
                     'start' => $row['time'],
                     'lines' => $row['lines'],
                 ];
+                // If there are no further subtitles or EOC codes present, set the end time as the start time plus 1 sec.
+                if (!isset($parsed[$j + 1])) {
+                    $internal_format[$i]['end'] = $internal_format[$i]['start'] + 1;
+                }
                 $i++;
             } elseif (isset($internal_format[$i - 1])) {
                 $internal_format[$i - 1]['end'] = $row['time'];
