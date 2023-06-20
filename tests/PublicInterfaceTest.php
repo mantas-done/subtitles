@@ -144,6 +144,24 @@ our final approach into Coruscant.
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
+    public function testParsesWithoutLineText()
+    {
+        $text = "
+1
+00:00:00,000 --> 00:00:23,000
+
+
+2
+00:00:23,000 --> 00:00:25,000
+text
+";
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(23, 25, 'text')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+    }
+
     // ----------------------------------------- remove() --------------------------------------------------------------
     public function testRemove()
     {
