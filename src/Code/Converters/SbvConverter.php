@@ -19,7 +19,7 @@ class SbvConverter implements ConverterContract
     {
         $internal_format = []; // array - where file content will be stored
 
-        $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
+        $blocks = preg_split("/(\n{2,})/", trim($file_content)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
             $lines = explode("\n", $block); // separate all block lines
             $times = explode(',', $lines[0]); // one the second line there is start and end times
