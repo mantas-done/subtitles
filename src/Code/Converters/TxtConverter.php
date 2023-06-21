@@ -4,9 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class TxtConverter implements ConverterContract
 {
-    private static $regex = '/(?:(?<start>\b(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?\b)*)?(?<text>.*)/';
-
-    private static $time_regexp = '/\b(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?\b/';
+    private static $time_regexp = '/(?<!\d)(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?(?!\d)/';
     private static $any_letter_regex = '/\p{L}/u';
 
     public function canParseFileContent($file_content)
@@ -21,9 +19,7 @@ class TxtConverter implements ConverterContract
         $internal_format = [];
         $i = -1;
         foreach ($lines as $line) {
-            if (preg_match(self::$regex, $line, $matches) !== 1) {
-                continue;
-            }
+            $matches = self::getLineParts($line);
 
             if ($matches['start'] !== '') {
                 if ($has_timestamps) {
@@ -33,6 +29,9 @@ class TxtConverter implements ConverterContract
                     'start' => self::timeToInternal($matches['start']),
                     'lines' => [],
                 ];
+            }
+            if ($matches['end'] !== '') {
+                $internal_format[$i]['end'] = self::timeToInternal($matches['end']);
             }
             if ($matches['text'] !== '' && self::hasText($matches['text'])) {
                 if (!$has_timestamps) {
@@ -81,6 +80,37 @@ class TxtConverter implements ConverterContract
         }
 
         return trim($file_content);
+    }
+
+    public static function getLineParts($line)
+    {
+        $matches = [
+            'start' => '',
+            'end' => '',
+            'text' => '',
+        ];
+        preg_match_all(self::$time_regexp . 'm', $line, $timestamps);
+        $right_timestamp = '';
+        if (isset($timestamps[0][0])) {
+            // start
+            $matches['start'] = $timestamps[0][0];
+            $right_timestamp = $matches['start'];
+        }
+        if (isset($timestamps[0][1])) {
+            // end
+            $matches['end'] = $timestamps[0][1];
+            $right_timestamp = $matches['end'];
+        }
+
+        $right_text = strstr($line, $right_timestamp);
+        if ($right_text) {
+            $right_text = substr($right_text, strlen($right_timestamp));
+        }
+        if (self::hasText($right_text)) {
+            $matches['text'] = $right_text;
+        }
+
+        return $matches;
     }
 
     private static function timeToInternal($time)

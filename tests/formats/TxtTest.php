@@ -79,6 +79,31 @@ TEXT;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testExcessiveNewLinesWithTwoTimestamps()
+    {
+        $content = <<< TEXT
+1
+
+00:00:01 --> 00:00:02
+
+a
+
+b
+
+
+2
+
+00:00:3 --> 00:00:4
+
+c
+
+TEXT;
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, ['a', 'b'])->add(3, 4, 'c')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testTimestamps()
     {
         $content = <<< TEXT
