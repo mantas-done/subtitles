@@ -4,51 +4,67 @@ namespace Done\Subtitles\Code\Converters;
 
 class TxtConverter implements ConverterContract
 {
-    private static $regex = '/(?:(\b(?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}(?:[.,]\d+)?\b)\s*)?(.*)/';
+    private static $regex = '/(?:(?<start>\b(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?\b)*)?(?<text>.*)/';
+
+    private static $time_regexp = '/\b(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?\b/';
+    private static $any_letter_regex = '/\p{L}/u';
 
     public function canParseFileContent($file_content)
     {
-        return preg_match(self::$regex, $file_content) === 1;
+        return self::hasText($file_content);
     }
 
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all(self::$regex, $file_content, $matches, PREG_SET_ORDER);
-        $data = [];
-        $i = 0;
-        $last_seen_start = 0;
-        foreach ($matches as $match) {
-            // regex returns every second row empty
-            if (trim($match[2]) == '') {
+        $lines = preg_split("/\R/", $file_content);
+        $has_timestamps = self::hasTime($file_content);
+        $internal_format = [];
+        $i = -1;
+        foreach ($lines as $line) {
+            if (preg_match(self::$regex, $line, $matches) !== 1) {
                 continue;
             }
 
-            if ($match[1] === '') {
-                $time = $last_seen_start;
-                $last_seen_start += 1;
-            } else {
-                $time = self::timeToInternal($match[1]);
+            if ($matches['start'] !== '') {
+                if ($has_timestamps) {
+                    $i++;
+                }
+                $internal_format[$i] = [
+                    'start' => self::timeToInternal($matches['start']),
+                    'lines' => [],
+                ];
             }
-            $text = $match[2];
-
-            if (isset($data[$i - 1])) {
-                $data[$i - 1]['end'] = $time;
+            if ($matches['text'] !== '' && self::hasText($matches['text'])) {
+                if (!$has_timestamps) {
+                    $i++;
+                }
+                $internal_format[$i]['lines'][] = trim($matches['text']);
             }
-            $data[$i] = [
-                'start' => $time,
-                'text' => $text,
-            ];
-            $i++;
         }
-        $data[$i - 1]['end'] = $data[$i - 1]['start'] + 1;
 
-        $internal_format = [];
-        foreach ($data as $row) {
-            $internal_format[] = [
-                'start' => $row['start'],
-                'end' => $row['end'],
-                'lines' => [$row['text']],
-            ];
+        // fill starts
+        $last_start = -1;
+        foreach ($internal_format as $k => $row) {
+            if (!isset($row['start'])) {
+                $last_start++;
+                $internal_format[$k]['start'] = $last_start;
+            } else {
+                $last_start = $row['start'];
+            }
+        }
+
+        // fill ends
+        foreach ($internal_format as $k => $row) {
+            if (!isset($row['end'])) {
+                if (isset($internal_format[$k + 1]['start'])) {
+                    $internal_format[$k]['end'] = $internal_format[$k + 1]['start'];
+                } else {
+                    $internal_format[$k]['end'] = $internal_format[$k]['start'] + 1;
+                }
+            }
+        }
+        if (!isset($row['end'])) {
+            $internal_format[$k]['end'] = $row['start'] + 1;
         }
 
         return $internal_format;
@@ -91,6 +107,16 @@ class TxtConverter implements ConverterContract
         } else {
             throw new \InvalidArgumentException("Invalid time format: $time");
         }
+    }
+
+    private static function hasTime($line)
+    {
+        return preg_match(self::$time_regexp, $line) === 1;
+    }
+
+    private static function hasText($line)
+    {
+        return preg_match(self::$any_letter_regex, $line) === 1;
     }
 
 }

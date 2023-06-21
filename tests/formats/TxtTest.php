@@ -60,6 +60,25 @@ TEXT;
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
 
+    public function testIncompleteSrt()
+    {
+        $content = <<< TEXT
+1
+00:00:01 -->
+a
+b
+
+2
+00:00:2 -->
+c
+
+TEXT;
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, ['a', 'b'])->add(2, 3, 'c')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testTimestamps()
     {
         $content = <<< TEXT
