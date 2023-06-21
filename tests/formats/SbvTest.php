@@ -78,6 +78,41 @@ TEXT;
         $this->assertEquals($expected_file_content, $actual_file_content);
     }
 
+    public function testParseMultipleNewLines()
+    {
+        $actual_file_content = <<< TEXT
+0:01:04.927,0:01:06.927
+Calm down da Vinci!
+OK...
+
+
+0:01:07.550,0:01:09.550
+Yes, yes. On my way.
+
+
+
+0:01:24.291,0:01:26.291
+Lisa...Mona Lisa.
+TEXT;
+
+        $actual_internal_format = Subtitles::loadFromString($actual_file_content, 'sbv')->getInternalFormat();
+        $expected_internal_format = [[
+            'start' => 64.927,
+            'end' => 66.927,
+            'lines' => ['Calm down da Vinci!', 'OK...'],
+        ], [
+            'start' => 67.55,
+            'end' => 69.55,
+            'lines' => ['Yes, yes. On my way.'],
+        ], [
+            'start' => 84.291,
+            'end' => 86.291,
+            'lines' => ['Lisa...Mona Lisa.'],
+        ]];
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
     // @TODO test time above 1 hour
 
 }
