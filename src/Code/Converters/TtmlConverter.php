@@ -14,6 +14,7 @@ class TtmlConverter implements ConverterContract
         $dom = new \DOMDocument();
         @$dom->loadXML($file_content);
 
+        $fps = self::framesPerSecond($dom);
         $array = array();
 
         $body = $dom->getElementsByTagName('body')->item(0);
@@ -45,8 +46,8 @@ class TtmlConverter implements ConverterContract
             $lines = array_map('trim', $lines);
 
             $array[] = array(
-                'start' => static::ttmlTimeToInternal($begin),
-                'end' => static::ttmlTimeToInternal($end),
+                'start' => static::ttmlTimeToInternal($begin, $fps),
+                'end' => static::ttmlTimeToInternal($end, $fps),
                 'lines' => $lines,
             );
         }
@@ -105,20 +106,16 @@ class TtmlConverter implements ConverterContract
         return $file_content;
     }
 
-    // ---------------------------------- private ----------------------------------------------------------------------
-
-    protected static function internalTimeToTtml($internal_time)
-    {
-        return number_format($internal_time, 1, '.', '');
-    }
-
-    protected static function ttmlTimeToInternal($ttml_time)
+    public static function ttmlTimeToInternal($ttml_time, $frame_rate = null)
     {
         if (substr($ttml_time, -1) === 't') { // if last symbol is "t"
             // parses 340400000t
             return substr($ttml_time, 0, -1) / 10000000;
         } elseif (substr($ttml_time, -1) === 's') {
             return rtrim($ttml_time, 's');
+        } elseif (substr($ttml_time, -1) === 'f' && $frame_rate) {
+            $seconds = rtrim($ttml_time, 'f');
+            return $seconds / $frame_rate;
         } else {
             $time_parts = explode('.', $ttml_time);
             $milliseconds = 0;
@@ -129,5 +126,29 @@ class TtmlConverter implements ConverterContract
             list($hours, $minutes, $seconds) = array_map('intval', explode(':', $time_parts[0]));
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         }
+    }
+
+    // ---------------------------------- private ----------------------------------------------------------------------
+
+    protected static function internalTimeToTtml($internal_time)
+    {
+        return number_format($internal_time, 1, '.', '');
+    }
+
+    protected static function framesPerSecond($dom)
+    {
+        $ttElement = $dom->getElementsByTagName('tt')->item(0);
+        $frameRate = $ttElement->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRate');
+        $frameRateMultiplier = $ttElement->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRateMultiplier');
+
+        if ($frameRate && $frameRateMultiplier) {
+            list($numerator, $denominator) = array_map('intval', explode(' ', $frameRateMultiplier));
+            return $frameRate / $denominator * $numerator;
+        } else if ($frameRate) {
+            return (int) $frameRate;
+        }
+
+        //This is a standard frame rate used in many video formats and broadcast television.
+        return 30;
     }
 }
