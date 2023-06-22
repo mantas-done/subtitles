@@ -63,4 +63,17 @@ class TtmlTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testDifferentTimestampParse()
+    {
+        $ttml_path = './tests/files/ttml_with_mixed_timestamps.ttml';
+        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 10, 'First line.')
+            ->add(11.2, 13.3, ['Second line.'])
+            ->add(15, 18, ['Third line.'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+    }
+
 }
