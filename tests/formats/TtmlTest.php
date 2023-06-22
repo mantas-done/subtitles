@@ -73,7 +73,18 @@ class TtmlTest extends TestCase {
             ->add(15, 18, ['Third line.'])
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
 
+    public function testDuplicatedElementIdsParse()
+    {
+        $ttml_path = './tests/files/ttml_with_duplicated_element_ids.ttml';
+        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'First line.')
+            ->add(1, 2, ['Second line.'])
+            ->add(2, 3, ['Third line.'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
     }
 
 }
