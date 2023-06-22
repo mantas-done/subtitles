@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" ttp:frameRate="24" ttp:frameRateMultiplier="1000 1001">
+  <head>
+    <metadata>
+      <ttm:title>TTML Example With Frame Rate Given</ttm:title>
+    </metadata>
+  </head>
+  <body>
+    <div>
+      <p begin="360f" end="424f">First line.</p>
+    </div>
+  </body>
+</tt>

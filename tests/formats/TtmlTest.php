@@ -63,18 +63,6 @@ class TtmlTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-    public function testDifferentTimestampParse()
-    {
-        $ttml_path = './tests/files/ttml_with_mixed_timestamps.ttml';
-        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
-        $expected = (new Subtitles())
-            ->add(0, 10, 'First line.')
-            ->add(11.2, 13.3, ['Second line.'])
-            ->add(15, 18, ['Third line.'])
-            ->getInternalFormat();
-        $this->assertInternalFormatsEqual($expected, $actual);
-    }
-
     public function testDuplicatedElementIdsParse()
     {
         $ttml_path = './tests/files/ttml_with_duplicated_element_ids.ttml';
@@ -87,4 +75,33 @@ class TtmlTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testTimeParseWithFpsAndMultiplierGiven()
+    {
+        $ttml_path = './tests/files/ttml_with_fps_and_multiplier_given.ttml';
+        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(15.015, 17.684, 'First line.')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    /**
+     * @dataProvider timeFormatProvider
+     */
+    public function testDifferentTimeFormats($ttml_time, $seconds, $fps)
+    {
+        $internal_seconds = TtmlConverter::ttmlTimeToInternal($ttml_time, $fps);
+        $this->assertEquals($internal_seconds, $seconds);
+    }
+
+    public static function timeFormatProvider()
+    {
+        return [
+            ['360f', 12, 30],
+            ['135f', 2.25, 60],
+            ['00:00:10', 10, null],
+            ['00:00:5.100', 5.1, null],
+            ['55s', 55, null],
+        ];
+    }
 }
