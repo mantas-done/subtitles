@@ -4,6 +4,7 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\SccConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
@@ -84,6 +85,35 @@ class SccTest extends TestCase {
 
     }
 
+    public function testSplitLongLines2()
+    {
+        $array = [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a",
+        ];
+
+        $actual = SccConverter::splitLongLines($array);
+        $expected = [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "a"
+        ];
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testSplitLongLines3()
+    {
+        $array = [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ];
+
+        $actual = SccConverter::splitLongLines($array);
+        $expected = [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ];
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testDoesntAddStopLineIfTimesAreTouching()
     {
         $expected = "Scenarist_SCC V1.0
@@ -131,5 +161,17 @@ class SccTest extends TestCase {
         $last_subtitle = end($subtitle_set);
 
         $this->assertEquals($last_subtitle['end'], $last_subtitle['start'] + 1);
+    }
+
+    public function testTextDoesntReachedSccFileLimit()
+    {
+        (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
+        $this->assertTrue(true);
+    }
+
+    public function testTextReachedSccFileLimit()
+    {
+        $this->expectException(UserException::class);
+        (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a')->content('scc');
     }
 }

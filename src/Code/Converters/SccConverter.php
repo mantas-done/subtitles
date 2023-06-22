@@ -3,6 +3,8 @@
 namespace Done\Subtitles\Code\Converters;
 
 // 32 characters per line per caption (maximum four captions) for a 30 frame broadcast
+use Done\Subtitles\Code\UserException;
+
 class SccConverter implements ConverterContract
 {
     private static $fps = 29.97;
@@ -122,6 +124,10 @@ class SccConverter implements ConverterContract
     {
         $lines = self::splitLongLines($lines);
 
+        if (count($lines) > 4) {
+            throw new UserException("SCC file can't have more than 4 lines of text each 32 characters long. This text is too long: " . implode(' ', $lines));
+        }
+
         $output = self::internalTimeToScc($start) . "\t" . '94ae 94ae 9420 9420';
         $count = count($lines);
         $positions = [
@@ -155,15 +161,15 @@ class SccConverter implements ConverterContract
         foreach ($lines as $line) {
             while (strlen($line) > 32) {
                 $pos = strrpos(substr($line, 0, 32), ' ');
-                if ($pos === false) {
-                    $result[] = substr($line, 0, 32);
-                    $line = substr($line, 32);
-                } else {
-                    $result[] = substr($line, 0, $pos);
-                    $line = substr($line, $pos + 1);
+                if ($pos === false || $pos < strlen($line) - 32) {
+                    $pos = 32;
                 }
+                $result[] = substr($line, 0, $pos);
+                $line = substr($line, $pos + 1);
             }
-            $result[] = $line;
+            if (!empty($line)) {
+                $result[] = $line;
+            }
         }
         return $result;
     }

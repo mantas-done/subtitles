@@ -118,6 +118,17 @@ Example: shift time gradually by 2 seconds over 1 hour video. At the beginning o
 $subtitles->shiftTimeGradually(2, 0, 3600);
 ```
 
+## Exceptions ##
+
+Library will throw UserException, it's message can be shown to the user.
+```php
+try {
+    (new \Done\Subtitles\Subtitles())->add(0, 1, 'very long text... aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
+} catch (\Done\Subtitles\Code\UserException $e) {
+    echo $e->getMessage(); // SCC file can't have more than 4 lines of text each 32 characters long. This text is too long: <text from user file that triggered this error>
+}
+```
+
 ## How to add new subtitle format?
 
 You need to implement ConverterContract.php interface. It has two methods.
