@@ -12,7 +12,7 @@ class TtmlConverter implements ConverterContract
     public function fileContentToInternalFormat($file_content)
     {
         $dom = new \DOMDocument();
-        $dom->loadXML($file_content);
+        @$dom->loadXML($file_content);
 
         $array = array();
 
@@ -120,12 +120,14 @@ class TtmlConverter implements ConverterContract
         } elseif (substr($ttml_time, -1) === 's') {
             return rtrim($ttml_time, 's');
         } else {
-            $timeParts = explode(':', $ttml_time);
-            $hours = (int)$timeParts[0];
-            $minutes = (int)$timeParts[1];
-            $seconds = (int)$timeParts[2];
-            $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
-            return $totalSeconds;
+            $time_parts = explode('.', $ttml_time);
+            $milliseconds = 0;
+            if (isset($time_parts[1])) {
+                $milliseconds = (float) ('0.' . $time_parts[1]);
+            }
+
+            list($hours, $minutes, $seconds) = array_map('intval', explode(':', $time_parts[0]));
+            return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         }
     }
 }

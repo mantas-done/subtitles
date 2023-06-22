@@ -1,0 +1,21 @@
+<tt xml:lang="en"
+xmlns="http://www.w3.org/ns/ttml"
+xmlns:tts="http://www.w3.org/ns/ttml#styling">
+ <head>
+    <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+     <ttm:title>TTML Example With Duplicated Element Ids</ttm:title>
+     <ttm:copyright>Thierry Michel 2015</ttm:copyright>
+    </metadata>
+
+    <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+     <style xml:id="s1" tts:color="red" tts:textAlign="center"  />
+    </styling>
+</head>
+ <body>
+    <div>
+        <p xml:id="c1" begin="00:00:00" end="00:00:01">First line.</p>
+        <p xml:id="c1" begin="00:00:01" end="00:00:02">Second line.</p>
+        <p xml:id="c3" begin="00:00:02" end="00:00:03">Third line.</p>
+    </div>
+ </body>
+</tt>
