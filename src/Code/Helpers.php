@@ -66,7 +66,7 @@ class Helpers
             }
         }
 
-        throw new \Exception("Can't find suitable converter");
+        throw new UserException("Can't find suitable converter for the file");
     }
 
     public static function fileExtension($filename) {
