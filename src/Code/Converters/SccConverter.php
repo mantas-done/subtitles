@@ -142,13 +142,12 @@ class SccConverter implements ConverterContract
         }
         $output .= ' 942f 942f' . "\r\n\r\n";
 
-        // if the next block showing text right away, do not add the stop
-        if ($next_block !== null) {
-            if (($next_block['start'] - $end) * self::$fps > 1) { // add if more than 1 frame difference
-                $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
-            }
-        } else {
+        if ($next_block === null) {
             // add stop block at the end of file
+            $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
+        }
+        // if the next block showing text right away, do not add the stop
+        if ($next_block !== null && ($next_block['start'] - $end) * self::$fps > 2) {
             $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
         }
 
@@ -177,24 +176,25 @@ class SccConverter implements ConverterContract
     protected static function lineToText($line)
     {
         $reversed_characters = array_flip(self::$characters);
-        $reversed_special = array_flip(self::$special_chars);
-        $reversed_extended = array_flip(self::$extended_chars);
+//        $reversed_special = array_flip(self::$special_chars);
+//        $reversed_extended = array_flip(self::$extended_chars);
         $codes = '';
         $length = mb_strlen($line, 'UTF-8');
         for ($i = 0; $i < $length; $i++) {
             $character = mb_substr($line, $i, 1, 'UTF-8');
             if (isset($reversed_characters[$character])) {
                 $codes .= $reversed_characters[$character];
-            } elseif (isset($reversed_special[$character])) {
-                if (strlen($codes) % 4 === 2) {
-                    $codes .= '80'; // fill
-                }
-                $codes .= $reversed_special[$character];
-            } elseif (isset($reversed_extended[$character])) {
-                if (strlen($codes) % 4 === 2) {
-                    $codes .= '80'; // fill
-                }
-                $codes .= $reversed_extended[$character];
+
+//            } elseif (isset($reversed_special[$character])) {
+//                if (strlen($codes) % 4 === 2) {
+//                    $codes .= '80'; // fill
+//                }
+//                $codes .= $reversed_special[$character];
+//            } elseif (isset($reversed_extended[$character])) {
+//                if (strlen($codes) % 4 === 2) {
+//                    $codes .= '80'; // fill
+//                }
+//                $codes .= $reversed_extended[$character];
             } else {
                 $codes .= $reversed_characters['#']; // no symbol
             }

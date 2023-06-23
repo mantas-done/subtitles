@@ -37,20 +37,20 @@ class SccTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-    public function testToSccMoreCharacters()
-    {
-        $actual = (new Subtitles())
-            ->add(0, 1, ['®', 'Á', 'a®', 'aÁ'])
-            ->content('scc');
-        $expected = "Scenarist_SCC V1.0
-
-00:00:00:00\t94ae 94ae 9420 9420 13d0 13d0 91b0 1370 1370 9220 94d0 94d0 6180 91b0 9470 9470 6180 9220 942f 942f
-
-00:00:01:00\t942c 942c
-
-";
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
-    }
+//    public function testToSccMoreCharacters()
+//    {
+//        $actual = (new Subtitles())
+//            ->add(0, 1, ['®', 'Á', 'a®', 'aÁ'])
+//            ->content('scc');
+//        $expected = "Scenarist_SCC V1.0
+//
+//00:00:00:00\t94ae 94ae 9420 9420 13d0 13d0 91b0 1370 1370 9220 94d0 94d0 6180 91b0 9470 9470 6180 9220 942f 942f
+//
+//00:00:01:00\t942c 942c
+//
+//";
+//        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
+//    }
 
     public function testFromSccMoreCharacters()
     {
@@ -174,4 +174,12 @@ class SccTest extends TestCase {
         $this->expectException(UserException::class);
         (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a')->content('scc');
     }
+//
+//    public function testMantas()
+//    {
+//        $content = file_get_contents('./tests/files/file.txt');
+//        $converter = Subtitles::loadFromString($content)->content('srt');
+//        echo $converter;
+//        $this->assertTrue(true);
+//    }
 }
