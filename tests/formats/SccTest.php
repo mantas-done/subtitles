@@ -20,10 +20,23 @@ class SccTest extends TestCase {
         $this->assertTrue($converter::class === SccConverter::class);
     }
 
-    public function testConvertsToScc()
+    public function testShortensTextIfItIsTooLong()
     {
-        $expected = file_get_contents('./tests/files/scc.scc');
-        $actual = $this->defaultSubtitles()->content('scc');
+        $content = (new Subtitles())->add(1, 2, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $this->assertEquals('aaaaaaaaaaaa', $actual[0]['lines'][0]);
+    }
+
+    public function testTimestampsAccountForTheDataSendingTime()
+    {
+        $actual = (new Subtitles())->add(1, 2, 'aaaa')->content('scc');
+        $expected = "Scenarist_SCC V1.0
+
+00:00:00:20\t94ae 94ae 9420 9420 9470 9470 6161 6161 942f 942f
+
+00:00:01:26\t942c 942c
+
+";
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
@@ -36,21 +49,6 @@ class SccTest extends TestCase {
         ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
-
-//    public function testToSccMoreCharacters()
-//    {
-//        $actual = (new Subtitles())
-//            ->add(0, 1, ['®', 'Á', 'a®', 'aÁ'])
-//            ->content('scc');
-//        $expected = "Scenarist_SCC V1.0
-//
-//00:00:00:00\t94ae 94ae 9420 9420 13d0 13d0 91b0 1370 1370 9220 94d0 94d0 6180 91b0 9470 9470 6180 9220 942f 942f
-//
-//00:00:01:00\t942c 942c
-//
-//";
-//        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
-//    }
 
     public function testFromSccMoreCharacters()
     {
@@ -118,11 +116,11 @@ class SccTest extends TestCase {
     {
         $expected = "Scenarist_SCC V1.0
 
-00:00:01:00\t94ae 94ae 9420 9420 9470 9470 ef6e e580 942f 942f
+00:00:00:20\t94ae 94ae 9420 9420 9470 9470 ef6e e580 942f 942f
 
-00:00:02:00\t94ae 94ae 9420 9420 9470 9470 f4f7 ef80 942f 942f
+00:00:01:20\t94ae 94ae 9420 9420 9470 9470 f4f7 ef80 942f 942f
 
-00:00:03:00\t942c 942c
+00:00:02:26\t942c 942c
 
 ";
         $actual = (new Subtitles())->add(1, 2, 'one')->add(2.01, 3, 'two')->content('scc');
@@ -161,25 +159,5 @@ class SccTest extends TestCase {
         $last_subtitle = end($subtitle_set);
 
         $this->assertEquals($last_subtitle['end'], $last_subtitle['start'] + 1);
-    }
-
-    public function testTextDoesntReachedSccFileLimit()
-    {
-        (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
-        $this->assertTrue(true);
-    }
-
-    public function testTextReachedSccFileLimit()
-    {
-        $this->expectException(UserException::class);
-        (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a')->content('scc');
-    }
-
-    public function testShortensTextIfItIsTooLong()
-    {
-        $content = (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
-        $expected = (new Subtitles())->add(0, 1, 'aaaaaaaaaa')->getInternalFormat();
-        $this->assertInternalFormatsEqual($expected, $actual);
     }
 }

@@ -68,11 +68,36 @@ class SccConverter implements ConverterContract
     {
         $file_content = "Scenarist_SCC V1.0\r\n\r\n";
 
-        foreach ($internal_format as $k => $block) {
-            $next_block = isset($internal_format[$k + 1]) ? $internal_format[$k + 1] : null;
-            $file_content .= self::textToSccLine($block['start'], $block['end'], $block['lines'], $next_block);
-        }
+        $last_end_time = 0;
+        $last_internal_format = null;
+        foreach ($internal_format as $k => $scc) {
+            $lines = self::splitLongLines($scc['lines']); // max 32 characters per line, max 4 lines
 
+            $time_available = $scc['start'] - $last_end_time;
+            $frames_available = floor(self::$fps * $time_available);
+            $blocks_available = ($frames_available - $frames_available % 2) / 2;
+            if ($blocks_available < 8) { // 16 - 94ae 94ae 9420 9420 and 942f 942f (start, end)
+                unset($internal_format[$k]); // to little time to show something
+                continue;
+            }
+
+            $codes = self::textToSccText($lines);
+            $codes_array = explode(' ', $codes);
+            $codes_array = array_slice($codes_array, 0, $blocks_available - 6);
+            $codes = implode(' ', $codes_array);
+            $full_codes = "94ae 94ae 9420 9420 $codes 942f 942f";
+            $frames_to_send = substr_count($full_codes, ' ') + 1;
+            $time_to_send = $frames_to_send / self::$fps;
+            $file_content .= self::internalTimeToScc($scc['start'] - $time_to_send) . "\t" . $full_codes . "\r\n\r\n";
+            if ($last_internal_format !== null && ($frames_to_send + 4) < $frames_available) {
+                self::internalTimeToScc($last_internal_format['end']) . "\t" . '942c 942c' . "\r\n\r\n";
+            }
+            $last_end_time = $scc['start'];
+            $last_internal_format = $scc;
+        }
+        if (isset($scc)) { // stop last caption
+            $file_content .= self::internalTimeToScc($scc['end'] - (4 / self::$fps)) . "\t" . '942c 942c' . "\r\n\r\n";
+        }
         return $file_content;
     }
 
@@ -120,15 +145,8 @@ class SccConverter implements ConverterContract
     // 94d0 above the last one
     // 1370 above the 94d0
     // 13d0 above the 1370
-    protected static function textToSccLine($start, $end, $lines, $next_block)
+    protected static function textToSccText($lines)
     {
-        $lines = self::splitLongLines($lines);
-
-        if (count($lines) > 4) {
-            throw new UserException("SCC file can't have more than 4 lines of text each 32 characters long. This text is too long: " . implode(' ', $lines));
-        }
-
-        $output = self::internalTimeToScc($start) . "\t" . '94ae 94ae 9420 9420';
         $count = count($lines);
         $positions = [
             '13d0', // 4th from the bottom line
@@ -141,26 +159,7 @@ class SccConverter implements ConverterContract
             $line_output .= ' ' . $positions[4 - $count + $k] . ' ' . $positions[4 - $count + $k]; // aligns text to the bottom
             $line_output .= ' ' . self::lineToText($line);
         }
-        try {
-            $output .= ' ' . self::shortenLineTextIfTooLong(trim($line_output), $start, $end, 14); // additional bytes: 94ae 94ae 9420 9420 and 9470 and 942f 942f
-        } catch (\Exception $e) {
-            if ($e->getCode() === 123) {
-                return ''; // to little time to show any text
-            }
-            throw $e;
-        }
-        $output .= ' 942f 942f' . "\r\n\r\n";
-
-        if ($next_block === null) {
-            // add stop block at the end of file
-            $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
-        }
-        // if the next block showing text right away, do not add the stop
-        if ($next_block !== null && ($next_block['start'] - $end) * self::$fps > 2) {
-            $output .= self::internalTimeToScc($end) . "\t" . '942c 942c' . "\r\n\r\n";
-        }
-
-        return $output;
+        return trim($line_output);
     }
 
     public static function splitLongLines($lines)
@@ -179,6 +178,8 @@ class SccConverter implements ConverterContract
                 $result[] = $line;
             }
         }
+
+        $result = array_slice($result, 0, 4); // max 4 lines
         return $result;
     }
 
