@@ -136,9 +136,18 @@ class SccConverter implements ConverterContract
             '94d0', // 2th from the bottom line
             '9470', // bottom line
         ];
+        $line_output = '';
         foreach ($lines as $k => $line) {
-            $output .= ' ' . $positions[4 - $count + $k] . ' ' . $positions[4 - $count + $k]; // aligns text to the bottom
-            $output .= ' ' . self::lineToText($line);
+            $line_output .= ' ' . $positions[4 - $count + $k] . ' ' . $positions[4 - $count + $k]; // aligns text to the bottom
+            $line_output .= ' ' . self::lineToText($line);
+        }
+        try {
+            $output .= ' ' . self::shortenLineTextIfTooLong(trim($line_output), $start, $end, 14); // additional bytes: 94ae 94ae 9420 9420 and 9470 and 942f 942f
+        } catch (\Exception $e) {
+            if ($e->getCode() === 123) {
+                return ''; // to little time to show any text
+            }
+            throw $e;
         }
         $output .= ' 942f 942f' . "\r\n\r\n";
 
@@ -207,6 +216,22 @@ class SccConverter implements ConverterContract
         $codes = self::addSpaceAfter4Characters($codes);
 
         return $codes;
+    }
+
+    public static function shortenLineTextIfTooLong($output, $start, $end, $additional_bytes)
+    {
+        $blocks = explode(' ', $output);
+        $start_frame = (int)ceil($start * self::$fps);
+        $end_frame = (int)floor($end * self::$fps);
+        $frame_count = $end_frame - $start_frame - $additional_bytes; // 1 byte is transmitted during 1 frame
+        if ($frame_count < 0) {
+            throw new UserException("There is to little time between $start and $end timestamps to show text", 123);
+        }
+        $frame_count = $frame_count - ($frame_count % 2); // nearest event number down
+        $block_count = $frame_count / 2;
+        $new_blocks = array_slice($blocks, 0, $block_count);
+
+        return implode(' ', $new_blocks);
     }
 
     protected static function addSpaceAfter4Characters($string) {

@@ -174,12 +174,12 @@ class SccTest extends TestCase {
         $this->expectException(UserException::class);
         (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a')->content('scc');
     }
-//
-//    public function testMantas()
-//    {
-//        $content = file_get_contents('./tests/files/file.txt');
-//        $converter = Subtitles::loadFromString($content)->content('srt');
-//        echo $converter;
-//        $this->assertTrue(true);
-//    }
+
+    public function testShortensTextIfItIsTooLong()
+    {
+        $content = (new Subtitles())->add(0, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'aaaaaaaaaa')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
