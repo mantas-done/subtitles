@@ -85,6 +85,13 @@ class TtmlTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testOutputsAccurateTimestamp()
+    {
+        $actual = (new Subtitles())->add(0.3, 8.456, 'test')->content('ttml');
+        $this->assertStringContainsString('"0.3s"', $actual);
+        $this->assertStringContainsString('"8.456s"', $actual);
+    }
+
     /**
      * @dataProvider timeFormatProvider
      */
