@@ -208,7 +208,15 @@ class Subtitles
         } else {
             $input_converter = Helpers::getConverterByFileContent($converter->input);
         }
-        $converter->internal_format = $input_converter->fileContentToInternalFormat($converter->input);
+        $internal_format = $input_converter->fileContentToInternalFormat($converter->input);
+        foreach ($internal_format as &$row) {
+            foreach ($row['lines'] as &$line) {
+                $line = trim($line);
+            }
+        }
+        unset($row);
+        unset($line);
+        $converter->internal_format = $internal_format;
 
         return $converter;
     }

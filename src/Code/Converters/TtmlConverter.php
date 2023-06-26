@@ -143,7 +143,13 @@ class TtmlConverter implements ConverterContract
 
     protected static function internalTimeToTtml($internal_time)
     {
-        return round($internal_time, 3);
+        $formatted_output =  round($internal_time, 3);
+
+        if (strpos($formatted_output, '.') === false) {
+            $formatted_output .= ".0";  // Add at least one digit after decimal if there are no digits
+        }
+
+        return $formatted_output;
     }
 
     protected static function framesPerSecond($dom)
