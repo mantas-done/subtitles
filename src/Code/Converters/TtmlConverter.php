@@ -155,8 +155,8 @@ class TtmlConverter implements ConverterContract
     protected static function framesPerSecond($dom)
     {
         $ttElement = $dom->getElementsByTagName('tt')->item(0);
-        $frameRate = $ttElement->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRate');
-        $frameRateMultiplier = $ttElement->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRateMultiplier');
+        $frameRate = $ttElement?->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRate');
+        $frameRateMultiplier = $ttElement?->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRateMultiplier');
 
         if ($frameRate && $frameRateMultiplier) {
             list($numerator, $denominator) = array_map('intval', explode(' ', $frameRateMultiplier));
