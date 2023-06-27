@@ -86,6 +86,7 @@ TEXT;
                 'end' => 1,
                 'lines' => [
                     'one',
+                ],
             ], [
                 'start' => 2,
                 'end' => 3,
@@ -93,7 +94,7 @@ TEXT;
                     'three',
                 ],
             ]
-        ]];
+        ];
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 

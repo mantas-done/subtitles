@@ -128,6 +128,27 @@ TEXT;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testClientFile()
+    {
+        $content = <<< TEXT
+1
+00:10.000--> 00:11.900:
+One
+1
+
+00:12.000--> 00:12.900:
+Two
+2 
+TEXT;
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(10, 11.9, ['One', '1'])
+            ->add(12, 12.9, ['Two', '2'])
+            ->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

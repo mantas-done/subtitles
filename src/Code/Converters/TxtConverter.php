@@ -14,11 +14,17 @@ class TxtConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        $lines = preg_split("/\R/", $file_content);
+        $lines = mb_split("\n", $file_content);
         $has_timestamps = self::hasTime($file_content);
         $internal_format = [];
         $i = -1;
+        $skip_if_new_line_will_be_digit = true; // skip first digit before timestamp
         foreach ($lines as $line) {
+            if ($skip_if_new_line_will_be_digit && preg_match('/^\s*\d+\s*$/', $line) === 1) {
+                $skip_if_new_line_will_be_digit = false;
+                continue;
+            }
+
             $matches = self::getLineParts($line);
 
             if ($matches['start'] !== '') {
@@ -33,11 +39,14 @@ class TxtConverter implements ConverterContract
             if ($matches['end'] !== '') {
                 $internal_format[$i]['end'] = self::timeToInternal($matches['end']);
             }
-            if ($matches['text'] !== '' && self::hasText($matches['text'])) {
+            if ($matches['text'] !== '' && (self::hasText($matches['text']) || self::hasDigit($matches['text']))) {
                 if (!$has_timestamps) {
                     $i++;
                 }
                 $internal_format[$i]['lines'][] = trim($matches['text']);
+                $skip_if_new_line_will_be_digit = false;
+            } elseif ($matches['text'] == '') { // if empty line
+                $skip_if_new_line_will_be_digit = true;
             }
         }
 
@@ -106,7 +115,7 @@ class TxtConverter implements ConverterContract
         if ($right_text) {
             $right_text = substr($right_text, strlen($right_timestamp));
         }
-        if (self::hasText($right_text)) {
+        if (self::hasText($right_text) || self::hasDigit($right_text)) {
             $matches['text'] = $right_text;
         }
 
@@ -116,23 +125,21 @@ class TxtConverter implements ConverterContract
     private static function timeToInternal($time)
     {
         $time = trim($time);
-        $time_parts = preg_split('/[:,.]/', $time);
+        $time_parts = explode(':', $time);
         $total_parts = count($time_parts);
 
         if ($total_parts === 2) { // minutes:seconds format
             $minutes = (int)$time_parts[0];
             $seconds = (int)$time_parts[1];
-            return ($minutes * 60) + $seconds;
-        } elseif ($total_parts === 3) { // hours:minutes:seconds format
+            $tmp = str_replace(',', '.', $time_parts[1]);
+            $milliseconds = $tmp - floor($tmp);
+            return ($minutes * 60) + $seconds + $milliseconds;
+        } elseif ($total_parts === 3) { // hours:minutes:seconds,milliseconds format
             $hours = (int)$time_parts[0];
             $minutes = (int)$time_parts[1];
             $seconds = (int)$time_parts[2];
-            return ($hours * 3600) + ($minutes * 60) + $seconds;
-        } elseif ($total_parts === 4) { // hours:minutes:seconds,milliseconds format
-            $hours = (int)$time_parts[0];
-            $minutes = (int)$time_parts[1];
-            $seconds = (int)$time_parts[2];
-            $milliseconds = (float)('0.' . $time_parts[3]);
+            $tmp = str_replace(',', '.', $time_parts[2]);
+            $milliseconds = $tmp - floor($tmp);
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         } else {
             throw new \InvalidArgumentException("Invalid time format: $time");
@@ -147,6 +154,11 @@ class TxtConverter implements ConverterContract
     private static function hasText($line)
     {
         return preg_match(self::$any_letter_regex, $line) === 1;
+    }
+
+    private static function hasDigit($line)
+    {
+        return preg_match('/\d/', $line) === 1;
     }
 
 }
