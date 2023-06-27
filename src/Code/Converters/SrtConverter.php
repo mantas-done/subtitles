@@ -6,7 +6,7 @@ class SrtConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
-        return preg_match('/^\d?\R(\d{2}:\d{2}:\d{2},\d{3}\s-->\s\d{2}:\d{2}:\d{2},\d{3})\R(.+)$/m', $file_content) === 1;
+        return preg_match('/^\d?\R(\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3})\R(.+)$/m', $file_content) === 1;
     }
 
     /**
@@ -21,7 +21,7 @@ class SrtConverter implements ConverterContract
 
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
-            preg_match('/(?<start>.*) --> (?<end>.*)\n(?<text>(\n*.*)*)/m', $block, $matches);
+            preg_match('/(?<start>.*) *--> *(?<end>.*)\n(?<text>(\n*.*)*)/m', $block, $matches);
 
             // if block doesn't contain text (invalid srt file given)
             if (empty($matches)) {

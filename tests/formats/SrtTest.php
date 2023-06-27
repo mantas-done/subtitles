@@ -60,9 +60,26 @@ class SrtTest extends TestCase {
 Very good, Lieutenant.
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content, 'srt')->getInternalFormat();
+        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(3, 4, ['Very good, Lieutenant.'])
+            ->getInternalFormat();
+        $this->assertEquals($expected_format, $actual_format);
+
+    }
+
+    public function testParsesClientFile()
+    {
+        $content = <<< TEXT
+1
+00:00:01,000-->00:00:02,000
+1
+
+TEXT;
+
+        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected_format = (new Subtitles())
+            ->add(1, 2, ['1'])
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
 
