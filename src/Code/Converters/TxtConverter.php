@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class TxtConverter implements ConverterContract
 {
-    private static $time_regexp = '/(?<!\d)(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?(?!\d)/';
+    private static $time_regexp = '/(?<!\d)(?:\d{2}:)?(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?(?!\d)/';
     private static $any_letter_regex = '/\p{L}/u';
 
     public function canParseFileContent($file_content)
@@ -129,17 +129,18 @@ class TxtConverter implements ConverterContract
         $total_parts = count($time_parts);
 
         if ($total_parts === 2) { // minutes:seconds format
-            $minutes = (int)$time_parts[0];
-            $seconds = (int)$time_parts[1];
+            list($minutes, $seconds) = array_map('intval', $time_parts);
             $tmp = str_replace(',', '.', $time_parts[1]);
             $milliseconds = $tmp - floor($tmp);
             return ($minutes * 60) + $seconds + $milliseconds;
         } elseif ($total_parts === 3) { // hours:minutes:seconds,milliseconds format
-            $hours = (int)$time_parts[0];
-            $minutes = (int)$time_parts[1];
-            $seconds = (int)$time_parts[2];
+            list($hours, $minutes, $seconds) = array_map('intval', $time_parts);
             $tmp = str_replace(',', '.', $time_parts[2]);
             $milliseconds = $tmp - floor($tmp);
+            return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
+        } elseif ($total_parts === 4) { // hours:minutes:seconds:frames format
+            list($hours, $minutes, $seconds, $frames) = array_map('intval', $time_parts);
+            $milliseconds = $frames / 25; // 25 frames
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         } else {
             throw new \InvalidArgumentException("Invalid time format: $time");
