@@ -6,7 +6,15 @@ class CsvConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
-        return false; // csv file is not recognized automatically, user must specify explicitly
+        $csv = self::csvToArray($file_content);
+
+        if (!isset($csv[1][0])) {
+            return false;
+        }
+        $cell = $csv[1][0];
+        $timestamp = preg_replace(TxtConverter::$time_regexp, '', $cell);
+        $only_timestamp_on_first_column = trim($timestamp) === '';
+        return count($csv) >= 2 && $only_timestamp_on_first_column; // at least 2 columns: timestamp + text
     }
 
     /**
@@ -17,25 +25,19 @@ class CsvConverter implements ConverterContract
      */
     public function fileContentToInternalFormat($file_content)
     {
-        $lines = explode("\n", $file_content);
-        $lines = array_map('trim', $lines);
-
-        $data = array();
-        foreach ($lines as $line) {
-            $data[] = str_getcsv($line);
-        }
-
+        $data = self::csvToArray($file_content);
 
         $internal_format = [];
-        foreach ($data as $row) {
-            if ($row[0] === 'Start') { // heading
+        foreach ($data as $k => $row) {
+            $timestamp = preg_replace(TxtConverter::$time_regexp, '', $row[0]);
+            if ($k === 0  && trim($timestamp) !== '') { // heading
                 continue;
             }
 
             $internal_format[] = [
-                'start' => $row[0],
-                'end' => $row[1],
-                'lines' => [$row[2]],
+                'start' => TxtConverter::timeToInternal($row[0]),
+                'end' => TxtConverter::timeToInternal($row[1]),
+                'lines' => mb_split("\n", $row[2]),
             ];
         }
 
@@ -68,5 +70,20 @@ class CsvConverter implements ConverterContract
         fclose($fp);
 
         return $file_content;
+    }
+
+    private static function csvToArray($content)
+    {
+        $fp = fopen("php://temp", 'r+');
+        fputs($fp, $content);
+        rewind($fp);
+
+        $csv = [];
+        while ( ($data = fgetcsv($fp) ) !== false ) {
+            $csv[] = $data;
+        }
+        fclose($fp);
+
+        return $csv;
     }
 }

@@ -117,6 +117,8 @@ c
 d
 01:23:47:20
 e
+5030.81
+f
 TEXT;
         $actual = Subtitles::loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())
@@ -124,9 +126,9 @@ TEXT;
             ->add(5025, 5025.001, 'b')
             ->add(5025.001, 5026.2, 'c')
             ->add(5026.2, 5027.8, 'd')
-            ->add(5027.8, 5028.8, 'e')
+            ->add(5027.8, 5030.81, 'e')
+            ->add(5030.81, 5031.81, 'f')
             ->getInternalFormat();
-
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }

@@ -30,7 +30,6 @@ class Subtitles
     public static $formats = [
         ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
         ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
-        ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class],
         ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => DfxpConverter::class],
         ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => SbvConverter::class],
         ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => SrtConverter::class],
@@ -43,6 +42,7 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
         ['extension' => 'scc',  'format' => 'scc',              'name' => 'Scenarist',                  'class' => SccConverter::class],
+        ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class], // must be last from bottom
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class], // must be the last one
     ];
 
@@ -198,10 +198,13 @@ class Subtitles
         return static::loadFromString($string, $format);
     }
 
-    public static function loadFromString($text, $format = null)
+    public static function loadFromString($string, $format = null)
     {
         $converter = new static;
-        $converter->input = Helpers::normalizeNewLines(Helpers::removeUtf8Bom($text));
+        $string = Helpers::convertToUtf8($string);
+        $string = Helpers::removeUtf8Bom($string);
+        $string = Helpers::normalizeNewLines($string);
+        $converter->input = $string;
 
         if ($format) {
             $input_converter = Helpers::getConverterByFormat($format);

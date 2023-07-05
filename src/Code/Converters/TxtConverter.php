@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class TxtConverter implements ConverterContract
 {
-    private static $time_regexp = '/(?<!\d)(?:\d{2}:)?(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?(?!\d)/';
+    public static $time_regexp = '/(?<!\d)(?:\d{2}:)?(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
     private static $any_letter_regex = '/\p{L}/u';
 
     public function canParseFileContent($file_content)
@@ -122,13 +122,16 @@ class TxtConverter implements ConverterContract
         return $matches;
     }
 
-    private static function timeToInternal($time)
+    public static function timeToInternal($time)
     {
         $time = trim($time);
         $time_parts = explode(':', $time);
         $total_parts = count($time_parts);
 
-        if ($total_parts === 2) { // minutes:seconds format
+        if ($total_parts === 1) {
+            $tmp = str_replace(',', '.', $time_parts[0]);
+            return $tmp;
+        } elseif ($total_parts === 2) { // minutes:seconds format
             list($minutes, $seconds) = array_map('intval', $time_parts);
             $tmp = str_replace(',', '.', $time_parts[1]);
             $milliseconds = $tmp - floor($tmp);

@@ -85,6 +85,20 @@ class Helpers
         return $file_content;
     }
 
+    public static function convertToUtf8($file_content)
+    {
+        $encodings = ['UTF-8', 'ISO-8859-1', 'Windows-1252'];
+
+        foreach ($encodings as $encoding) {
+            $converted_content = mb_convert_encoding($file_content, 'UTF-8', $encoding);
+            if ($converted_content !== false) {
+                return $converted_content;
+            }
+        }
+
+        throw new UserException('Unknown file encoding (not utf8)');
+    }
+
     public static function shiftBlockTime($block, $seconds, $from, $till)
     {
         if (!static::blockTimesWithinRange($block, $from, $till)) {
