@@ -4,6 +4,8 @@ namespace Done\Subtitles\Code\Converters;
 
 class CsvConverter implements ConverterContract
 {
+    public static $allowedSeparators = [",", ";", "|", "\t"];
+
     public function canParseFileContent($file_content)
     {
         $csv = self::csvToArray($file_content);
@@ -78,12 +80,39 @@ class CsvConverter implements ConverterContract
         fputs($fp, $content);
         rewind($fp);
 
+        $separator = self::detectSeparator($content);
         $csv = [];
-        while ( ($data = fgetcsv($fp) ) !== false ) {
+        while ( ($data = fgetcsv($fp, 0, $separator) ) !== false ) {
             $csv[] = $data;
         }
         fclose($fp);
 
         return $csv;
+    }
+
+    private static function detectSeparator($file_content)
+    {
+        $lines = explode("\n", $file_content);
+        $results = [];
+        foreach ($lines as $line) {
+            foreach (self::$allowedSeparators as $delimiter) {
+                $count = count(explode($delimiter, $line));
+                if ($count === 1) continue; // delimiter not found in line
+
+                if (empty($results[$delimiter])) {
+                    $results[$delimiter] = [];
+                }
+                $results[$delimiter][] = $count;
+            }
+        }
+
+        foreach ($results as $delimiter => $value) {
+            $flipped = array_flip($value);
+            $results[$delimiter] = count($flipped);
+        }
+
+        arsort($results, SORT_NUMERIC);
+
+        return !empty($results) ? key($results) : self::$allowedSeparators[0];
     }
 }

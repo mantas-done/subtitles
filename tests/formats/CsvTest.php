@@ -57,4 +57,31 @@ class CsvTest extends TestCase {
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    /**
+     * @dataProvider differentContentSeparatorProvider
+     */
+    public function testDifferentContentSeparators($string)
+    {
+        $actual_internal_format = Subtitles::loadFromString($string, 'csv')->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(1, 2, ['Oh! Can I believe my eyes!'])
+            ->add(2, 3, ['If Heaven and earth.'])->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
+    public static function differentContentSeparatorProvider()
+    {
+        $original_string = 'Start,End,Text
+00:00:1,00:00:2,Oh! Can I believe my eyes!
+00:00:2,00:00:3,If Heaven and earth.';
+
+        $strings = [];
+        foreach (CsvConverter::$allowedSeparators as $separator) {
+            $strings[] = str_replace(',', $separator, $original_string);
+        }
+
+        return [$strings];
+    }
 }
