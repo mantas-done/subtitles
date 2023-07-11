@@ -129,16 +129,16 @@ class TxtConverter implements ConverterContract
         $total_parts = count($time_parts);
 
         if ($total_parts === 1) {
-            $tmp = str_replace(',', '.', $time_parts[0]);
+            $tmp = (float) str_replace(',', '.', $time_parts[0]);
             return $tmp;
         } elseif ($total_parts === 2) { // minutes:seconds format
             list($minutes, $seconds) = array_map('intval', $time_parts);
-            $tmp = str_replace(',', '.', $time_parts[1]);
+            $tmp = (float) str_replace(',', '.', $time_parts[1]);
             $milliseconds = $tmp - floor($tmp);
             return ($minutes * 60) + $seconds + $milliseconds;
         } elseif ($total_parts === 3) { // hours:minutes:seconds,milliseconds format
             list($hours, $minutes, $seconds) = array_map('intval', $time_parts);
-            $tmp = str_replace(',', '.', $time_parts[2]);
+            $tmp = (float) str_replace(',', '.', $time_parts[2]);
             $milliseconds = $tmp - floor($tmp);
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         } elseif ($total_parts === 4) { // hours:minutes:seconds:frames format
