@@ -77,7 +77,8 @@ class SrtConverter implements ConverterContract
      */
     protected static function srtTimeToInternal($srt_time)
     {
-        $parts = explode(',', $srt_time);
+        $time_string = str_replace('.', ',', $srt_time);
+        $parts = explode(',', $time_string);
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float)('0.' . $parts[1]);

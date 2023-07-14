@@ -110,4 +110,25 @@ TEXT;
             ->add(3740.476, 3742.501, ['Very good, Lieutenant.']);
     }
 
+    public function testTimeFormats()
+    {
+        $content = <<< TEXT
+1
+00:00:01,100-->00:00:02,200
+one
+
+2
+00:00:02.200-->00:00:03.300
+two
+TEXT;
+
+        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected_format = (new Subtitles())
+            ->add(1.1, 2.2, ['one'])
+            ->add(2.2, 3.3, ['two'])
+            ->getInternalFormat();
+        $this->assertEquals($expected_format, $actual_format);
+
+    }
+
 }
