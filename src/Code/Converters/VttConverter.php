@@ -11,19 +11,22 @@ class VttConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        $parts = explode("\n\n", $file_content);
-        $internal_format = [];
-        foreach ($parts as $part) {
-            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{3})\s-->\s((?:\d{2}:){1,2}\d{2}\.\d{3})\s+(.*?)(?=\n\n|$)/s', $part, $matches);
-            if ($found === 0) {
-                continue;
-            }
+        preg_match_all(
+            '/((?:\d{2}:){1,2}\d{2}\.\d{3})\s-->\s((?:\d{2}:){1,2}\d{2}\.\d{3})\n(.*?)(?=(?:\n\n|$))/s',
+            $file_content,
+            $matches,
+            PREG_SET_ORDER
+        );
 
-            $lines = explode("\n", $matches[3]);
+        $internal_format = [];
+        foreach ($matches as $match) {
+            if (empty($match[3])) continue;
+
+            $lines = explode("\n", $match[3]);
             $lines_array = array_map(static::fixLine(), $lines);
             $internal_format[] = [
-                'start' => static::vttTimeToInternal($matches[1]),
-                'end' => static::vttTimeToInternal($matches[2]),
+                'start' => static::vttTimeToInternal($match[1]),
+                'end' => static::vttTimeToInternal($match[2]),
                 'lines' => $lines_array,
             ];
         }
