@@ -6,7 +6,7 @@ class SrtConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
-        return preg_match('/^\d?\R(\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3})\R(.+)$/m', $file_content) === 1;
+        return preg_match('/^0*\d?\R(\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3})\R(.+)$/m', $file_content) === 1;
     }
 
     /**
@@ -27,11 +27,12 @@ class SrtConverter implements ConverterContract
             if (empty($matches)) {
                 continue;
             }
-
+            $lines = explode("\n", $matches['text']);
+            $lines_array = array_map('strip_tags', $lines);
             $internal_format[] = [
                 'start' => static::srtTimeToInternal($matches['start']),
                 'end' => static::srtTimeToInternal($matches['end']),
-                'lines' => explode("\n", $matches['text']),
+                'lines' => $lines_array,
             ];
         }
 
