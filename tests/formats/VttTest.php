@@ -158,4 +158,17 @@ TEXT;
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testParsesFileWithMultipleNewLines()
+    {
+        $given = file_get_contents('./tests/files/vtt_with_multiple_new_lines.vtt');
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0.0, 1.0, 'one')
+            ->add(1.0, 2.0, 'two')
+            ->add(2.0, 3.0, 'three')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
 }
