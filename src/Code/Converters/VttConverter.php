@@ -11,22 +11,21 @@ class VttConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all(
-            '/((?:\d{2}:){1,2}\d{2}\.\d{3})\s-->\s((?:\d{2}:){1,2}\d{2}\.\d{3})\n(.*?)(?=(?:\n\n|$))/s',
-            $file_content,
-            $matches,
-            PREG_SET_ORDER
-        );
-
+        $block_lines = self::countBlockLines($file_content);
+        $blocks = preg_split("/\n{{$block_lines}}/", $file_content);
         $internal_format = [];
-        foreach ($matches as $match) {
-            if (empty($match[3])) continue;
+        foreach ($blocks as $block) {
+            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{3})\s-->\s((?:\d{2}:){1,2}\d{2}\.\d{3})([\s\S]+)/s', $block, $matches);
+            if ($found === 0) {
+                continue;
+            }
 
-            $lines = explode("\n", $match[3]);
+            $trimmed_lines = preg_replace("/\n+/", "\n", trim($matches[3]));
+            $lines = explode("\n", $trimmed_lines);
             $lines_array = array_map(static::fixLine(), $lines);
             $internal_format[] = [
-                'start' => static::vttTimeToInternal($match[1]),
-                'end' => static::vttTimeToInternal($match[2]),
+                'start' => static::vttTimeToInternal($matches[1]),
+                'end' => static::vttTimeToInternal($matches[2]),
                 'lines' => $lines_array,
             ];
         }
@@ -95,5 +94,13 @@ class VttConverter implements ConverterContract
 
             return $line;
         };
+    }
+
+    protected static function countBlockLines($file_content)
+    {
+        $pattern = '/\bWEBVTT\b\s*\R*/';
+        preg_match($pattern, $file_content, $matches);
+
+        return substr_count($matches[0], "\n");
     }
 }
