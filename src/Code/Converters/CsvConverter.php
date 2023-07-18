@@ -16,7 +16,7 @@ class CsvConverter implements ConverterContract
         $cell = $csv[1][0];
         $timestamp = preg_replace(TxtConverter::$time_regexp, '', $cell);
         $only_timestamp_on_first_column = trim($timestamp) === '';
-        return count($csv) >= 2 && $only_timestamp_on_first_column; // at least 2 columns: timestamp + text
+        return count($csv[1]) >= 2 && $only_timestamp_on_first_column; // at least 2 columns: timestamp + text
     }
 
     /**
