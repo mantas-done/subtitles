@@ -123,13 +123,18 @@ two
 
 3
 00:00:04-->00:00:05
-two
+three
+
+4
+0:00:05-->0:00:06
+four
 TEXT;
         $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1.1, 2.2, ['one'])
             ->add(2.2, 3.3, ['two'])
-            ->add(4, 5, ['two'])
+            ->add(4, 5, ['three'])
+            ->add(5, 6, ['four'])
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
     }
