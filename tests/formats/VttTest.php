@@ -170,4 +170,37 @@ TEXT;
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testParseFileWithMetadata()
+    {
+        $given = <<< TEXT
+WEBVTT
+X-TIMESTAMP-MAP=LOCAL:00:00:00.000,MPEGTS:0
+
+00:00:00.000 --> 00:00:01.000
+text1
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'text1')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testParseFileWithSpacesBetweenTimestamps()
+    {
+        $given = <<< TEXT
+WEBVTT
+
+     00:00:00.100    -->    00:00:01.100     
+text1
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0.1, 1.1, 'text1')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
 }

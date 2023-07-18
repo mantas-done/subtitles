@@ -15,7 +15,7 @@ class VttConverter implements ConverterContract
         $blocks = preg_split("/\n{{$block_lines}}/", $file_content);
         $internal_format = [];
         foreach ($blocks as $block) {
-            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{3})\s-->\s((?:\d{2}:){1,2}\d{2}\.\d{3})([\s\S]+)/s', $block, $matches);
+            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{3}).*?\n([\s\S]+)/s', $block, $matches);
             if ($found === 0) {
                 continue;
             }
@@ -98,6 +98,7 @@ class VttConverter implements ConverterContract
 
     protected static function countBlockLines($file_content)
     {
+        $file_content = preg_replace('/^X-TIMESTAMP-MAP.*\R/m', '', $file_content);
         $pattern = '/\bWEBVTT\b\s*\R*/';
         preg_match($pattern, $file_content, $matches);
 
