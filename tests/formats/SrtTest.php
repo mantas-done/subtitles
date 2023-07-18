@@ -120,11 +120,16 @@ one
 2
 00:00:02.200-->00:00:03.300
 two
+
+3
+00:00:04-->00:00:05
+two
 TEXT;
         $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1.1, 2.2, ['one'])
             ->add(2.2, 3.3, ['two'])
+            ->add(4, 5, ['two'])
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
     }
