@@ -6,7 +6,7 @@ class SrtConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
-        return preg_match('/^0*\d?\R(\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3})\R(.+)$/m', $file_content) === 1;
+        return preg_match('/^0*\d?\R(\d{1,2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{1,2}:\d{2}:\d{2},\d{3})\R(.+)$/m', $file_content) === 1;
     }
 
     /**
@@ -80,9 +80,8 @@ class SrtConverter implements ConverterContract
     {
         $time_string = str_replace('.', ',', $srt_time);
         $parts = explode(',', $time_string);
-
+        $milliseconds = count($parts) > 1 ? (float)('0.' . $parts[1]) : 0;
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
-        $milliseconds = (float)('0.' . $parts[1]);
 
         $time = $only_seconds + $milliseconds;
 

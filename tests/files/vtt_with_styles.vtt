@@ -15,5 +15,5 @@ STYLE
 }
 
 hello
-00:00:00.000 --> 00:00:10.000
+00:00:00.000 --> 00:00:10.000 position:50% line:15% align:middle
 Hello world.

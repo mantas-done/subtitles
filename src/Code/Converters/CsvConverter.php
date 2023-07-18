@@ -16,7 +16,7 @@ class CsvConverter implements ConverterContract
         $cell = $csv[1][0];
         $timestamp = preg_replace(TxtConverter::$time_regexp, '', $cell);
         $only_timestamp_on_first_column = trim($timestamp) === '';
-        return count($csv) >= 2 && $only_timestamp_on_first_column; // at least 2 columns: timestamp + text
+        return count($csv[1]) >= 2 && $only_timestamp_on_first_column; // at least 2 columns: timestamp + text
     }
 
     /**
@@ -97,7 +97,7 @@ class CsvConverter implements ConverterContract
         foreach ($lines as $line) {
             foreach (self::$allowedSeparators as $delimiter) {
                 $count = count(explode($delimiter, $line));
-                if ($count === 1) continue; // delimiter not found in line
+                if ($count < 2) continue; // delimiter not found in line, minimum 2 cols (timestamp + text)
 
                 if (empty($results[$delimiter])) {
                     $results[$delimiter] = [];
@@ -108,7 +108,7 @@ class CsvConverter implements ConverterContract
 
         foreach ($results as $delimiter => $value) {
             $flipped = array_flip($value);
-            $results[$delimiter] = count($flipped);
+            $results[$delimiter] = max($flipped);
         }
 
         arsort($results, SORT_NUMERIC);

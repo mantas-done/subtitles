@@ -4,6 +4,8 @@ namespace Done\Subtitles\Code\Converters;
 
 class VttConverter implements ConverterContract
 {
+    protected static $time_regexp = '((?:\d{2}:){1,2}\d{2}\.\d{3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{3})';
+
     public function canParseFileContent($file_content)
     {
         return preg_match('/^WEBVTT/m', $file_content) === 1;
@@ -15,7 +17,7 @@ class VttConverter implements ConverterContract
         $blocks = preg_split("/\n{{$block_lines}}/", $file_content);
         $internal_format = [];
         foreach ($blocks as $block) {
-            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{3})\s-->\s((?:\d{2}:){1,2}\d{2}\.\d{3})([\s\S]+)/s', $block, $matches);
+            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{3}).*?\n([\s\S]+)/s', $block, $matches);
             if ($found === 0) {
                 continue;
             }
@@ -98,9 +100,18 @@ class VttConverter implements ConverterContract
 
     protected static function countBlockLines($file_content)
     {
-        $pattern = '/\bWEBVTT\b\s*\R*/';
-        preg_match($pattern, $file_content, $matches);
+        $min_block_lines = 2;
+        preg_match_all('/' . self::$time_regexp . '/', $file_content, $matches);
 
-        return substr_count($matches[0], "\n");
+        // file might contain no cues, need at least two cues to determinate lines between blocks;
+        if (count($matches[0]) < 2) {
+            return $min_block_lines;
+        }
+
+        $second_subtitle_timestamp = $matches[0][1];
+        preg_match('/(\s+)' . $second_subtitle_timestamp . '/s', $file_content, $matches);
+        $block_lines = substr_count($matches[0], "\n");
+
+        return $block_lines < $min_block_lines ? $min_block_lines : $block_lines; // there can not be less than two new line symbols between blocks
     }
 }
