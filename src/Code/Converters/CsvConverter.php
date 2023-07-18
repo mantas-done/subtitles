@@ -97,7 +97,7 @@ class CsvConverter implements ConverterContract
         foreach ($lines as $line) {
             foreach (self::$allowedSeparators as $delimiter) {
                 $count = count(explode($delimiter, $line));
-                if ($count === 1) continue; // delimiter not found in line
+                if ($count < 2) continue; // delimiter not found in line, minimum 2 cols (timestamp + text)
 
                 if (empty($results[$delimiter])) {
                     $results[$delimiter] = [];
@@ -108,7 +108,7 @@ class CsvConverter implements ConverterContract
 
         foreach ($results as $delimiter => $value) {
             $flipped = array_flip($value);
-            $results[$delimiter] = count($flipped);
+            $results[$delimiter] = max($flipped);
         }
 
         arsort($results, SORT_NUMERIC);
