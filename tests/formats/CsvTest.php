@@ -84,4 +84,18 @@ class CsvTest extends TestCase {
 
         return [$strings];
     }
+
+    public function testParseFileWithSingleTimestamp()
+    {
+        $string = <<< TEXT
+00:00:01    One
+00:00:02    Two
+TEXT;
+        $actual_internal_format = Subtitles::loadFromString($string, 'csv')->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(1, 2, ['One'])
+            ->add(2, 3, ['Two'])->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
 }

@@ -28,22 +28,19 @@ class CsvConverter implements ConverterContract
     public function fileContentToInternalFormat($file_content)
     {
         $data = self::csvToArray($file_content);
-
-        $internal_format = [];
+        $data_string  = '';
+        $splitter = "/\nnewline\n/";
         foreach ($data as $k => $row) {
-            $timestamp = preg_replace(TxtConverter::$time_regexp, '', $row[0]);
-            if ($k === 0  && trim($timestamp) !== '') { // heading
+            $timestamp_found = (bool) preg_match(TxtConverter::$time_regexp, $row[0]);
+            if ($k === 0  && $timestamp_found === false) { // heading
                 continue;
             }
 
-            $internal_format[] = [
-                'start' => TxtConverter::timeToInternal($row[0]),
-                'end' => TxtConverter::timeToInternal($row[1]),
-                'lines' => mb_split("\n", $row[2]),
-            ];
+            $row_string = implode(' ', $row);
+            $data_string .= $row_string . $splitter;
         }
 
-        return $internal_format;
+        return TxtConverter::contentToInternalFormatBySeparator($data_string, $splitter);
     }
 
     /**
