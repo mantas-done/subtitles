@@ -128,6 +128,10 @@ three
 4
 0:00:05-->0:00:06
 four
+
+5
+0:00:06,5-->0:00:07,11
+five
 TEXT;
         $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
@@ -135,6 +139,7 @@ TEXT;
             ->add(2.2, 3.3, ['two'])
             ->add(4, 5, ['three'])
             ->add(5, 6, ['four'])
+            ->add(6.5, 7.11, ['five'])
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
     }
