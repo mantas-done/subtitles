@@ -23,13 +23,12 @@ class SubViewerConverter implements ConverterContract
 
         $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
         foreach ($blocks as $block) {
-            $lines = explode("\n", $block); // separate all block lines
+            $lines = explode("\n", trim($block)); // separate all block lines
             $times = explode(',', $lines[0]); // one the second line there is start and end times
-
             $internal_format[] = [
-                'start' => static::srtTimeToInternal($times[0]),
-                'end' => static::srtTimeToInternal($times[1]),
-                'lines' => explode('[br]', $lines[1]), // get all the remaining lines from block (if multiple lines of text)
+                'start' => static::timeToInternal($times[0]),
+                'end' => static::timeToInternal($times[1]),
+                'lines' => explode('[br]', $lines[1] ?? ''), // get all the remaining lines from block (if multiple lines of text)
             ];
         }
 
@@ -64,14 +63,14 @@ class SubViewerConverter implements ConverterContract
     // ------------------------------ private --------------------------------------------------------------------------
 
     /**
-     * Convert .srt file format to internal time format (float in seconds)
+     * Convert .sub file format to internal time format (float in seconds)
      * Example: 00:02:17,440 -> 137.44
      *
      * @param $sub_time
      *
      * @return float
      */
-    protected static function srtTimeToInternal($sub_time)
+    protected static function timeToInternal($sub_time)
     {
         $parts = explode('.', $sub_time);
 
