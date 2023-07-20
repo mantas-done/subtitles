@@ -60,4 +60,22 @@ TEXT;
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testParseCueWithEmptyText()
+    {
+        $content = <<<TEXT
+00:00:00.50,00:00:02.00
+
+
+00:00:02.00,00:00:03.50
+Text here
+TEXT;
+        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected_format = (new Subtitles())
+            ->add(0.5, 2, [''])
+            ->add(2, 3.5, ['Text here'])
+            ->getInternalFormat();
+        $this->assertEquals($expected_format, $actual_format);
+
+    }
 }
