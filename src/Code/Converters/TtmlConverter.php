@@ -15,58 +15,45 @@ class TtmlConverter implements ConverterContract
         @$dom->loadXML($file_content);
 
         $fps = self::framesPerSecond($dom);
-        $array = array();
 
         $body = $dom->getElementsByTagName('body')->item(0);
         if (!$body) {
             throw new \Exception('no body');
         }
-        $div = $body->getElementsByTagName('div')->item(0);
-        if (!$div) {
+
+        $divElements = $body->getElementsByTagName('div');
+        if ($divElements->count() < 1) {
             throw new \Exception('no div');
         }
-        $pElements = $div->getElementsByTagName('p');
-        foreach ($pElements as $p) {
-            $begin = $p->getAttribute('begin');
-            $end = $p->getAttribute('end');
-            $lines = '';
-
-            $textNodes = $p->childNodes;
-            foreach ($textNodes as $node) {
-                if ($node->nodeType === XML_TEXT_NODE) {
-                    $lines .= $node->nodeValue;
-                } else {
-                    $lines .= $dom->saveXML($node); // Preserve HTML tags
-                }
-            }
-
-            $lines = preg_replace('/<br\s*\/?>/', '<br>', $lines); // normalize <br>*/
-            $lines = explode('<br>', $lines);
-            $lines = array_map('strip_tags', $lines);
-            $lines = array_map('trim', $lines);
-
-            $array[] = array(
-                'start' => static::ttmlTimeToInternal($begin, $fps),
-                'end' => static::ttmlTimeToInternal($end, $fps),
-                'lines' => $lines,
-            );
-        }
-
-        return $array;
-
-
-
-
-
-        preg_match_all('/<p.+begin="(?<start>[^"]+).*end="(?<end>[^"]+)[^>]*>(?<text>(?!<\/p>).+)<\/p>/', $file_content, $matches, PREG_SET_ORDER);
 
         $internal_format = [];
-        foreach ($matches as $block) {
-            $internal_format[] = [
-                'start' => static::ttmlTimeToInternal($block['start']),
-                'end' => static::ttmlTimeToInternal($block['end']),
-                'lines' => explode('<br />', $block['text']),
-            ];
+        foreach ($divElements as $element) {
+            $begin = $element->getAttribute('begin');
+            $end = $element->getAttribute('end');
+            foreach ($element->getElementsByTagName('p') as $pElement) {
+                $begin = $pElement->hasAttribute('begin') ? $pElement->getAttribute('begin') : $begin;
+                $end = $pElement->hasAttribute('end') ? $pElement->getAttribute('end') : $end;
+                $lines = '';
+
+                foreach ($pElement->childNodes as $node) {
+                    if ($node->nodeType === XML_TEXT_NODE) {
+                        $lines .= $node->nodeValue;
+                    } else {
+                        $lines .= $dom->saveXML($node); // Preserve HTML tags
+                    }
+                }
+
+                $lines = preg_replace('/<br\s*\/?>/', '<br>', $lines); // normalize <br>*/
+                $lines = explode('<br>', $lines);
+                $lines = array_map('strip_tags', $lines);
+                $lines = array_map('trim', $lines);
+
+                $internal_format[] = array(
+                    'start' => static::ttmlTimeToInternal($begin, $fps),
+                    'end' => static::ttmlTimeToInternal($end, $fps),
+                    'lines' => $lines,
+                );
+            }
         }
 
         return $internal_format;

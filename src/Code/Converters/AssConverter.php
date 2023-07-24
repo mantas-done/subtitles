@@ -11,6 +11,7 @@ class AssConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
+        $internal_format = []; // array - where file content will be stored
         // get column numbers (every file can have a different number of columns that is encoded in this string)
         preg_match('/\[Events]\RFormat:(.*)/', $file_content, $formats);
         $formats = explode(',', $formats[1]);

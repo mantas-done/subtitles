@@ -1,0 +1,18 @@
+<tt xml:lang="en"
+   xmlns="http://www.w3.org/ns/ttml"
+   xmlns:tts="http://www.w3.org/ns/ttml#styling">
+   <head>
+      <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+         <ttm:title>TTML Example With Multiple div blocks</ttm:title>
+      </metadata>
+   </head>
+   <body>
+      <div begin="00:00:01.464" end="00:00:02.423">
+         <p>Senator, we're making<br />our final approach into Coruscant.</p>
+         <p begin="00:00:02.423" end="00:00:05.432">Very good, Lieutenant.</p>
+      </div>
+      <div>
+         <p begin="00:00:10.886" end="00:00:10.928">CLUB SHOU-TIME</p>
+      </div>
+   </body>
+</tt>
