@@ -215,7 +215,7 @@ one
 00:03.30 --> 00:04.40
 two
 TEXT;
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(1.1, 2.5, 'one')
             ->add(3.3, 4.4, 'two')
