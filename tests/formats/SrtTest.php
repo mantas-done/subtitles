@@ -12,8 +12,6 @@ class SrtTest extends TestCase {
 
     use AdditionalAssertionsTrait;
 
-    protected $format = 'srt';
-
     public function testRecognizesSrt()
     {
         $content = file_get_contents('./tests/files/srt.srt');
@@ -36,14 +34,14 @@ class SrtTest extends TestCase {
 
     public function testFileToInternalFormat()
     {
-        $actual_internal_format = Subtitles::loadFromString(self::fileContent(), $this->format)->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString(self::fileContent())->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
 
     public function testConvertToFile()
     {
-        $actual_file_content = self::generatedSubtitles()->content($this->format);
+        $actual_file_content = self::generatedSubtitles()->content('srt');
 
         $this->assertStringEqualsStringIgnoringLineEndings(self::fileContent(), $actual_file_content);
     }

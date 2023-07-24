@@ -71,7 +71,7 @@ WEBVTT
 Roger Bingham: We are in New York City
 TEXT;
 
-        $actual_vtt_file_content = (new Subtitles())->loadFromString($input_vtt_file_content, 'vtt')->content('vtt');
+        $actual_vtt_file_content = (new Subtitles())->loadFromString($input_vtt_file_content)->content('vtt');
 
         $this->assertStringEqualsStringIgnoringLineEndings($expected_vtt_file_content, $actual_vtt_file_content);
     }
@@ -113,7 +113,7 @@ text1
 00:00:01.000 --> 00:00:02.000
 text2
 TEXT;
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(0, 1, 'text1')
@@ -126,7 +126,7 @@ TEXT;
     public function testParsesFileWithStyles()
     {
         $given = file_get_contents('./tests/files/vtt_with_styles.vtt');
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(0, 10, 'Hello world.')
@@ -138,7 +138,7 @@ TEXT;
     public function testParsesFileWithHtml()
     {
         $given = file_get_contents('./tests/files/vtt_with_html.vtt');
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(0.0, 10.0, 'Sur les playground, ici à Montpellier')
@@ -150,7 +150,7 @@ TEXT;
     public function testParsesFileWithoutHoursInTimestamp()
     {
         $given = file_get_contents('./tests/files/vtt_without_hours_in_timestamp.vtt');
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
 
         $expected = (new Subtitles())
             ->add(0.0, 10.0, "I've spent nearly two decades")
@@ -162,7 +162,7 @@ TEXT;
     public function testParsesFileWithMultipleNewLines()
     {
         $given = file_get_contents('./tests/files/vtt_with_multiple_new_lines.vtt');
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(0.0, 1.0, ['one', 'two'])
             ->add(2.0, 3.0, 'three')
@@ -180,7 +180,7 @@ X-TIMESTAMP-MAP=LOCAL:00:00:00.000,MPEGTS:0
 00:00:00.000 --> 00:00:01.000
 text1
 TEXT;
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(0, 1, 'text1')
             ->getInternalFormat();
@@ -196,7 +196,7 @@ WEBVTT
      00:00:00.100    -->    00:00:01.100     
 text1
 TEXT;
-        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(0.1, 1.1, 'text1')
             ->getInternalFormat();

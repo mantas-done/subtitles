@@ -35,7 +35,7 @@ because they’re not your children or relatives.
 Because every child in our society is
 a part of that society
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($actual_file_content, 'sbv')->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString($actual_file_content)->getInternalFormat();
         $expected_internal_format = [[
             'start' => 340,
             'end' => 346,
@@ -95,7 +95,7 @@ Yes, yes. On my way.
 Lisa...Mona Lisa.
 TEXT;
 
-        $actual_internal_format = Subtitles::loadFromString($actual_file_content, 'sbv')->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString($actual_file_content)->getInternalFormat();
         $expected_internal_format = [[
             'start' => 64.927,
             'end' => 66.927,

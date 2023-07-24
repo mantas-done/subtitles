@@ -63,7 +63,7 @@ class CsvTest extends TestCase {
      */
     public function testDifferentContentSeparators($string)
     {
-        $actual_internal_format = Subtitles::loadFromString($string, 'csv')->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(1, 2, ['Oh! Can I believe my eyes!'])
             ->add(2, 3, ['If Heaven and earth.'])->getInternalFormat();
@@ -91,7 +91,7 @@ class CsvTest extends TestCase {
 00:00:01    One
 00:00:02    Two
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($string, 'csv')->getInternalFormat();
+        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(1, 2, ['One'])
             ->add(2, 3, ['Two'])->getInternalFormat();
