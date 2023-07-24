@@ -111,4 +111,16 @@ class TtmlTest extends TestCase {
             ['55s', 55, null],
         ];
     }
+
+    public function testParseWithMultipleDivs()
+    {
+        $ttml_path = './tests/files/ttml_with_multiple_divs.ttml';
+        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(1.464, 2.423, ["Senator, we're making", 'our final approach into Coruscant.'])
+            ->add(2.423, 5.432, ['Very good, Lieutenant.'])
+            ->add(10.886, 10.928, ['CLUB SHOU-TIME'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
