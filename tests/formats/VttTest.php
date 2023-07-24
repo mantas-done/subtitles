@@ -203,4 +203,25 @@ TEXT;
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testTimeFormats()
+    {
+        $given = <<< TEXT
+WEBVTT
+
+00:00:01.10 --> 00:00:02.50
+one
+
+00:03.30 --> 00:04.40
+two
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given, 'vtt')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(1.1, 2.5, 'one')
+            ->add(3.3, 4.4, 'two')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+
+    }
 }
