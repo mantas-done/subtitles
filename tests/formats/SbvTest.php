@@ -113,6 +113,29 @@ TEXT;
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
+    public function testInvalidTimeSeparators()
+    {
+        $string = "0:00:00.120,0:00:05.540
+a
+b
+
+0:00:07.980.0:00:11.300
+c
+
+0:00:25,734,0:00:28,734
+d";
+
+        $expected = (new Subtitles())
+            ->add(0.12,5.54, ['a', 'b'])
+            ->add(7.98, 11.3, 'c')
+            ->add(25.734, 28.734, 'd')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual(
+            $expected,
+            Subtitles::loadFromString($string)->getInternalFormat()
+        );
+    }
+
     // @TODO test time above 1 hour
 
 }

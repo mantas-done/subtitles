@@ -17,21 +17,7 @@ class SbvConverter implements ConverterContract
      */
     public function fileContentToInternalFormat($file_content)
     {
-        $internal_format = []; // array - where file content will be stored
-
-        $blocks = preg_split("/(\n{2,})/", trim($file_content)); // each block contains: start and end times + text
-        foreach ($blocks as $block) {
-            $lines = explode("\n", $block); // separate all block lines
-            $times = explode(',', $lines[0]); // one the second line there is start and end times
-
-            $internal_format[] = [
-                'start' => static::srtTimeToInternal($times[0]),
-                'end' => static::srtTimeToInternal($times[1]),
-                'lines' => array_slice($lines, 1), // get all the remaining lines from block (if multiple lines of text)
-            ];
-        }
-
-        return $internal_format;
+        return (new TxtConverter)->fileContentToInternalFormat($file_content);
     }
 
     /**
