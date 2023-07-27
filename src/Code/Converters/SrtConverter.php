@@ -96,7 +96,7 @@ class SrtConverter implements ConverterContract
      *
      * @return string
      */
-    protected static function internalTimeToSrt($internal_time)
+    public static function internalTimeToSrt($internal_time)
     {
         $parts = explode('.', $internal_time); // 1.23
         $whole = $parts[0]; // 1

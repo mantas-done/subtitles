@@ -54,10 +54,10 @@ class TtmlTest extends TestCase {
         $ttml_path = './tests/files/ttml2.ttml';
         $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
-            ->add(0, 10, 'Hello I am your first line.')
-            ->add(2, 10, ['I am your second captions', 'but with two lines.'])
-            ->add(4, 10, ['Je suis le troisième sous-titre.'])
-            ->add(6, 10, ['I am another caption with Bold and Italic styles.'])
+            ->add(0, 2, 'Hello I am your first line.')
+            ->add(2, 4, ['I am your second captions', 'but with two lines.'])
+            ->add(4, 6, ['Je suis le troisième sous-titre.'])
+            ->add(6, 8, ['I am another caption with Bold and Italic styles.'])
             ->add(8, 10, ['I am the last caption displayed in red and centered.'])
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);

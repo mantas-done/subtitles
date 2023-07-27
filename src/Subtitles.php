@@ -17,6 +17,7 @@ use Done\Subtitles\Code\Converters\TxtConverter;
 use Done\Subtitles\Code\Converters\TxtQuickTimeConverter;
 use Done\Subtitles\Code\Converters\VttConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 
 class Subtitles
 {
@@ -212,6 +213,8 @@ class Subtitles
             $input_converter = Helpers::getConverterByFileContent($converter->input);
         }
         $internal_format = $input_converter->fileContentToInternalFormat($converter->input);
+
+        // trim lines
         foreach ($internal_format as &$row) {
             foreach ($row['lines'] as &$line) {
                 $line = trim($line);
@@ -219,6 +222,19 @@ class Subtitles
         }
         unset($row);
         unset($line);
+
+        // check if time is increasing
+        $last_end_time = 0;
+        foreach ($internal_format as $row) {
+            if ($row['start'] < $last_end_time) {
+                throw new UserException('Start time is lower than the last end time: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . $row['lines'][0]);
+            }
+            $last_end_time = $row['end'];
+            if ($row['start'] > $row['end']) {
+                throw new UserException('Start time is bigger than end time: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+            }
+        }
+
         $converter->internal_format = $internal_format;
 
         return $converter;
