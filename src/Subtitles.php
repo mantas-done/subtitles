@@ -223,15 +223,27 @@ class Subtitles
         unset($row);
         unset($line);
 
+        // fix up to a second time overlap
+        foreach ($internal_format as $k => $row) {
+            if ($k === 0) {
+                continue;
+            }
+            $diff = $internal_format[$k - 1]['end'] - $row['start'];
+            if ($diff < 1 && $diff > 0) {
+                $internal_format[$k - 1]['end'] = $row['start'];
+            }
+        }
+        unset($row);
+
         // check if time is increasing
         $last_end_time = 0;
         foreach ($internal_format as $row) {
             if ($row['start'] < $last_end_time) {
-                throw new UserException('Start time is lower than the last end time: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . $row['lines'][0]);
+                throw new UserException('Times are overlapping near text: ' . $row['lines'][0]);
             }
             $last_end_time = $row['end'];
             if ($row['start'] > $row['end']) {
-                throw new UserException('Start time is bigger than end time: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                throw new UserException('Times are overlapping near text: ' . $row['lines'][0]);
             }
         }
 
