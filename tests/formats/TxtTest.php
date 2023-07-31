@@ -186,6 +186,46 @@ TEXT;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testIfFileWithoutTimestampsDoNotReturnTimestamp()
+    {
+        $actual = Subtitles::loadFromString('
+a
+b
+c
+d
+e
+10,000 rounds of ammunition
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->add(1, 2, 'b')
+            ->add(2, 3, 'c')
+            ->add(3, 4, 'd')
+            ->add(4, 5, 'e')
+            ->add(5, 6, '10,000 rounds of ammunition')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testLinesTogetherAreLeftConnected()
+    {
+        $actual = Subtitles::loadFromString('
+a
+b
+
+c
+
+d
+e
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, ['a', 'b'])
+            ->add(1, 2, 'c')
+            ->add(2, 3, ['d', 'e'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

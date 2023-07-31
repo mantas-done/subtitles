@@ -19,9 +19,18 @@ class TxtConverter implements ConverterContract
         // numbered file
         // timestamps on separate line
 
-        $file_content = trim($file_content);
-        $file_content = preg_replace("/\n+/", "\n", $file_content);
-        $lines = mb_split("\n", $file_content);
+        $file_content2 = trim($file_content);
+        $file_content2 = preg_replace("/\n+/", "\n", $file_content2);
+        $lines = mb_split("\n", $file_content2);
+
+        if (!self::doesFileUseTimestamps($lines)) {
+            if (self::areEmptyLinesUsedAsSeparators($file_content)) {
+                return self::twoLinesSeparatedByEmptyLine($file_content);
+            }
+
+            return self::withoutTimestampsInternalFormat($lines);
+        }
+
         $array = [];
         foreach ($lines as $line) {
             $array[] = self::getLineParts($line) + ['line' => $line];
@@ -81,6 +90,11 @@ class TxtConverter implements ConverterContract
             $j++;
         }
 
+        return self::fillStartAndEndTimes($internal_format);
+    }
+
+    private static function fillStartAndEndTimes(array $internal_format)
+    {
         // fill starts
         $last_start = -1;
         foreach ($internal_format as $k => $row) {
@@ -195,6 +209,99 @@ class TxtConverter implements ConverterContract
         } else {
             throw new \InvalidArgumentException("Invalid time format: $time");
         }
+    }
+
+    private static function doesFileUseTimestamps(array $lines)
+    {
+        $lines_count = count($lines);
+        $lines_with_timestamp_count = 0;
+        foreach ($lines as $line) {
+            $parts = self::getLineParts($line);
+            if ($parts['start'] !== null) {
+                $lines_with_timestamp_count++;
+            }
+        }
+        return $lines_with_timestamp_count >= ($lines_count * 0.2); // if there 20% or more lines with timestamps
+    }
+
+    public static function withoutTimestampsInternalFormat(array $lines)
+    {
+        $internal_format = [];
+        foreach ($lines as $line) {
+            $internal_format[] = ['lines' => [$line]];
+        }
+        $internal_format = self::fillStartAndEndTimes($internal_format);
+        return $internal_format;
+    }
+
+    private static function areEmptyLinesUsedAsSeparators(string $file_content)
+    {
+        $counts = self::countLinesWithEmptyLines($file_content);
+        return
+            $counts['double_text_lines'] > $counts['lines'] * 0.01
+            && $counts['single_empty_lines'] > $counts['lines'] * 0.05
+        ;
+    }
+
+    private static function countLinesWithEmptyLines($file_content) {
+        $file_content = trim($file_content);
+        $lines = mb_split("\n", $file_content);
+        $single_empty_lines = 0;
+        $double_text_lines = 0;
+        foreach ($lines as &$line) {
+            $line = trim($line);
+        }
+        unset($line);
+
+        foreach ($lines as $k => $line) {
+            if ($line === '') {
+                continue;
+            }
+
+            $last_empty_line = isset($lines[$k - 1]) && $lines[$k - 1] === '';
+            $last2_empty_line = isset($lines[$k - 2]) && $lines[$k - 2] === '';
+
+            if (!$last_empty_line && $last2_empty_line) {
+                $double_text_lines++;
+            }
+            if ($last_empty_line && !$last2_empty_line) {
+                $single_empty_lines++;
+            }
+        }
+
+        return [
+            'lines' => count($lines),
+            'double_text_lines' => $double_text_lines,
+            'single_empty_lines' => $single_empty_lines,
+        ];
+    }
+
+    private static function twoLinesSeparatedByEmptyLine(string $file_content)
+    {
+        $lines = mb_split("\n", $file_content);
+        $internal_format = [];
+        $i = 0;
+        foreach ($lines as $k => $line) {
+            $is_empty = trim($line) === '';
+            $last_empty_line = isset($lines[$k - 1]) && trim($lines[$k - 1]) === '';
+            if ($is_empty) {
+                continue;
+            }
+
+            if ($last_empty_line) {
+                $internal_format[$i] = ['lines' => [$line]];
+                $i++;
+            } else {
+                if (isset($internal_format[$i - 1])) {
+                    $internal_format[$i - 1]['lines'][] = $line;
+                } else {
+                    $internal_format[$i] = ['lines' => [$line]];
+                    $i++;
+                }
+            }
+        }
+
+        return self::fillStartAndEndTimes($internal_format);
     }
 
     private static function hasTime($line)
