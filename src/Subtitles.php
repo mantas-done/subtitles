@@ -247,6 +247,11 @@ class Subtitles
             }
         }
 
+        // first key is zero
+        if (array_key_first($internal_format) !== 0) {
+            throw new \Exception('First internal_array element is not a 0');
+        }
+
         $converter->internal_format = $internal_format;
 
         return $converter;

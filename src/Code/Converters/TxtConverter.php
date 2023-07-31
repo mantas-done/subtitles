@@ -14,48 +14,71 @@ class TxtConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        return self::contentToInternalFormatBySeparator($file_content);
-    }
+        // just text lines
+        // timestamps on the same line
+        // numbered file
+        // timestamps on separate line
 
-    public static function contentToInternalFormatBySeparator($file_content)
-    {
+        $file_content = trim($file_content);
+        $file_content = preg_replace("/\n+/", "\n", $file_content);
         $lines = mb_split("\n", $file_content);
-        $internal_format = [];
-        $has_timestamps = preg_match('/^(?:[^\p{L}\d\n]*(' . trim(self::$time_regexp, '/') . '))/m', $file_content) === 1; // no text before the timestamp
-        $i = -1;
-        $skip_if_new_line_will_be_digit = true; // skip first digit before timestamp
+        $array = [];
         foreach ($lines as $line) {
-            if ($skip_if_new_line_will_be_digit && preg_match('/^\s*\d+\s*$/', $line) === 1) {
-                $skip_if_new_line_will_be_digit = false;
+            $array[] = self::getLineParts($line) + ['line' => $line];
+        }
+
+        $data = [];
+        for ($i = 0; $i < count($array); $i++) {
+            $row = $array[$i];
+            if (!isset($row['text'])) {
+                continue;
+            }
+            if (preg_match('/^[0-9]+$/', $row['text'])) { // only number on the line
+                if (isset($array[$i + 1]['start']) && $array[$i + 1]['start'] !== null) { // timestamp
+                    continue; // probably a number from an srt file, because after the number goes the timestamp
+                }
+            }
+
+            $start = null;
+            $end = null;
+            if ($start === null && isset($row['start'])) {
+                $start = $row['start'];
+                $end = $row['end'] ?? null;
+            }
+            if ($start === null && isset($array[$i - 1]['start']) && $array[$i - 1]['text'] === null) {
+                $start = $array[$i - 1]['start'];
+                $end = $array[$i - 1]['end'] ?? null;
+            }
+            if ($start === null && isset($array[$i - 2]['start']) && $array[$i - 2]['text'] === null) {
+                $start = $array[$i - 2]['start'];
+                $end = $array[$i - 2]['end'] ?? null;
+            }
+
+            $data[] = [
+                'start' => $start,
+                'end' => $end,
+                'text' => $row['text'],
+            ];
+        }
+
+        // merge lines with same timestamps
+        $internal_format = [];
+        $j = 0;
+        foreach ($data as $k => $row) {
+            if (
+                isset($data[$k - 1]['start'])
+                && $data[$k - 1]['start'] === $row['start']
+            ) {
+                $internal_format[$j - 1]['lines'][] = $row['text'];
                 continue;
             }
 
-            $matches = self::getLineParts($line);
-
-            if ($matches['start'] !== '') {
-                if ($has_timestamps) {
-                    $i++;
-                }
-                $internal_format[$i] = [
-                    'start' => self::timeToInternal($matches['start']),
-                    'lines' => [],
-                ];
-            }
-            if ($matches['end'] !== '') {
-                $internal_format[$i]['end'] = self::timeToInternal($matches['end']);
-            }
-            if ($matches['text'] !== '' && (self::hasText($matches['text']) || self::hasDigit($matches['text']))) {
-                if (!$has_timestamps) {
-                    $i++;
-                }
-                $internal_format[$i]['lines'][] = trim($matches['text']);
-                $skip_if_new_line_will_be_digit = false;
-            } elseif ($matches['text'] == '') { // if empty line
-                $skip_if_new_line_will_be_digit = true;
-            }
-        }
-        if (empty($internal_format[$i]['lines'])) { // not text (only the timestamp)
-            unset($internal_format[$i]);
+            $internal_format[$j] =  [
+                'start' => $row['start'],
+                'end' => $row['end'],
+                'lines' => [$row['text']],
+            ];
+            $j++;
         }
 
         // fill starts
@@ -102,9 +125,9 @@ class TxtConverter implements ConverterContract
     public static function getLineParts($line)
     {
         $matches = [
-            'start' => '',
-            'end' => '',
-            'text' => '',
+            'start' => null,
+            'end' => null,
+            'text' => null,
         ];
         preg_match_all(self::$time_regexp . 'm', $line, $timestamps);
 
@@ -134,6 +157,13 @@ class TxtConverter implements ConverterContract
         }
         if (self::hasText($right_text) || self::hasDigit($right_text)) {
             $matches['text'] = $right_text;
+        }
+
+        if ($matches['start'] !== null) {
+            $matches['start'] = self::timeToInternal($matches['start']);
+        }
+        if ($matches['end'] !== null) {
+            $matches['end'] = self::timeToInternal($matches['end']);
         }
 
         return $matches;

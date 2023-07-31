@@ -110,25 +110,25 @@ TEXT;
         $content = <<< TEXT
 01:23 
 a
-01:23:45
+01:23:46
 b
-01:23:45,001
+01:23:47,001
 c
-01:23:46.2
+01:23:48.2
 d
-01:23:47:20
+01:23:49:20
 e
-5030.81
+5050.81
 f
 TEXT;
         $actual = Subtitles::loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())
-            ->add(83, 5025, 'a')
-            ->add(5025, 5025.001, 'b')
-            ->add(5025.001, 5026.2, 'c')
-            ->add(5026.2, 5027.8, 'd')
-            ->add(5027.8, 5030.81, 'e')
-            ->add(5030.81, 5031.81, 'f')
+            ->add(83, 5026, 'a')
+            ->add(5026, 5027.001, 'b')
+            ->add(5027.001, 5028.2, 'c')
+            ->add(5028.2, 5029.8, 'd')
+            ->add(5029.8, 5050.81, 'e')
+            ->add(5050.81, 5051.81, 'f')
             ->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
@@ -142,6 +142,7 @@ TEXT;
 One
 1
 
+2
 00:12.000--> 00:12.900:
 Two
 2 
@@ -159,8 +160,8 @@ TEXT;
     {
         $parts = TxtConverter::getLineParts('The sun rises at 6:03 a.m.');
         $this->assertEquals($parts, [
-            'start' => '',
-            'end' => '',
+            'start' => null,
+            'end' => null,
             'text' => 'The sun rises at 6:03 a.m.',
         ]);
     }
@@ -172,6 +173,16 @@ TEXT;
             b 00:00
         ')->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b 00:00')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testNoException()
+    {
+        $actual = Subtitles::loadFromString('
+            a
+            00:03 b 
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 3, 'a')->add(3, 4, 'b')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
