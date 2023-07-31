@@ -29,7 +29,6 @@ class CsvConverter implements ConverterContract
     {
         $data = self::csvToArray($file_content);
         $data_string  = '';
-        $splitter = "/\nnewline\n/";
         foreach ($data as $k => $row) {
             $timestamp_found = (bool) preg_match(TxtConverter::$time_regexp, $row[0]);
             if ($k === 0  && $timestamp_found === false) { // heading
@@ -37,10 +36,10 @@ class CsvConverter implements ConverterContract
             }
 
             $row_string = implode(' ', $row);
-            $data_string .= $row_string . $splitter;
+            $data_string .= $row_string . "\n";
         }
 
-        return TxtConverter::contentToInternalFormatBySeparator($data_string, $splitter);
+        return TxtConverter::contentToInternalFormatBySeparator($data_string);
     }
 
     /**

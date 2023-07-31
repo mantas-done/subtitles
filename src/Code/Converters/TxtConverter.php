@@ -14,12 +14,12 @@ class TxtConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        return self::contentToInternalFormatBySeparator($file_content, "\n");
+        return self::contentToInternalFormatBySeparator($file_content);
     }
 
-    public static function contentToInternalFormatBySeparator($file_content, $splitter)
+    public static function contentToInternalFormatBySeparator($file_content)
     {
-        $lines = mb_split($splitter, $file_content);
+        $lines = mb_split("\n", $file_content);
         $has_timestamps = self::hasTime($file_content);
         $internal_format = [];
         $i = -1;
@@ -48,14 +48,7 @@ class TxtConverter implements ConverterContract
                 if (!$has_timestamps) {
                     $i++;
                 }
-
-                $text = trim($matches['text']);
-                if (self::hasNewLine($text)) {
-                    $internal_format[$i]['lines'] += preg_split("/\R+/", $text);
-                } else {
-                    $internal_format[$i]['lines'][] = $text;
-                }
-
+                $internal_format[$i]['lines'][] = trim($matches['text']);
                 $skip_if_new_line_will_be_digit = false;
             } elseif ($matches['text'] == '') { // if empty line
                 $skip_if_new_line_will_be_digit = true;
@@ -176,10 +169,4 @@ class TxtConverter implements ConverterContract
     {
         return preg_match('/\d/', $line) === 1;
     }
-
-    private static function hasNewLine($line)
-    {
-        return preg_match('/\n+/', $line) === 1;
-    }
-
 }
