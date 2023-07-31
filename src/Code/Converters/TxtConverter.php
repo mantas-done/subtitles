@@ -20,8 +20,8 @@ class TxtConverter implements ConverterContract
     public static function contentToInternalFormatBySeparator($file_content)
     {
         $lines = mb_split("\n", $file_content);
-        $has_timestamps = self::hasTime($file_content);
         $internal_format = [];
+        $has_timestamps = preg_match('/^(?:[^\p{L}\d\n]*(' . trim(self::$time_regexp, '/') . '))/m', $file_content) === 1; // no text before the timestamp
         $i = -1;
         $skip_if_new_line_will_be_digit = true; // skip first digit before timestamp
         foreach ($lines as $line) {
@@ -53,6 +53,9 @@ class TxtConverter implements ConverterContract
             } elseif ($matches['text'] == '') { // if empty line
                 $skip_if_new_line_will_be_digit = true;
             }
+        }
+        if (empty($internal_format[$i]['lines'])) { // not text (only the timestamp)
+            unset($internal_format[$i]);
         }
 
         // fill starts
@@ -104,18 +107,27 @@ class TxtConverter implements ConverterContract
             'text' => '',
         ];
         preg_match_all(self::$time_regexp . 'm', $line, $timestamps);
+
+        // there shouldn't be any text before the timestamp
+        // if there is text before it, then maybe it is not a timestamp
         $right_timestamp = '';
         if (isset($timestamps[0][0])) {
-            // start
-            $matches['start'] = $timestamps[0][0];
-            $right_timestamp = $matches['start'];
-        }
-        if (isset($timestamps[0][1])) {
-            // end
-            $matches['end'] = $timestamps[0][1];
-            $right_timestamp = $matches['end'];
+            $text_before_timestamp = substr($line, 0, strpos($line, $timestamps[0][0]));
+            if (!self::hasText($text_before_timestamp)) {
+                if (isset($timestamps[0][0])) {
+                    // start
+                    $matches['start'] = $timestamps[0][0];
+                    $right_timestamp = $matches['start'];
+                }
+                if (isset($timestamps[0][1])) {
+                    // end
+                    $matches['end'] = $timestamps[0][1];
+                    $right_timestamp = $matches['end'];
+                }
+            }
         }
 
+        // check if there is any text after the timestamp
         $right_text = strstr($line, $right_timestamp);
         if ($right_text) {
             $right_text = substr($right_text, strlen($right_timestamp));

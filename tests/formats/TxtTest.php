@@ -2,6 +2,7 @@
 
 namespace Tests\Formats;
 
+use Done\Subtitles\Code\Converters\TxtConverter;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
@@ -151,6 +152,26 @@ TEXT;
             ->add(12, 12.9, ['Two', '2'])
             ->getInternalFormat();
 
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testNotTimestampInTheMiddleOfText()
+    {
+        $parts = TxtConverter::getLineParts('The sun rises at 6:03 a.m.');
+        $this->assertEquals($parts, [
+            'start' => '',
+            'end' => '',
+            'text' => 'The sun rises at 6:03 a.m.',
+        ]);
+    }
+
+    public function testNotATimestampIfInTheMiddleOfTheText()
+    {
+        $actual = Subtitles::loadFromString('
+            a
+            b 00:00
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b 00:00')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
