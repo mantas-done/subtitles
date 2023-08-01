@@ -107,31 +107,47 @@ TEXT;
 
     public function testTimestamps()
     {
-        $content = <<< TEXT
-01:23 
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(83, 84, 'a')->getInternalFormat(),
+            Subtitles::loadFromString('
+01:23
 a
+')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(5026, 5027.001, 'b')->getInternalFormat(),
+            Subtitles::loadFromString('
 01:23:46
 b
+')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(5027.001, 5028.001, 'c')->getInternalFormat(),
+            Subtitles::loadFromString('
 01:23:47,001
 c
+')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(5028.2, 5029.2, 'd')->getInternalFormat(),
+            Subtitles::loadFromString('
 01:23:48.2
 d
+')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(5029.8, 5030.8, 'e')->getInternalFormat(),
+            Subtitles::loadFromString('
 01:23:49:20
 e
+')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(5050.81, 5051.81, 'f')->getInternalFormat(),
+            Subtitles::loadFromString('
 5050.81
 f
-TEXT;
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
-        $expected = (new Subtitles())
-            ->add(83, 5026, 'a')
-            ->add(5026, 5027.001, 'b')
-            ->add(5027.001, 5028.2, 'c')
-            ->add(5028.2, 5029.8, 'd')
-            ->add(5029.8, 5050.81, 'e')
-            ->add(5050.81, 5051.81, 'f')
-            ->getInternalFormat();
-
-        $this->assertInternalFormatsEqual($expected, $actual);
+')->getInternalFormat());
     }
 
     public function testClientFile()
@@ -222,6 +238,24 @@ e
             ->add(0, 1, ['a', 'b'])
             ->add(1, 2, 'c')
             ->add(2, 3, ['d', 'e'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testTextHasTimestampLikeNumber()
+    {
+        $actual = Subtitles::loadFromString('
+23:19
+a
+23:25
+103.06 meters
+23:29
+c
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(1399, 1405, 'a')
+            ->add(1405, 1409, '103.06 meters')
+            ->add(1409, 1410, 'c')
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }

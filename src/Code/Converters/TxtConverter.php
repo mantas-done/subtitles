@@ -31,9 +31,22 @@ class TxtConverter implements ConverterContract
             return self::withoutTimestampsInternalFormat($lines);
         }
 
+        $colon_count = self::detectMostlyUsedTimestampType($lines);
+
         $array = [];
         foreach ($lines as $line) {
-            $array[] = self::getLineParts($line) + ['line' => $line];
+            $tmp = self::getLineParts($line) + ['line' => $line];
+            if ($tmp['start'] !== null) { // only if timestamp format matches add timestamps
+                if (substr_count($tmp['start'], ':') >= $colon_count) {
+                    $tmp['start'] = self::timeToInternal($tmp['start']);
+                    $tmp['end'] = $tmp['end'] != null ? self::timeToInternal($tmp['end']) : null;
+                } else {
+                    $tmp['start'] = null;
+                    $tmp['end'] = null;
+                    $tmp['text'] = $tmp['line'];
+                }
+            }
+            $array[] = $tmp;
         }
 
         $data = [];
@@ -91,6 +104,31 @@ class TxtConverter implements ConverterContract
         }
 
         return self::fillStartAndEndTimes($internal_format);
+    }
+
+    private static function detectMostlyUsedTimestampType(array $lines)
+    {
+
+        $counts = [];
+        foreach ($lines as $line) {
+            $parts = self::getLineParts($line);
+            if (!$parts['start']) {
+                continue;
+            }
+            $count = substr_count($parts['start'], ':');
+            if (!isset($counts[$count])) {
+                $counts[$count] = 0;
+            }
+            $counts[$count]++;
+        }
+        $max_number = max($counts);
+        foreach ($counts as $count => $number) {
+            if ($number === $max_number) {
+                return $count;
+            }
+        }
+
+        throw new \Exception('no timestamps found');
     }
 
     private static function fillStartAndEndTimes(array $internal_format)
@@ -171,13 +209,6 @@ class TxtConverter implements ConverterContract
         }
         if (self::hasText($right_text) || self::hasDigit($right_text)) {
             $matches['text'] = $right_text;
-        }
-
-        if ($matches['start'] !== null) {
-            $matches['start'] = self::timeToInternal($matches['start']);
-        }
-        if ($matches['end'] !== null) {
-            $matches['end'] = self::timeToInternal($matches['end']);
         }
 
         return $matches;

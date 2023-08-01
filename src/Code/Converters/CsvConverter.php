@@ -8,7 +8,18 @@ class CsvConverter implements ConverterContract
 
     public function canParseFileContent($file_content)
     {
-        $csv = self::csvToArray($file_content);
+        $csv = self::csvToArray(trim($file_content));
+
+        $row_count = null;
+        foreach ($csv as $rows) {
+            $count = count($rows);
+            if ($row_count === null) {
+                $row_count = $count;
+            }
+            if ($row_count !== $count) {
+                return false; // if not every row has the same column count
+            }
+        }
 
         if (!isset($csv[1][0])) {
             return false;
