@@ -93,7 +93,7 @@ class TxtConverter implements ConverterContract
                     isset($data[$k - $i]['start'])
                     && ($data[$k - $i]['start'] === $row['start'] || $row['start'] === null)
                 ) {
-                    $internal_format[$j - $i]['lines'][] = $row['text'];
+                    $internal_format[$j - 1]['lines'][] = $row['text'];
                     continue 2;
                 }
             }

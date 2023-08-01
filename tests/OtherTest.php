@@ -22,22 +22,22 @@ a
         ');
     }
 
-    public function testLastEndTimeIsSmallerThanCurrentStartTime()
+    public function testTimesOverlapOver10Seconds()
     {
         $this->expectException(UserException::class);
 
         Subtitles::loadFromString('
 1
-00:00:01,000 --> 00:00:02,000
+00:00:01,000 --> 00:00:40,000
 a
 
 2
-00:00:01,000 --> 00:00:04,000
+00:00:20,000 --> 00:00:50,000
 b
         ');
     }
 
-    public function testFixesUpToSecondTimeOverlap()
+    public function testFixesUpTo10SecondsTimeOverlap()
     {
         $actual = Subtitles::loadFromString('
 1
