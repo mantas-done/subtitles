@@ -260,6 +260,21 @@ c
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testFirstLineWithTimestampSecondAfter()
+    {
+        $actual = Subtitles::loadFromString('
+01:01 a
+b
+01:02 c
+        ')->getInternalFormat();
+//        var_dump($actual); exit;
+        $expected = (new Subtitles())
+            ->add(61, 62, ['a', 'b'])
+            ->add(62, 63, 'c')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

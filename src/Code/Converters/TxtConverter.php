@@ -33,6 +33,7 @@ class TxtConverter implements ConverterContract
 
         $colon_count = self::detectMostlyUsedTimestampType($lines);
 
+        // line parts to array
         $array = [];
         foreach ($lines as $line) {
             $tmp = self::getLineParts($line) + ['line' => $line];
@@ -63,15 +64,15 @@ class TxtConverter implements ConverterContract
 
             $start = null;
             $end = null;
-            if ($start === null && isset($row['start'])) {
+            if (isset($row['start'])) {
                 $start = $row['start'];
                 $end = $row['end'] ?? null;
             }
-            if ($start === null && isset($array[$i - 1]['start']) && $array[$i - 1]['text'] === null) {
+            if (isset($array[$i - 1]['start']) && $array[$i - 1]['text'] === null) {
                 $start = $array[$i - 1]['start'];
                 $end = $array[$i - 1]['end'] ?? null;
             }
-            if ($start === null && isset($array[$i - 2]['start']) && $array[$i - 2]['text'] === null) {
+            if (isset($array[$i - 2]['start']) && $array[$i - 2]['text'] === null) {
                 $start = $array[$i - 2]['start'];
                 $end = $array[$i - 2]['end'] ?? null;
             }
@@ -89,7 +90,7 @@ class TxtConverter implements ConverterContract
         foreach ($data as $k => $row) {
             if (
                 isset($data[$k - 1]['start'])
-                && $data[$k - 1]['start'] === $row['start']
+                && ($data[$k - 1]['start'] === $row['start'] || $row['start'] === null)
             ) {
                 $internal_format[$j - 1]['lines'][] = $row['text'];
                 continue;
