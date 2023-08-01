@@ -229,7 +229,7 @@ class Subtitles
                 continue;
             }
             $diff = $internal_format[$k - 1]['end'] - $row['start'];
-            if ($diff < 1 && $diff > 0) {
+            if ($diff < 10 && $diff > 0) {
                 $internal_format[$k - 1]['end'] = $row['start'];
             }
         }
@@ -239,11 +239,11 @@ class Subtitles
         $last_end_time = 0;
         foreach ($internal_format as $row) {
             if ($row['start'] < $last_end_time) {
-                throw new UserException('Times are overlapping near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . $row['lines'][0]);
+                throw new UserException('Times are overlapping over 10 seconds near the text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . $row['lines'][0]);
             }
             $last_end_time = $row['end'];
             if ($row['start'] > $row['end']) {
-                throw new UserException('Times are overlapping near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . $row['lines'][0]);
+                throw new UserException('Start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' ' . $row['lines'][0]);
             }
         }
 

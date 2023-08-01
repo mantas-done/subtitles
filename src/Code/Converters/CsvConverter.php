@@ -41,14 +41,25 @@ class CsvConverter implements ConverterContract
         $data = self::csvToArray($file_content);
         $data_string  = '';
 
+        $is_start_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][0]);
+        $is_end_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][1]);
+
         foreach ($data as $k => $row) {
             $timestamp_found = (bool) preg_match(TxtConverter::$time_regexp, $row[0]);
             if ($k === 0  && $timestamp_found === false) { // heading
                 continue;
             }
 
-            $row_string = implode(' ', $row);
-            $data_string .= $row_string . "\n";
+            // format csv file as a txt file, so TxtConverter would be able to understand it
+            if ($is_start_time && $is_end_time) {
+                $data_string .= $row[0] . ' ' . $row[1] . "\n"; // start end
+                $data_string .= $row[2] . "\n"; // text
+            } elseif ($is_start_time) {
+                $data_string .= $row[0] . "\n"; // start
+                $data_string .= $row[1] . "\n"; // text
+            } else {
+                $data_string .= $row[0] . "\n"; // text
+            }
         }
         return (new TxtConverter)->fileContentToInternalFormat($data_string);
     }

@@ -88,12 +88,14 @@ class TxtConverter implements ConverterContract
         $internal_format = [];
         $j = 0;
         foreach ($data as $k => $row) {
-            if (
-                isset($data[$k - 1]['start'])
-                && ($data[$k - 1]['start'] === $row['start'] || $row['start'] === null)
-            ) {
-                $internal_format[$j - 1]['lines'][] = $row['text'];
-                continue;
+            for ($i = 1; $i <= 10; $i++) { // up to 10 lines
+                if (
+                    isset($data[$k - $i]['start'])
+                    && ($data[$k - $i]['start'] === $row['start'] || $row['start'] === null)
+                ) {
+                    $internal_format[$j - $i]['lines'][] = $row['text'];
+                    continue 2;
+                }
             }
 
             $internal_format[$j] =  [

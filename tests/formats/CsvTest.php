@@ -98,4 +98,19 @@ TEXT;
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
+
+    public function testAdditionalColumns()
+    {
+        $string = <<< TEXT
+Start Time,End Time,Text,Layer ID
+00:00:08:00,00:00:13:00,"abc",1
+00:00:20:00,00:00:24:00,def,1
+TEXT;
+        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(8, 13, ['abc'])
+            ->add(20, 24, ['def'])->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
 }

@@ -265,12 +265,16 @@ c
         $actual = Subtitles::loadFromString('
 01:01 a
 b
-01:02 c
+c
+d
+01:02 e
+f
+01:03 g
         ')->getInternalFormat();
-//        var_dump($actual); exit;
         $expected = (new Subtitles())
-            ->add(61, 62, ['a', 'b'])
-            ->add(62, 63, 'c')
+            ->add(61, 62, ['a', 'b', 'c', 'd'])
+            ->add(62, 63, ['e', 'f'])
+            ->add(63, 64, 'g')
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
