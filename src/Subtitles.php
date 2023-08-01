@@ -65,16 +65,21 @@ class Subtitles
         return $this;
     }
 
-    public function add($start, $end, $text)
+    public function add($start, $end, $text, $settings = [])
     {
         // @TODO validation
         // @TODO check subtitles to not overlap
-        $this->internal_format[] = [
+        $internal_format = [
             'start' => $start,
             'end' => $end,
             'lines' => is_array($text) ? $text : [$text],
         ];
 
+        if (isset($settings['vtt_cue_settings']) && $settings['vtt_cue_settings']) {
+            $internal_format['vtt_cue_settings'] = $settings['vtt_cue_settings'];
+        }
+
+        $this->internal_format[] = $internal_format;
         $this->sortInternalFormat();
 
         return $this;
