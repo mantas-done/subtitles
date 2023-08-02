@@ -129,7 +129,7 @@ TEXT;
         $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
 
         $expected = (new Subtitles())
-            ->add(0, 10, 'Hello world.')
+            ->add(0, 10, 'Hello world.', ['vtt_cue_settings' => 'position:50% line:15% align:middle'])
             ->getInternalFormat();
 
         $this->assertEquals($expected, $actual);

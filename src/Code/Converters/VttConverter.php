@@ -17,19 +17,23 @@ class VttConverter implements ConverterContract
         $blocks = preg_split("/\n{{$block_lines}}/", $file_content);
         $internal_format = [];
         foreach ($blocks as $block) {
-            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{1,3}).*?\n([\s\S]+)/s', $block, $matches);
+            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{1,3})(.*?)\n([\s\S]+)/s', $block, $matches);
             if ($found === 0) {
                 continue;
             }
 
-            $trimmed_lines = preg_replace("/\n+/", "\n", trim($matches[3]));
+            $trimmed_lines = preg_replace("/\n+/", "\n", trim($matches[4]));
             $lines = explode("\n", $trimmed_lines);
             $lines_array = array_map(static::fixLine(), $lines);
-            $internal_format[] = [
+            $format = [
                 'start' => static::vttTimeToInternal($matches[1]),
                 'end' => static::vttTimeToInternal($matches[2]),
                 'lines' => $lines_array,
             ];
+            if (ltrim($matches[3])) {
+                $format['vtt_cue_settings'] = ltrim($matches[3]);
+            }
+            $internal_format[] = $format;
         }
 
         return $internal_format;
@@ -44,7 +48,11 @@ class VttConverter implements ConverterContract
             $end = static::internalTimeToVtt($block['end']);
             $lines = implode("\r\n", $block['lines']);
 
-            $file_content .= $start . ' --> ' . $end . "\r\n";
+            $vtt_cue_settings = '';
+            if (isset($block['vtt_cue_settings'])) {
+                $vtt_cue_settings = ' ' . $block['vtt_cue_settings'];
+            }
+            $file_content .= $start . ' --> ' . $end . $vtt_cue_settings . "\r\n";
             $file_content .= $lines . "\r\n";
             $file_content .= "\r\n";
         }
