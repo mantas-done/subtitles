@@ -51,4 +51,23 @@ b
         $expected = (new Subtitles())->add(1, 1.5, 'a')->add(1.5, 4, 'b')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testMergeIfStartEquals()
+    {
+        $actual = Subtitles::loadFromString('
+3
+00:00:03,000 --> 00:00:04,000
+c
+
+2
+00:00:02,000 --> 00:00:03,000
+b
+
+1
+00:00:02,000 --> 00:00:02,500
+a
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(2, 3, ['a', 'b'])->add(3, 4, 'c')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

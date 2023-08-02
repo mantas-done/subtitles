@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\UserException;
+
 class TxtConverter implements ConverterContract
 {
     public static $time_regexp = '/(?<!\d)(?:\d{2}:)?(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,2}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
@@ -136,6 +138,10 @@ class TxtConverter implements ConverterContract
 
     private static function fillStartAndEndTimes(array $internal_format)
     {
+        if (count($internal_format) === 0) {
+            throw new UserException("Subtitles were not found in this file");
+        }
+
         // fill starts
         $last_start = -1;
         foreach ($internal_format as $k => $row) {

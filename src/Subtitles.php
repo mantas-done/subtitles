@@ -223,7 +223,40 @@ class Subtitles
         unset($row);
         unset($line);
 
-        // fix up to a second time overlap
+        if (count($internal_format) === 0) {
+            throw new UserException('Subtitles were not found in this file');
+        }
+
+        // reorder by time
+        usort($internal_format, function ($a, $b) {
+            if ($a['start'] === $b['start']) {
+                return $a['end'] > $b['end'];
+            }
+            return $a['start'] > $b['start'];
+        });
+
+        // merge if the same start time
+        $tmp = $internal_format;
+        $internal_format = [];
+        $i = 0;
+        foreach ($tmp as $k => $row) {
+            if ($k === 0) {
+                $internal_format[$i] = $row;
+                $i++;
+                continue;
+            }
+            if ($row['start'] === $internal_format[$i - 1]['start']) {
+                $internal_format[$i - 1]['lines'] = array_merge($internal_format[$i - 1]['lines'], $row['lines']);
+                $max_end = max($row['end'], $internal_format[$i - 1]['end']);
+                $internal_format[$i - 1]['end'] = $max_end;
+            } else {
+                $internal_format[$i] = $row;
+                $i++;
+            }
+
+        }
+
+        // fix up to a 10 seconds time overlap
         foreach ($internal_format as $k => $row) {
             if ($k === 0) {
                 continue;
