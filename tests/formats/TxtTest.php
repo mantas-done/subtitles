@@ -172,16 +172,6 @@ TEXT;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-    public function testNotTimestampInTheMiddleOfText()
-    {
-        $parts = TxtConverter::getLineParts('The sun rises at 6:03 a.m.');
-        $this->assertEquals($parts, [
-            'start' => null,
-            'end' => null,
-            'text' => 'The sun rises at 6:03 a.m.',
-        ]);
-    }
-
     public function testNotATimestampIfInTheMiddleOfTheText()
     {
         $actual = Subtitles::loadFromString('
@@ -219,6 +209,19 @@ e
             ->add(3, 4, 'd')
             ->add(4, 5, 'e')
             ->add(5, 6, '10,000 rounds of ammunition')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testCorrectlyParsesNumbers()
+    {
+        $actual = Subtitles::loadFromString('
+00:00 50,000 a
+00:01 b
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, '50,000 a')
+            ->add(1, 2, 'b')
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }

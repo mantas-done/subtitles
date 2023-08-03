@@ -117,11 +117,11 @@ class TxtConverter implements ConverterContract
         $start_count = 0;
         $end_count = 0;
         foreach ($lines as $line) {
-            $parts = self::getLineParts($line);
-            if ($parts['start']) {
+            $timestamps = self::timestampsFromLine($line);
+            if ($timestamps['start']) {
                 $start_count++;
             }
-            if ($parts['end']) {
+            if ($timestamps['end']) {
                 $end_count++;
             }
         }
@@ -141,14 +141,13 @@ class TxtConverter implements ConverterContract
 
     private static function detectMostlyUsedTimestampType(array $lines)
     {
-
         $counts = [];
         foreach ($lines as $line) {
-            $parts = self::getLineParts($line);
-            if (!$parts['start']) {
+            $timestamps = self::timestampsFromLine($line);
+            if (!$timestamps['start']) {
                 continue;
             }
-            $count = substr_count($parts['start'], ':');
+            $count = substr_count($timestamps['start'], ':');
             if (!isset($counts[$count])) {
                 $counts[$count] = 0;
             }
@@ -211,29 +210,27 @@ class TxtConverter implements ConverterContract
         return trim($file_content);
     }
 
-    public static function getLineParts($line)
+    public static function getLineParts($line, $colon_count, $timestamp_count)
     {
         $matches = [
             'start' => null,
             'end' => null,
             'text' => null,
         ];
-        preg_match_all(self::$time_regexp . 'm', $line, $timestamps);
+        $timestamps = self::timestampsFromLine($line);
 
         // there shouldn't be any text before the timestamp
-        // if there is text before it, then maybe it is not a timestamp
+        // if there is text before it, then it is not a timestamp
         $right_timestamp = '';
-        if (isset($timestamps[0][0])) {
-            $text_before_timestamp = substr($line, 0, strpos($line, $timestamps[0][0]));
+        if (isset($timestamps['start'])) {
+            $text_before_timestamp = substr($line, 0, strpos($line, $timestamps['start']));
             if (!self::hasText($text_before_timestamp)) {
-                if (isset($timestamps[0][0])) {
-                    // start
-                    $matches['start'] = $timestamps[0][0];
-                    $right_timestamp = $matches['start'];
-                }
-                if (isset($timestamps[0][1])) {
+                // start
+                $matches['start'] = $timestamps['start'];
+                $right_timestamp = $matches['start'];
+                if ($timestamp_count === 2 && isset($timestamps['end'])) {
                     // end
-                    $matches['end'] = $timestamps[0][1];
+                    $matches['end'] = $timestamps['end'];
                     $right_timestamp = $matches['end'];
                 }
             }
@@ -284,12 +281,28 @@ class TxtConverter implements ConverterContract
         $lines_count = count($lines);
         $lines_with_timestamp_count = 0;
         foreach ($lines as $line) {
-            $parts = self::getLineParts($line);
-            if ($parts['start'] !== null) {
+            $timestamps = self::timestampsFromLine($line);
+            if ($timestamps['start'] !== null) {
                 $lines_with_timestamp_count++;
             }
         }
         return $lines_with_timestamp_count >= ($lines_count * 0.2); // if there 20% or more lines with timestamps
+    }
+
+    private static function timestampsFromLine(string $line)
+    {
+        preg_match_all(self::$time_regexp . 'm', $line, $timestamps);
+        $result = [
+            'start' => null,
+            'end' => null,
+        ];
+        if (isset($timestamps[0][0])) {
+            $result['start'] = $timestamps[0][0];
+        }
+        if (isset($timestamps[0][1])) {
+            $result['end'] = $timestamps[0][1];
+        }
+        return $result;
     }
 
     public static function withoutTimestampsInternalFormat(array $lines)
