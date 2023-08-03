@@ -86,6 +86,10 @@ $subtitles->add(0, 5, [
     'first line',
     'second line',
 ]);
+
+// Add styles to VTT file format
+// Only VTT supports styles currently
+$subtitles->add(0, 5, 'text', ['vtt_cue_settings' => 'position:50% line:15% align:middle']);
 ````
 
 Remove subtitles
