@@ -34,11 +34,12 @@ class TxtConverter implements ConverterContract
         }
 
         $colon_count = self::detectMostlyUsedTimestampType($lines);
+        $timestamp_count = self::timestampCount($lines);
 
         // line parts to array
         $array = [];
         foreach ($lines as $line) {
-            $tmp = self::getLineParts($line) + ['line' => $line];
+            $tmp = self::getLineParts($line, $colon_count, $timestamp_count) + ['line' => $line];
             if ($tmp['start'] !== null) { // only if timestamp format matches add timestamps
                 if (substr_count($tmp['start'], ':') >= $colon_count) {
                     $tmp['start'] = self::timeToInternal($tmp['start']);
@@ -109,6 +110,33 @@ class TxtConverter implements ConverterContract
         }
 
         return self::fillStartAndEndTimes($internal_format);
+    }
+
+    private static function timestampCount(array $lines): int
+    {
+        $start_count = 0;
+        $end_count = 0;
+        foreach ($lines as $line) {
+            $parts = self::getLineParts($line);
+            if ($parts['start']) {
+                $start_count++;
+            }
+            if ($parts['end']) {
+                $end_count++;
+            }
+        }
+
+        if (self::isDifferenceLessThan10Percent($start_count, $end_count)) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
+    private static function isDifferenceLessThan10Percent($number1, $number2) {
+        $diff = abs($number1 - $number2);
+        $threshold = max(abs($number1), abs($number2)) * 0.10;
+        return $diff < $threshold;
     }
 
     private static function detectMostlyUsedTimestampType(array $lines)

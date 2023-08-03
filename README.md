@@ -23,7 +23,7 @@ Convert and edit subtitles and captions.
 | Comma separated values | .csv | csv |
 | Plaintext | .txt | txt |
 
-## Installation
+## Installation (supports PHP 8.1+)
 ```
 composer require mantas-done/subtitles
 ```

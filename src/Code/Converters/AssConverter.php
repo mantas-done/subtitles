@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\UserException;
+
 class AssConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
@@ -14,6 +16,9 @@ class AssConverter implements ConverterContract
         $internal_format = []; // array - where file content will be stored
         // get column numbers (every file can have a different number of columns that is encoded in this string)
         preg_match('/\[Events]\RFormat:(.*)/', $file_content, $formats);
+        if (!isset($formats[1])) {
+            throw new UserException('.ass converter did not found any text');
+        }
         $formats = explode(',', $formats[1]);
         $formats = array_map('trim', $formats);
         $array = array_flip($formats);

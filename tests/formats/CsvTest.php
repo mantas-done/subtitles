@@ -99,6 +99,21 @@ TEXT;
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
+    public function testExtraEmptyLine() // client file
+    {
+        $string = <<< TEXT
+00:00:01,One
+,
+00:00:02,Two
+TEXT;
+        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(1, 2, ['One'])
+            ->add(2, 3, ['Two'])->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
     public function testAdditionalColumns()
     {
         $string = <<< TEXT

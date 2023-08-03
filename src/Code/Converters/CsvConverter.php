@@ -105,7 +105,18 @@ class CsvConverter implements ConverterContract
         }
         fclose($fp);
 
-        return $csv;
+        $csv2 = [];
+        foreach ($csv as $row) {
+            if (!isset($row[0]) || !isset($row[1])) {
+                return [];
+            }
+            if (trim($row[0]) === '' && trim($row[1]) === '') {
+                continue;
+            }
+            $csv2[] = $row;
+        }
+
+        return $csv2;
     }
 
     private static function detectSeparator($file_content)
