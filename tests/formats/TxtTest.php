@@ -182,15 +182,29 @@ TEXT;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    // ignore all the content before the timestamp
     public function testNoException()
     {
         $actual = Subtitles::loadFromString('
             a
             00:03 b 
         ')->getInternalFormat();
-        $expected = (new Subtitles())->add(0, 3, 'a')->add(3, 4, 'b')->getInternalFormat();
+        $expected = (new Subtitles())->add(3, 4, 'b')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testNoExceptionFromClientFile()
+    {
+        $actual = Subtitles::loadFromString('
+            a
+            b
+            00:00:00
+            c
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'c')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
 
     public function testIfFileWithoutTimestampsDoNotReturnTimestamp()
     {

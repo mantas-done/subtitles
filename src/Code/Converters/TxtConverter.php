@@ -38,17 +38,22 @@ class TxtConverter implements ConverterContract
 
         // line parts to array
         $array = [];
+        $seen_first_timestamp = false;
         foreach ($lines as $line) {
             $tmp = self::getLineParts($line, $colon_count, $timestamp_count) + ['line' => $line];
             if ($tmp['start'] !== null) { // only if timestamp format matches add timestamps
                 if (substr_count($tmp['start'], ':') >= $colon_count) {
                     $tmp['start'] = self::timeToInternal($tmp['start']);
                     $tmp['end'] = $tmp['end'] != null ? self::timeToInternal($tmp['end']) : null;
+                    $seen_first_timestamp = true;
                 } else {
                     $tmp['start'] = null;
                     $tmp['end'] = null;
                     $tmp['text'] = $tmp['line'];
                 }
+            }
+            if (!$seen_first_timestamp) {
+                continue;
             }
             $array[] = $tmp;
         }
@@ -112,6 +117,8 @@ class TxtConverter implements ConverterContract
         return self::fillStartAndEndTimes($internal_format);
     }
 
+    // start and end timestamp
+    // or just end timestamp
     private static function timestampCount(array $lines): int
     {
         $start_count = 0;
@@ -222,13 +229,13 @@ class TxtConverter implements ConverterContract
         // there shouldn't be any text before the timestamp
         // if there is text before it, then it is not a timestamp
         $right_timestamp = '';
-        if (isset($timestamps['start'])) {
+        if (isset($timestamps['start']) && substr_count($timestamps['start'], ':') === $colon_count) {
             $text_before_timestamp = substr($line, 0, strpos($line, $timestamps['start']));
             if (!self::hasText($text_before_timestamp)) {
                 // start
                 $matches['start'] = $timestamps['start'];
                 $right_timestamp = $matches['start'];
-                if ($timestamp_count === 2 && isset($timestamps['end'])) {
+                if ($timestamp_count === 2 && isset($timestamps['end']) && substr_count($timestamps['end'], ':') === $colon_count) {
                     // end
                     $matches['end'] = $timestamps['end'];
                     $right_timestamp = $matches['end'];
@@ -281,12 +288,29 @@ class TxtConverter implements ConverterContract
         $lines_count = count($lines);
         $lines_with_timestamp_count = 0;
         foreach ($lines as $line) {
-            $timestamps = self::timestampsFromLine($line);
-            if ($timestamps['start'] !== null) {
+            preg_match_all(self::$time_regexp . 'm', $line, $timestamps);
+            $start = null;
+            if (isset($timestamps[0][0])) {
+                $start = $timestamps[0][0];
+                $before = self::strBefore($line, $start);
+                if (self::hasText($before) || self::hasDigit($before)) {
+                    continue;
+                }
                 $lines_with_timestamp_count++;
             }
         }
         return $lines_with_timestamp_count >= ($lines_count * 0.2); // if there 20% or more lines with timestamps
+    }
+
+    public static function strBefore($subject, $search)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $result = strstr($subject, (string) $search, true);
+
+        return $result === false ? $subject : $result;
     }
 
     private static function timestampsFromLine(string $line)
