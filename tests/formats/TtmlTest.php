@@ -4,6 +4,7 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\TtmlConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
@@ -65,6 +66,8 @@ class TtmlTest extends TestCase {
 
     public function testDuplicatedElementIdsParse()
     {
+        $this->expectException(UserException::class);
+
         $ttml_path = './tests/files/ttml_with_duplicated_element_ids.ttml';
         $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
@@ -77,6 +80,8 @@ class TtmlTest extends TestCase {
 
     public function testTimeParseWithFpsAndMultiplierGiven()
     {
+        $this->expectException(UserException::class);
+
         $ttml_path = './tests/files/ttml_with_fps_and_multiplier_given.ttml';
         $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())

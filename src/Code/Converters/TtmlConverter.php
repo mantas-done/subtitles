@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\UserException;
+
 class TtmlConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
@@ -11,8 +13,14 @@ class TtmlConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
+        libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
-        @$dom->loadXML($file_content);
+        $dom->loadXML($file_content);
+
+        $errors = libxml_get_errors();
+        if (!empty($errors)) {
+            throw new UserException('Invalid XML: ' . trim($errors[0]->message));
+        }
 
         $fps = self::framesPerSecond($dom);
 
