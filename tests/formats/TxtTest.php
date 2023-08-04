@@ -136,9 +136,16 @@ d
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
-            (new Subtitles())->add(5029.8, 5030.8, 'e')->getInternalFormat(),
+            (new Subtitles())->add(5029.769, 5030.769, 'e')->getInternalFormat(),
             Subtitles::loadFromString('
 01:23:49:20
+e
+')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(0.984, 1.984, 'e')->getInternalFormat(),
+            Subtitles::loadFromString('
+00:00:00:60
 e
 ')->getInternalFormat());
 

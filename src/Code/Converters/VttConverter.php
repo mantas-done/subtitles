@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\UserException;
+
 class VttConverter implements ConverterContract
 {
     protected static $time_regexp = '((?:\d{2}:){1,2}\d{2}\.\d{3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{3})';
@@ -34,6 +36,10 @@ class VttConverter implements ConverterContract
                 $format['vtt_cue_settings'] = ltrim($matches[3]);
             }
             $internal_format[] = $format;
+        }
+
+        if (count($internal_format) === 0) {
+            throw new UserException('No valid .vtt subtitles found in this file');
         }
 
         return $internal_format;

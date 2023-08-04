@@ -34,6 +34,10 @@ class TxtConverter implements ConverterContract
         }
 
         $colon_count = self::detectMostlyUsedTimestampType($lines);
+        $fps = 25;
+        if ($colon_count === 3) {
+            $fps = self::maxFps($lines);
+        }
         $timestamp_count = self::timestampCount($lines);
 
         // line parts to array
@@ -43,8 +47,8 @@ class TxtConverter implements ConverterContract
             $tmp = self::getLineParts($line, $colon_count, $timestamp_count) + ['line' => $line];
             if ($tmp['start'] !== null) { // only if timestamp format matches add timestamps
                 if (substr_count($tmp['start'], ':') >= $colon_count) {
-                    $tmp['start'] = self::timeToInternal($tmp['start']);
-                    $tmp['end'] = $tmp['end'] != null ? self::timeToInternal($tmp['end']) : null;
+                    $tmp['start'] = self::timeToInternal($tmp['start'], $fps);
+                    $tmp['end'] = $tmp['end'] != null ? self::timeToInternal($tmp['end'], $fps) : null;
                     $seen_first_timestamp = true;
                 } else {
                     $tmp['start'] = null;
@@ -170,6 +174,24 @@ class TxtConverter implements ConverterContract
         throw new \Exception('no timestamps found');
     }
 
+    private static function maxFps(array $lines): float
+    {
+        $max_fps = 25;
+        foreach ($lines as $line) {
+            $timestamps = self::timestampsFromLine($line);
+            if (!$timestamps['start']) {
+                continue;
+            }
+            $parts = explode(':', $timestamps['start']);
+            $fps = end($parts);
+            if ($fps > $max_fps) {
+                $max_fps = $fps;
+            }
+        }
+
+        return $max_fps + 1;
+    }
+
     private static function fillStartAndEndTimes(array $internal_format)
     {
         if (count($internal_format) === 0) {
@@ -255,7 +277,7 @@ class TxtConverter implements ConverterContract
         return $matches;
     }
 
-    public static function timeToInternal($time)
+    public static function timeToInternal(string $time, int|null $fps)
     {
         $time = trim($time);
         $time_parts = explode(':', $time);
@@ -276,7 +298,7 @@ class TxtConverter implements ConverterContract
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         } elseif ($total_parts === 4) { // hours:minutes:seconds:frames format
             list($hours, $minutes, $seconds, $frames) = array_map('intval', $time_parts);
-            $milliseconds = $frames / 25; // 25 frames
+            $milliseconds = $frames / $fps;
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         } else {
             throw new \InvalidArgumentException("Invalid time format: $time");
