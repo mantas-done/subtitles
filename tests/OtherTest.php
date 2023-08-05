@@ -70,4 +70,15 @@ a
         $expected = (new Subtitles())->add(2, 3, ['a', 'b'])->add(3, 4, 'c')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testExceptionIfCaptionTooLong()
+    {
+        $this->expectException(UserException::class);
+
+        Subtitles::loadFromString('
+1
+00:00:00,000 --> 00:01:01,000
+a
+        ');
+    }
 }

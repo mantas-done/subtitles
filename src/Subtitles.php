@@ -234,6 +234,13 @@ class Subtitles
             throw new UserException('Subtitles were not found in this file');
         }
 
+        // exception if caption is showing for more than a minute
+        foreach ($internal_format as $row) {
+            if ($row['end'] - $row['start'] > 60) {
+                throw new UserException('Error: line duration is longer than 1 minute: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+            }
+        }
+
         // reorder by time
         usort($internal_format, function ($a, $b) {
             if ($a['start'] === $b['start']) {
