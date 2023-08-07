@@ -78,14 +78,17 @@ class SrtConverter implements ConverterContract
      */
     protected static function srtTimeToInternal($srt_time)
     {
-        $time_string = str_replace('.', ',', $srt_time);
-        $parts = explode(',', $time_string);
-        $milliseconds = count($parts) > 1 ? (float)('0.' . $parts[1]) : 0;
-        $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
+        $pattern = '/(\d{1,2}):(\d{2}):(\d{1,2})([:.,](\d{1,3}))?/m';
+        if (preg_match($pattern, $srt_time, $matches)) {
+            $hours = $matches[1];
+            $minutes = $matches[2];
+            $seconds = $matches[3];
+            $milliseconds = isset($matches[5]) ? $matches[5] : "000";
+        } else {
+            throw new \Exception("can't parse timestamp: $srt_time");
+        }
 
-        $time = $only_seconds + $milliseconds;
-
-        return $time;
+        return $hours * 3600 + $minutes * 60 + $seconds + str_pad($milliseconds, 3, "0", STR_PAD_RIGHT) / 1000;
     }
 
     /**

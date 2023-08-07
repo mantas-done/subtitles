@@ -183,6 +183,9 @@ class TxtConverter implements ConverterContract
                 continue;
             }
             $parts = explode(':', $timestamps['start']);
+            if (count($parts) !== 4) {
+                continue;
+            }
             $fps = end($parts);
             if ($fps > $max_fps) {
                 $max_fps = $fps;
@@ -348,6 +351,14 @@ class TxtConverter implements ConverterContract
         if (isset($timestamps[0][1])) {
             $result['end'] = $timestamps[0][1];
         }
+        $text_before_timestamp = substr($line, 0, strpos($line, $result['start']));
+        if ($result['start'] && self::hasText($text_before_timestamp)) {
+            $result = [
+                'start' => null,
+                'end' => null,
+            ];
+        }
+
         return $result;
     }
 

@@ -303,6 +303,20 @@ f
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testNoException2()
+    {
+        $actual = Subtitles::loadFromString('
+00:00:15:00 - 00:00:20:00
+a 40,50 b
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(15, 20, 'a 40,50 b')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

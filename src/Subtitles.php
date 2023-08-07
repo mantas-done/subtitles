@@ -276,7 +276,7 @@ class Subtitles
                 continue;
             }
             $diff = $internal_format[$k - 1]['end'] - $row['start'];
-            if ($diff < 10 && $diff > 0) {
+            if ($diff < 60 && $diff > 0) {
                 $internal_format[$k - 1]['end'] = $row['start'];
             }
         }
@@ -291,7 +291,7 @@ class Subtitles
             }
             $last_end_time = $row['end'];
             if ($row['start'] > $row['end']) {
-                throw new UserException('Start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                throw new UserException('Problem with timestamps, probably start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
             }
         }
 
