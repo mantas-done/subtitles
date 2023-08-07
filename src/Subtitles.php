@@ -264,7 +264,7 @@ class Subtitles
 
         }
 
-        // fix up to a 10 seconds time overlap
+        // fix up to a 60 seconds time overlap
         foreach ($internal_format as $k => $row) {
             if ($k === 0) {
                 continue;
@@ -277,11 +277,10 @@ class Subtitles
         unset($row);
 
         // check if time is increasing
-        // @todo increase to 60 seconds?
         $last_end_time = 0;
         foreach ($internal_format as $k => $row) {
             if ($row['start'] < $last_end_time) {
-                throw new UserException("Timestamps are overlapping over 10 seconds: \nxx:xx:xx,xxx --> " . SrtConverter::internalTimeToSrt($internal_format[$k - 1]['end']) . ' ' .  $internal_format[$k - 1]['lines'][0] . "\n" . SrtConverter::internalTimeToSrt($row['start']) . ' --> xx:xx:xx,xxx ' . $row['lines'][0]);
+                throw new UserException("Timestamps are overlapping over 60 seconds: \nxx:xx:xx,xxx --> " . SrtConverter::internalTimeToSrt($internal_format[$k - 1]['end']) . ' ' .  $internal_format[$k - 1]['lines'][0] . "\n" . SrtConverter::internalTimeToSrt($row['start']) . ' --> xx:xx:xx,xxx ' . $row['lines'][0]);
             }
             $last_end_time = $row['end'];
             if ($row['start'] > $row['end']) {

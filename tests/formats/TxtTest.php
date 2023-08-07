@@ -317,6 +317,24 @@ a 40,50 b
 
     }
 
+    public function testNoException3()
+    {
+        $actual = Subtitles::loadFromString('
+01:00
+a
+
+10:00
+b
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(60, 120, 'a')
+            ->add(600, 601, 'b')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

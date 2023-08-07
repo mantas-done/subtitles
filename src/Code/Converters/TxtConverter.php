@@ -216,7 +216,8 @@ class TxtConverter implements ConverterContract
         foreach ($internal_format as $k => $row) {
             if (!isset($row['end'])) {
                 if (isset($internal_format[$k + 1]['start'])) {
-                    $internal_format[$k]['end'] = $internal_format[$k + 1]['start'];
+                    $tmp = min($internal_format[$k + 1]['start'], $internal_format[$k]['start'] + 60); // max 60 seconds
+                    $internal_format[$k]['end'] = $tmp;
                 } else {
                     $internal_format[$k]['end'] = $internal_format[$k]['start'] + 1;
                 }
