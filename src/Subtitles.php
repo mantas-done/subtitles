@@ -5,6 +5,7 @@ namespace Done\Subtitles;
 use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
+use Done\Subtitles\Code\Converters\LrcConverter;
 use Done\Subtitles\Code\Converters\SbvConverter;
 use Done\Subtitles\Code\Converters\SccConverter;
 use Done\Subtitles\Code\Converters\SmiConverter;
@@ -45,6 +46,7 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
         ['extension' => 'scc',  'format' => 'scc',              'name' => 'Scenarist',                  'class' => SccConverter::class],
+        ['extension' => 'lrc',  'format' => 'lrc',              'name' => 'LyRiCs',                     'class' => LrcConverter::class],
         ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class], // must be last from bottom
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class], // must be the last one
     ];

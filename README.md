@@ -20,6 +20,7 @@ Convert and edit subtitles and captions.
 | [SAMI](https://en.wikipedia.org/wiki/SAMI) | .smi | smi |
 | QuickTime | .qt.txt | txt_quicktime |
 | [Scenarist](http://www.theneitherworld.com/mcpoodle/SCC_TOOLS/DOCS/SCC_FORMAT.HTML) | .scc | scc |
+| [LyRiCs](https://en.wikipedia.org/wiki/LRC_(file_format)) | .lrc | lrc |
 | Comma separated values | .csv | csv |
 | Plaintext | .txt | txt |
 
