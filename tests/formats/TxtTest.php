@@ -335,6 +335,21 @@ b
 
     }
 
+    public function testDoubleTimestamps()
+    {
+        $actual = Subtitles::loadFromString('
+00:01
+00:02
+a
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(2, 3, 'a')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

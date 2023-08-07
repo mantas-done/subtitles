@@ -62,6 +62,7 @@ class TxtConverter implements ConverterContract
             $array[] = $tmp;
         }
 
+        // connect timestamps and text from different lines
         $data = [];
         for ($i = 0; $i < count($array); $i++) {
             $row = $array[$i];
@@ -79,12 +80,10 @@ class TxtConverter implements ConverterContract
             if (isset($row['start'])) {
                 $start = $row['start'];
                 $end = $row['end'] ?? null;
-            }
-            if (isset($array[$i - 1]['start']) && $array[$i - 1]['text'] === null) {
+            } elseif (isset($array[$i - 1]['start']) && $array[$i - 1]['text'] === null) {
                 $start = $array[$i - 1]['start'];
                 $end = $array[$i - 1]['end'] ?? null;
-            }
-            if (isset($array[$i - 2]['start']) && $array[$i - 2]['text'] === null) {
+            } elseif (isset($array[$i - 2]['start']) && $array[$i - 2]['text'] === null) {
                 $start = $array[$i - 2]['start'];
                 $end = $array[$i - 2]['end'] ?? null;
             }
