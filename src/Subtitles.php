@@ -168,13 +168,7 @@ class Subtitles
     protected function sortInternalFormat()
     {
         usort($this->internal_format, function ($item1, $item2) {
-            if ($item2['start'] == $item1['start']) {
-                return 0;
-            } elseif ($item2['start'] < $item1['start']) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return $item1['start'] <=> $item2['start'];
         });
     }
 
@@ -244,9 +238,9 @@ class Subtitles
         // reorder by time
         usort($internal_format, function ($a, $b) {
             if ($a['start'] === $b['start']) {
-                return $a['end'] > $b['end'];
+                return $a['end'] <=> $b['end'];
             }
-            return $a['start'] > $b['start'];
+            return $a['start'] <=> $b['start'];
         });
 
         // merge if the same start time
