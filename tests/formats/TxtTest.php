@@ -346,8 +346,19 @@ a
             ->add(2, 3, 'a')
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
 
+    public function testReordersTime()
+    {
+        $actual = Subtitles::loadFromString('
+00:02
+b
 
+00:01
+a
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'a')->add(2, 3, 'b')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     // ---------------------------------- private ----------------------------------------------------------------------
