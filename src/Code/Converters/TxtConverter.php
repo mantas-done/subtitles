@@ -200,14 +200,6 @@ class TxtConverter implements ConverterContract
             throw new UserException("Subtitles were not found in this file");
         }
 
-        // sort times
-        usort($internal_format, function ($a, $b) {
-            if ($a['start'] === $b['start']) {
-                return $a['end'] > $b['end'];
-            }
-            return $a['start'] > $b['start'];
-        });
-
         // fill starts
         $last_start = -1;
         foreach ($internal_format as $k => $row) {
@@ -218,6 +210,14 @@ class TxtConverter implements ConverterContract
                 $last_start = $row['start'];
             }
         }
+
+        // sort times
+        usort($internal_format, function ($a, $b) {
+            if ($a['start'] === $b['start']) {
+                return $a['end'] > $b['end'];
+            }
+            return $a['start'] > $b['start'];
+        });
 
         // fill ends
         foreach ($internal_format as $k => $row) {
