@@ -21,17 +21,17 @@ class XmlTest extends TestCase
     <Number>1</Number>
     <StartMilliseconds>0</StartMilliseconds>
     <EndMilliseconds>1000</EndMilliseconds>
-    <Text>a</Text>
+    <Text>a<br/>b</Text>
   </Paragraph>
   <Paragraph>
     <Number>2</Number>
     <StartMilliseconds>1000</StartMilliseconds>
     <EndMilliseconds>2000</EndMilliseconds>
-    <Text>b</Text>
+    <Text>c</Text>
   </Paragraph>
 </Subtitle>';
         $actual = Subtitles::loadFromString($text)->getInternalFormat();
-        $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, ['a', 'b'])->add(1, 2, 'c')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 

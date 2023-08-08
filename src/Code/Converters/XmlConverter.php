@@ -19,21 +19,17 @@ class XmlConverter implements ConverterContract
             $subtitle = [
                 'start' => (int)$paragraph->StartMilliseconds / 1000,
                 'end' => (int)$paragraph->EndMilliseconds / 1000,
-                'lines' => [(string)$paragraph->Text],
+                'lines' => self::getLines($paragraph->Text->asXML()),
             ];
             $internal_format[] = $subtitle;
         }
 
         if (empty($internal_format)) {
             foreach ($xml->body->div->p as $paragraph) {
-                $text = $paragraph->asXML();
-                $text = preg_replace('/<br\s*\/?>/', "\n", $text); // normalize <br>*/
-                $text = strip_tags($text);
-                $lines = explode("\n", $text);
                 $subtitle = [
                     'start' => TxtConverter::timeToInternal((string)$paragraph['begin'], null),
                     'end' => TxtConverter::timeToInternal((string)$paragraph['end'], null),
-                    'lines' => $lines,
+                    'lines' => self::getLines($paragraph->asXML()),
                 ];
                 $internal_format[] = $subtitle;
             }
@@ -45,5 +41,14 @@ class XmlConverter implements ConverterContract
     public function internalFormatToFileContent(array $internal_format)
     {
         throw new \Exception('not implemented');
+    }
+
+    private static function getLines(string $text)
+    {
+        $text = preg_replace('/<br\s*\/?>/', "\n", $text); // normalize <br>*/
+        $text = strip_tags($text);
+        $lines = explode("\n", $text);
+
+        return $lines;
     }
 }
