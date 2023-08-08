@@ -227,7 +227,8 @@ class Subtitles
         unset($line);
 
         if (count($internal_format) === 0) {
-            throw new UserException('Subtitles were not found in this file');
+            $converter_name = explode('\\', $input_converter::class);
+            throw new UserException('Subtitles were not found in this file (' . end($converter_name) . ')');
         }
 
         // exception if caption is showing for more than a 5 minutes
