@@ -4,6 +4,7 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\SrtConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
@@ -183,5 +184,17 @@ TEXT;
             ->add(2, 3, ['two'])
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
+    }
+
+    public function testWriteUnderstandableMessage()
+    {
+        $this->expectException(UserException::class, "Can't parse timestamp: \" \", near: THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH");
+
+        $actual = Subtitles::loadFromString('
+00:09:01,866
+
+--> 00:09:06,100
+THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH
+')->getInternalFormat();
     }
 }

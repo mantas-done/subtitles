@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\UserException;
+
 class SrtConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
@@ -30,8 +32,8 @@ class SrtConverter implements ConverterContract
             $lines = explode("\n", $matches['text']);
             $lines_array = array_map('strip_tags', $lines);
             $internal_format[] = [
-                'start' => static::srtTimeToInternal($matches['start']),
-                'end' => static::srtTimeToInternal($matches['end']),
+                'start' => static::srtTimeToInternal($matches['start'], implode("\n", $lines)),
+                'end' => static::srtTimeToInternal($matches['end'], implode("\n", $lines)),
                 'lines' => $lines_array,
             ];
         }
@@ -76,7 +78,7 @@ class SrtConverter implements ConverterContract
      *
      * @return float
      */
-    protected static function srtTimeToInternal($srt_time)
+    protected static function srtTimeToInternal($srt_time, string $lines)
     {
         $pattern = '/(\d{1,2}):(\d{2}):(\d{1,2})([:.,](\d{1,3}))?/m';
         if (preg_match($pattern, $srt_time, $matches)) {
@@ -85,7 +87,7 @@ class SrtConverter implements ConverterContract
             $seconds = $matches[3];
             $milliseconds = isset($matches[5]) ? $matches[5] : "000";
         } else {
-            throw new \Exception("can't parse timestamp: $srt_time");
+            throw new UserException("Can't parse timestamp: \"$srt_time\", near: $lines");
         }
 
         return $hours * 3600 + $minutes * 60 + $seconds + str_pad($milliseconds, 3, "0", STR_PAD_RIGHT) / 1000;
