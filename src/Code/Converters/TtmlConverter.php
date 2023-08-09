@@ -8,7 +8,10 @@ class TtmlConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
-        return strpos($file_content, 'xmlns="http://www.w3.org/ns/ttml"') !== false && strpos($file_content, 'xml:id="d1"') === false;
+        return
+            (strpos($file_content, 'xmlns="http://www.w3.org/ns/ttml"') !== false && strpos($file_content, 'xml:id="d1"') === false)
+            || preg_match('/<\?xml /m', $file_content) === 1
+        ;
     }
 
     public function fileContentToInternalFormat($file_content)
@@ -24,12 +27,14 @@ class TtmlConverter implements ConverterContract
 
         $fps = self::framesPerSecond($dom);
 
-        $body = $dom->getElementsByTagName('body')->item(0);
-        if (!$body) {
-            throw new \Exception('no body');
-        }
+        $divElements = $dom->getElementsByTagName('div');
+        if (!$divElements->count()) {
+            $divElements = $dom->getElementsByTagName('Subtitle');
+            if ($divElements->count()) {
+                return self::subtitleXml($file_content);
+            }
 
-        $divElements = $body->getElementsByTagName('div');
+        }
         if ($divElements->count() < 1) {
             throw new \Exception('no div');
         }
@@ -51,10 +56,8 @@ class TtmlConverter implements ConverterContract
                     }
                 }
 
-                $lines = preg_replace('/<br\s*\/?>/', '<br>', $lines); // normalize <br>*/
-                $lines = explode('<br>', $lines);
-                $lines = array_map('strip_tags', $lines);
-                $lines = array_map('trim', $lines);
+
+                $lines = self::getLinesFromTextWithBr($lines);
 
                 $internal_format[] = array(
                     'start' => static::ttmlTimeToInternal($begin, $fps),
@@ -162,5 +165,33 @@ class TtmlConverter implements ConverterContract
 
         //This is a standard frame rate used in many video formats and broadcast television.
         return 30;
+    }
+
+    private static function subtitleXml(string $file_content)
+    {
+        $xml = simplexml_load_string($file_content);
+
+        $internal_format = [];
+
+        foreach ($xml->Paragraph as $paragraph) {
+            $subtitle = [
+                'start' => (int)$paragraph->StartMilliseconds / 1000,
+                'end' => (int)$paragraph->EndMilliseconds / 1000,
+                'lines' => self::getLinesFromTextWithBr($paragraph->Text->asXML()),
+            ];
+            $internal_format[] = $subtitle;
+        }
+
+        return $internal_format;
+    }
+
+    private static function getLinesFromTextWithBr(string $text)
+    {
+        $lines = preg_replace('/<br\s*\/?>/', '<br>', $text); // normalize <br>*/
+        $lines = explode('<br>', $lines);
+        $lines = array_map('strip_tags', $lines);
+        $lines = array_map('trim', $lines);
+
+        return $lines;
     }
 }

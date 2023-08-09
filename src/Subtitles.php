@@ -17,7 +17,6 @@ use Done\Subtitles\Code\Converters\TtmlConverter;
 use Done\Subtitles\Code\Converters\TxtConverter;
 use Done\Subtitles\Code\Converters\TxtQuickTimeConverter;
 use Done\Subtitles\Code\Converters\VttConverter;
-use Done\Subtitles\Code\Converters\XmlConverter;
 use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Code\UserException;
 
@@ -41,7 +40,6 @@ class Subtitles
         ['extension' => 'sub',  'format' => 'sub_subviewer',    'name' => 'SubViewer2.0',               'class' => SubViewerConverter::class],
         ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
         ['extension' => 'xml',  'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
-        ['extension' => 'xml',  'format' => 'xml',              'name' => 'Xml',                        'class' => XmlConverter::class],
         ['extension' => 'smi',  'format' => 'smi',              'name' => 'SAMI',                       'class' => SmiConverter::class],
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
