@@ -26,6 +26,9 @@ class TtmlConverter implements ConverterContract
         }
 
         $fps = self::framesPerSecond($dom);
+        if (preg_match('/DCSubtitle/', $file_content) === 1) {
+            return self::DCSubtitles($file_content);
+        }
         $divElements = $dom->getElementsByTagName('div');
         if (!$divElements->count() && $dom->getElementsByTagName('Subtitle')->count()) {
             return self::subtitleXml($file_content);
@@ -134,6 +137,15 @@ class TtmlConverter implements ConverterContract
         } elseif (substr($ttml_time, -1) === 'f' && $frame_rate) {
             $seconds = rtrim($ttml_time, 'f');
             return $seconds / $frame_rate;
+        } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{3})/', $ttml_time, $matches)) {
+            $hours = intval($matches[1]);
+            $minutes = intval($matches[2]);
+            $seconds = intval($matches[3]);
+            $milliseconds = intval($matches[4]);
+
+            $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + ($milliseconds / 1000);
+
+            return $totalSeconds;
         } else {
             $time_parts = explode('.', $ttml_time);
             $milliseconds = 0;
@@ -144,6 +156,21 @@ class TtmlConverter implements ConverterContract
             list($hours, $minutes, $seconds) = array_map('intval', explode(':', $time_parts[0]));
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         }
+    }
+
+    private static function DCSubtitles(string $file_content)
+    {
+        $xml = simplexml_load_string($file_content);
+
+        foreach ($xml->Font->Subtitle as $subtitle) {
+            $internal_format[] = array(
+                'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn']),
+                'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut']),
+                'lines' => self::getLinesFromTextWithBr((string)$subtitle->Text->asXML()),
+            );
+        }
+//var_dump($internal_format); exit;
+        return $internal_format;
     }
 
     // ---------------------------------- private ----------------------------------------------------------------------
@@ -196,7 +223,8 @@ class TtmlConverter implements ConverterContract
 
     private static function getLinesFromTextWithBr(string $text)
     {
-        $lines = preg_replace('/<br\s*\/?>/', '<br>', $text); // normalize <br>*/
+        $text = preg_replace('/<br\s*\/?>/', '<br>', $text); // normalize <br>*/
+        $lines = preg_replace('/<tt:br*\/?>/', '<br>', $text); // normalize <br>*/
         $lines = explode('<br>', $lines);
         $lines = array_map('strip_tags', $lines);
         $lines = array_map('trim', $lines);
