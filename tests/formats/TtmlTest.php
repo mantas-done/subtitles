@@ -129,7 +129,7 @@ class TtmlTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-    public function testConvertFromXml123()
+    public function testConvertFromXml()
     {
         $text = '<?xml version="1.0" encoding="utf-8"?>
 <Subtitle>
@@ -169,4 +169,47 @@ X;
         $expected = (new Subtitles())->add(0, 1, ['a', 'b'])->add(2.123, 3.321, 'c')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testConvertFromXml3()
+    {
+        $text = <<<X
+<?xml version="1.0"?>
+<tt
+	xmlns="http://www.w3.org/ns/ttml" xml:lang="en"
+	xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+	xmlns:tts="http://www.w3.org/ns/ttml#styling">
+	<head/>
+	<body region="subtitleArea">
+		<p begin="0.0s" dur="2.0s">test1</p>
+		<p begin="5.38s" dur="6.0s">test2</p>
+	</body>
+</tt>
+
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 2, 'test1')->add(5.38, 11.38, 'test2')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testConvertFromXml4()
+    {
+        $text = <<<X
+<?xml version="1.0"?>
+<tt
+	xmlns="http://www.w3.org/ns/ttml" xml:lang="en"
+	xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+	xmlns:tts="http://www.w3.org/ns/ttml#styling">
+	<head/>
+	<body region="subtitleArea">
+		<p begin="0.0s" dur="">test1</p>
+		<p begin="5.38s" dur="">test2</p>
+	</body>
+</tt>
+
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 5.38, 'test1')->add(5.38, 6.38, 'test2')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
 }

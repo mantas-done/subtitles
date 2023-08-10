@@ -194,7 +194,7 @@ class TxtConverter implements ConverterContract
         return $max_fps + 1;
     }
 
-    private static function fillStartAndEndTimes(array $internal_format)
+    public static function fillStartAndEndTimes(array $internal_format)
     {
         if (count($internal_format) === 0) {
             throw new UserException("Subtitles were not found in this file");

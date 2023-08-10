@@ -26,14 +26,12 @@ class TtmlConverter implements ConverterContract
         }
 
         $fps = self::framesPerSecond($dom);
-
         $divElements = $dom->getElementsByTagName('div');
-        if (!$divElements->count()) {
-            $divElements = $dom->getElementsByTagName('Subtitle');
-            if ($divElements->count()) {
-                return self::subtitleXml($file_content);
-            }
-
+        if (!$divElements->count() && $dom->getElementsByTagName('Subtitle')->count()) {
+            return self::subtitleXml($file_content);
+        }
+        if ($divElements->count() < 1) {
+            $divElements = $dom->getElementsByTagName('body');
         }
         if ($divElements->count() < 1) {
             throw new \Exception('no div');
@@ -41,11 +39,17 @@ class TtmlConverter implements ConverterContract
 
         $internal_format = [];
         foreach ($divElements as $element) {
-            $begin = $element->getAttribute('begin');
-            $end = $element->getAttribute('end');
+            $div_begin = $element->getAttribute('begin');
+            $div_end = $element->getAttribute('end');
             foreach ($element->getElementsByTagName('p') as $pElement) {
-                $begin = $pElement->hasAttribute('begin') ? $pElement->getAttribute('begin') : $begin;
-                $end = $pElement->hasAttribute('end') ? $pElement->getAttribute('end') : $end;
+                $begin = $pElement->hasAttribute('begin') ? $pElement->getAttribute('begin') : $div_begin;
+                $begin = static::ttmlTimeToInternal($begin, $fps);
+                $end = $pElement->hasAttribute('end') ? $pElement->getAttribute('end') : $div_end;
+                if ($end) {
+                    $end = static::ttmlTimeToInternal($end, $fps);
+                } elseif ($pElement->hasAttribute('dur') && $pElement->getAttribute('dur')) {
+                    $end = $begin + static::ttmlTimeToInternal($pElement->getAttribute('dur'), $fps);
+                }
                 $lines = '';
 
                 foreach ($pElement->childNodes as $node) {
@@ -56,16 +60,17 @@ class TtmlConverter implements ConverterContract
                     }
                 }
 
-
                 $lines = self::getLinesFromTextWithBr($lines);
 
                 $internal_format[] = array(
-                    'start' => static::ttmlTimeToInternal($begin, $fps),
-                    'end' => static::ttmlTimeToInternal($end, $fps),
+                    'start' => $begin,
+                    'end' => $end ? $end : null,
                     'lines' => $lines,
                 );
             }
         }
+
+        $internal_format = TxtConverter::fillStartAndEndTimes($internal_format);
 
         return $internal_format;
     }
@@ -117,6 +122,10 @@ class TtmlConverter implements ConverterContract
 
     public static function ttmlTimeToInternal($ttml_time, $frame_rate = null)
     {
+        if (trim($ttml_time) === '') {
+            throw new \Exception("empty time");
+        }
+
         if (substr($ttml_time, -1) === 't') { // if last symbol is "t"
             // parses 340400000t
             return substr($ttml_time, 0, -1) / 10000000;

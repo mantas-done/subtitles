@@ -224,6 +224,7 @@ class Subtitles
         unset($row);
         unset($line);
 
+        // if empty captions
         if (count($internal_format) === 0) {
             $converter_name = explode('\\', $input_converter::class);
             throw new UserException('Subtitles were not found in this file (' . end($converter_name) . ')');
