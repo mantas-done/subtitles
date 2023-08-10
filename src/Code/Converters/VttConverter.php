@@ -10,11 +10,12 @@ class VttConverter implements ConverterContract
 
     public function canParseFileContent($file_content)
     {
-        return preg_match('/^WEBVTT/m', $file_content) === 1;
+        return preg_match('/WEBVTT/m', $file_content) === 1;
     }
 
     public function fileContentToInternalFormat($file_content)
     {
+        $file_content = self::fixExtraNewLines($file_content);
         $block_lines = self::countBlockLines($file_content);
         $blocks = preg_split("/\n{{$block_lines}}/", $file_content);
         $internal_format = [];
@@ -127,5 +128,37 @@ class VttConverter implements ConverterContract
         $block_lines = substr_count($matches[0], "\n");
 
         return $block_lines < $min_block_lines ? $min_block_lines : $block_lines; // there can not be less than two new line symbols between blocks
+    }
+
+    private static function fixExtraNewLines($file_content) {
+        $lines = mb_split("\n", $file_content);
+        $startCounting = false;
+        $newLineCount = 0;
+
+        foreach ($lines as $line) {
+            if (strpos($line, '-->') !== false) {
+                $startCounting = true;
+                continue;
+            }
+
+            if ($startCounting) {
+                if (trim($line) === '') {
+                    $newLineCount++;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if ($newLineCount > 0) {
+            $lines = $newLineCount + 1;
+            $lines_double = $lines * 2;
+
+            $file_content = str_replace(str_repeat("\n", $lines_double), '{REPLACEMENT}', $file_content);
+            $file_content = str_replace(str_repeat("\n", $lines), "\n", $file_content);
+            $file_content = str_replace('{REPLACEMENT}', "\n\n", $file_content);
+        }
+
+        return $file_content;
     }
 }

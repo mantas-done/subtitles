@@ -222,6 +222,29 @@ TEXT;
             ->getInternalFormat();
 
         $this->assertEquals($expected, $actual);
+    }
 
+    public function testParsesFileWithExtraNewLines()
+    {
+        $given = <<< TEXT
+WEBVTT
+
+
+
+00:00:01.10 --> 00:00:02.50
+
+one
+
+
+00:00:03.30 --> 00:00:04.40
+
+two
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(1.1, 2.5, 'one')
+            ->add(3.3, 4.4, 'two')
+            ->getInternalFormat();
+        $this->assertEquals($expected, $actual);
     }
 }

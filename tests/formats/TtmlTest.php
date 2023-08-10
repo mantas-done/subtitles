@@ -211,5 +211,4 @@ X;
         $expected = (new Subtitles())->add(0, 5.38, 'test1')->add(5.38, 6.38, 'test2')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
-
 }
