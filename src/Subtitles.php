@@ -224,6 +224,15 @@ class Subtitles
         unset($row);
         unset($line);
 
+        // remove blocks without text
+        foreach ($internal_format as $k => $row) {
+            if (trim($row['lines'][0]) === '') {
+                unset($internal_format[$k]);
+            }
+        }
+        unset($row);
+        unset($k);
+
         // if empty captions
         if (count($internal_format) === 0) {
             $converter_name = explode('\\', $input_converter::class);

@@ -81,4 +81,18 @@ a
 a
         ');
     }
+
+    public function testRemovesEmptySubtitles()
+    {
+        $actual = Subtitles::loadFromString('
+[Script Info]
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:21:33.39,0:23:07.52,Default,,0,0,0,,
+Dialogue: 0,0:21:41.41,0:21:44.20,사랑에 애태우며,,0,0,0,,test
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(1301.41, 1304.20, 'test')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
