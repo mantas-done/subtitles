@@ -6,12 +6,12 @@ use Done\Subtitles\Code\UserException;
 
 class LrcConverter implements ConverterContract
 {
-    protected static $regexp = '/\[\s*(\d{2}:\d{2}(?:[:.]\d{1,3})?)\s*](.*)/s';
+    protected static $regexp = '/\[\s*(\d{2}:\d{2}(?:[:.]\d{1,3})?)\s*]/';
     protected static $time_offset_regexp = '/\[offset:\s*\+?(-?\d+)\s*]/s';
 
     public function canParseFileContent($file_content)
     {
-        return preg_match(self::$regexp, $file_content) === 1;
+        return preg_match(self::$regexp . 's', $file_content) === 1;
     }
 
     public function fileContentToInternalFormat($file_content)
@@ -19,24 +19,31 @@ class LrcConverter implements ConverterContract
         $timestamp_offset = self::timestampsOffset($file_content);
         $lines = explode("\n", $file_content);
         $internal_format = [];
-        $i = 0;
         foreach ($lines as $line) {
-            $found = preg_match(self::$regexp, $line, $match);
+            $found = preg_match_all(self::$regexp, $line, $timestamps);
             if ($found === 0) {
                 continue;
             }
 
-            $internal_format[$i] = [
-                'start' => static::lrcTimeToInternal($match[1], $timestamp_offset),
-                'end' => null,
-                'lines' => [trim($match[2])]
-            ];
+            $text = str_replace($timestamps[0], '', $line);
 
+            foreach ($timestamps[1] as $timestamp) {
+                $internal_format[] = [
+                    'start' => static::lrcTimeToInternal($timestamp, $timestamp_offset),
+                    'end' => null,
+                    'lines' => [trim($text)]
+                ];
+            }
+        }
+
+        usort($internal_format, function ($a, $b) {
+            return $a['start'] <=> $b['start'];
+        });
+
+        for ($i = 0; $i < count($internal_format); $i++) {
             if (isset($internal_format[$i - 1]) && $internal_format[$i - 1]['end'] === null) {
                 $internal_format[$i - 1]['end'] = $internal_format[$i]['start'];
             }
-
-            $i++;
         }
 
         //TODO: Currently last line's end time is start + 1sec, but it might be calculated differently
