@@ -215,6 +215,17 @@ class Subtitles
         }
         $internal_format = $input_converter->fileContentToInternalFormat($converter->input);
 
+        // remove empty lines
+        foreach ($internal_format as $k => $row) {
+            $new_lines = [];
+            foreach ($row['lines'] as $line) {
+                if (trim($line) !== '') {
+                    $new_lines[] = $line;
+                }
+            }
+            $internal_format[$k]['lines'] = $new_lines;
+        }
+
         // trim lines
         foreach ($internal_format as &$row) {
             foreach ($row['lines'] as &$line) {
@@ -226,7 +237,7 @@ class Subtitles
 
         // remove blocks without text
         foreach ($internal_format as $k => $row) {
-            if (trim($row['lines'][0]) === '') {
+            if (!isset($row['lines'][0]) || trim($row['lines'][0]) === '') {
                 unset($internal_format[$k]);
             }
         }

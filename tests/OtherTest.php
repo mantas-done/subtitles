@@ -95,4 +95,18 @@ Dialogue: 0,0:21:41.41,0:21:44.20,사랑에 애태우며,,0,0,0,,test
         $expected = (new Subtitles())->add(1301.41, 1304.20, 'test')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testRemoveEmptyLines()
+    {
+        $actual = Subtitles::loadFromString('
+[Script Info]
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.00,0:00:02.00,Default,,0,0,0,,test\N
+Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'test')->add(3, 4, 'test')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
