@@ -16,21 +16,40 @@ class TxtQuickTimeConverter implements ConverterContract
     {
         $internal_format = [];
 
+        $started = false;
         $blocks = explode("\n\n", trim($file_content));
         foreach ($blocks as $block) {
-            preg_match('/(?<start>\[.{11}\])\n(?<text>[\s\S]+?)(?=\n\[)\n(?<end>\[.{11}\])/m', $block, $matches);
-
-            // if block doesn't contain text
-            if (empty($matches)) {
-                continue;
+            $lines = explode("\n", $block);
+            $tmp = [
+                'start' => null,
+                'end' => null,
+                'lines' => [],
+            ];
+            foreach ($lines as $line) {
+                $parts = TxtConverter::getLineParts($line, 2, 1);
+                if ($started === false && $parts['start'] === null) {
+                    continue;
+                }
+                $started = true;
+                if ($tmp['start'] === null && $parts['start']) {
+                    $tmp['start'] = $parts['start'];
+                } elseif ($parts['text'] !== null) {
+                    $tmp['lines'][] = $parts['text'];
+                } elseif ($tmp['end'] === null && $parts['start']) {
+                    $tmp['end'] = $parts['start'];
+                }
             }
 
-            $internal_format[] = [
-                'start' => static::timeToInternal($matches['start'], self::$fps),
-                'end' => static::timeToInternal($matches['end'], self::$fps),
-                'lines' => explode("\n", $matches['text']),
-            ];
+            if (isset($tmp['lines'][0]) && trim($tmp['lines'][0])) {
+                $internal_format[] = [
+                    'start' => static::timeToInternal($tmp['start'], self::$fps),
+                    'end' => $tmp['end'] ? static::timeToInternal($tmp['end'], self::$fps) : null,
+                    'lines' => $tmp['lines'],
+                ];
+            }
         }
+
+        $internal_format = TxtConverter::fillStartAndEndTimes($internal_format);
 
         return $internal_format;
     }
