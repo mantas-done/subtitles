@@ -37,7 +37,7 @@ class TtmlConverter implements ConverterContract
             $divElements = $dom->getElementsByTagName('body');
         }
         if ($divElements->count() < 1) {
-            throw new \Exception('no div');
+            return [];
         }
 
         $internal_format = [];
