@@ -293,6 +293,9 @@ class SccConverter implements ConverterContract
             // text
             $part1 = substr($block, 0, 2);
             $part2 = substr($block, 2, 2);
+            if (!isset(self::$characters[$part1]) || !isset(self::$characters[$part2])) {
+                throw new \Exception('unknown block: ' . $block);
+            }
             $text .= self::$characters[$part1] . self::$characters[$part2];
         }
 
@@ -859,6 +862,10 @@ class SccConverter implements ConverterContract
         '94a8' => '',
         '9423' => '',
         '94a2' => '',
+
+        '1520' => '', // codes that I don't know what they do
+        '152c' => '',
+        '152f' => '',
     ];
 
     private static $characters = [
