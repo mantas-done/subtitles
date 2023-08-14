@@ -2,7 +2,13 @@
 
 namespace Done\Subtitles\Code\Converters;
 
-// 32 characters per line per caption (maximum four captions) for a 30 frame broadcast
+// 32 characters, 4 lines
+// every frame transmits 2 bytes of data (two letters)
+// : - non drop frame - counts frames (not time)
+// ; - drop frame - counts time (not frames)
+// non drop frame plays at 29.97 fps, so in one hour there is fewer frames. Non drop frame time in scc 1:00:00:00 = 1:00:03;18 in real time
+// 3.6 seconds difference https://sonix.ai/resources/what-is-drop-frame-vs-non-drop-frame-timecode/
+// scc time is earlier that srt time, because it needs to account for time it takes to send the text
 use Done\Subtitles\Code\UserException;
 
 class SccConverter implements ConverterContract
@@ -22,14 +28,14 @@ class SccConverter implements ConverterContract
      */
     public function fileContentToInternalFormat($file_content)
     {
-        preg_match_all('/^(\d{2}:\d{2}:\d{2}:\d{2})\s+(.*)$/m', $file_content, $matches, PREG_SET_ORDER);
+        preg_match_all('/^(\d{2}:\d{2}:\d{2}[;:]\d{2})\s+(.*)$/m', $file_content, $matches, PREG_SET_ORDER);
         $parsed = [];
         foreach ($matches as $match) {
             $time = $match[1];
             $data = $match[2];
 
             $parsed[] = [
-                'time' => self::sccTimeToInternal($time),
+                'time' => self::sccTimeToInternal($time, self::codesToBytes($data)),
                 'lines' => self::sccToLines($data),
             ];
         }
@@ -88,15 +94,15 @@ class SccConverter implements ConverterContract
             $full_codes = "94ae 94ae 9420 9420 $codes 942f 942f";
             $frames_to_send = substr_count($full_codes, ' ') + 1;
             $time_to_send = $frames_to_send / self::$fps;
-            $file_content .= self::internalTimeToScc($scc['start'] - $time_to_send) . "\t" . $full_codes . "\r\n\r\n";
+            $file_content .= self::internalTimeToScc($scc['start'] - $time_to_send, 0) . "\t" . $full_codes . "\r\n\r\n";
             if ($last_internal_format !== null && ($frames_to_send + 4) < $frames_available) {
-                self::internalTimeToScc($last_internal_format['end']) . "\t" . '942c 942c' . "\r\n\r\n";
+                self::internalTimeToScc($last_internal_format['end'], 0) . "\t" . '942c 942c' . "\r\n\r\n";
             }
             $last_end_time = $scc['start'];
             $last_internal_format = $scc;
         }
         if (isset($scc)) { // stop last caption
-            $file_content .= self::internalTimeToScc($scc['end'] - (4 / self::$fps)) . "\t" . '942c 942c' . "\r\n\r\n";
+            $file_content .= self::internalTimeToScc($scc['end'] - (4 / self::$fps), 0) . "\t" . '942c 942c' . "\r\n\r\n";
         }
         return $file_content;
     }
@@ -111,11 +117,20 @@ class SccConverter implements ConverterContract
      *
      * @return float
      */
-    protected static function sccTimeToInternal($scc_time)
+    public static function sccTimeToInternal($scc_time, $text_bytes)
     {
-        $parts = explode(':', $scc_time);
+        $tmp = str_replace(';', ':', $scc_time);
+        $parts = explode(':', $tmp);
+        $time = $parts[0] * 3600 + $parts[1] * 60 + $parts[2] + $parts[3] / self::$fps;
+        $time += ($text_bytes / 2) / self::$fps;
 
-        return $parts[0] * 3600 + $parts[1] * 60 + $parts[2] + $parts[3] / self::$fps;
+        if (strstr($scc_time, ';') !== false) {
+            // drop frame
+            return $time;
+        } else {
+            // non drop frame
+            return $time / 3600 * 3603.6;
+        }
     }
 
     /**
@@ -126,15 +141,16 @@ class SccConverter implements ConverterContract
      *
      * @return string
      */
-    protected static function internalTimeToScc($internal_time)
+    public static function internalTimeToScc($internal_time, $text_bytes)
     {
-        $parts = explode('.', $internal_time);
+        $time = $internal_time - ($text_bytes / 2) / self::$fps;
+        $parts = explode('.', $time);
         $whole = (int) $parts[0];
         $decimal = isset($parts[1]) ? (float)('0.' . $parts[1]) : 0.0;
         $frame = round($decimal * self::$fps);
         $frame = min($frame, floor(self::$fps)); // max 29
 
-        $srt_time = gmdate("H:i:s", floor($whole)) . ':' . sprintf("%02d", $frame);
+        $srt_time = gmdate("H:i:s", floor($whole)) . ';' . sprintf("%02d", $frame);
 
         return $srt_time;
     }
@@ -293,6 +309,11 @@ class SccConverter implements ConverterContract
         });
 
         return array_values($result);
+    }
+
+    private static function codesToBytes(string $codes): int // AD00 FFAA
+    {
+        return $bytes = strlen(str_replace(' ', '', $codes)) / 2;
     }
 
     // from https://github.com/pbs/pycaption/blob/main/pycaption/scc/constants.py
