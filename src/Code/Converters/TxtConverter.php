@@ -359,11 +359,14 @@ class TxtConverter implements ConverterContract
         if (isset($timestamps[0][1])) {
             $result['end'] = $timestamps[0][1];
         }
-        if ($result['start'] && self::hasText(substr($line, 0, strpos($line, $result['start'])))) {
-            $result = [
-                'start' => null,
-                'end' => null,
-            ];
+        if ($result['start']) {
+            $text_before_timestamp = substr($line, 0, strpos($line, $result['start']));
+            if (self::hasText($text_before_timestamp)) {
+                $result = [
+                    'start' => null,
+                    'end' => null,
+                ];
+            }
         }
 
         return $result;
