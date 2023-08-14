@@ -247,4 +247,19 @@ TEXT;
             ->getInternalFormat();
         $this->assertEquals($expected, $actual);
     }
+
+    public function testParseFileWithoutWEBVTTText()
+    {
+        $given = <<< TEXT
+
+     00:00:02.100    -->    00:00:03.100     
+text1
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(2.1, 3.1, 'text1')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
 }

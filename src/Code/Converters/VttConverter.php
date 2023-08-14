@@ -10,7 +10,7 @@ class VttConverter implements ConverterContract
 
     public function canParseFileContent($file_content)
     {
-        return preg_match('/WEBVTT/m', $file_content) === 1;
+        return preg_match('/WEBVTT/m', $file_content) === 1 || preg_match('/' . static::$time_regexp . '/m', $file_content);
     }
 
     public function fileContentToInternalFormat($file_content)
