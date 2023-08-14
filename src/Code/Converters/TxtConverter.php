@@ -214,9 +214,9 @@ class TxtConverter implements ConverterContract
         // sort times
         usort($internal_format, function ($a, $b) {
             if ($a['start'] === $b['start']) {
-                return $a['end'] > $b['end'];
+                return $a['end'] <=> $b['end'];
             }
-            return $a['start'] > $b['start'];
+            return $a['start'] <=> $b['start'];
         });
 
         // fill ends
@@ -359,12 +359,14 @@ class TxtConverter implements ConverterContract
         if (isset($timestamps[0][1])) {
             $result['end'] = $timestamps[0][1];
         }
-        $text_before_timestamp = substr($line, 0, strpos($line, $result['start']));
-        if ($result['start'] && self::hasText($text_before_timestamp)) {
-            $result = [
-                'start' => null,
-                'end' => null,
-            ];
+        if ($result['start']) {
+            $text_before_timestamp = substr($line, 0, strpos($line, $result['start']));
+            if (self::hasText($text_before_timestamp)) {
+                $result = [
+                    'start' => null,
+                    'end' => null,
+                ];
+            }
         }
 
         return $result;

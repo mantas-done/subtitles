@@ -80,4 +80,23 @@ TEXT;
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testParseGroupedLines()
+    {
+        $given = <<< TEXT
+[00:01.10] First
+[00:02.20][00:05.00] [grouped]
+[00:03:25] Third
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+
+        $expected = (new Subtitles())
+            ->add(1.1, 2.2, 'First')
+            ->add(2.2, 3.25, '[grouped]')
+            ->add(3.25, 5, 'Third')
+            ->add(5, 6, '[grouped]')
+            ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
 }
