@@ -27,7 +27,7 @@ Convert and edit subtitles and captions.
 ## Command line
 Can be used from the command line to convert from .srt to .vtt
 ```
-php subtitles.phar subtitles.srt subtitles.vtt
+php subtitles.phar input.srt output.vtt
 ```
 
 ## Installation (supports PHP 8.1+)
