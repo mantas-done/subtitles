@@ -15,7 +15,7 @@ class AssConverter implements ConverterContract
     {
         $internal_format = []; // array - where file content will be stored
         // get column numbers (every file can have a different number of columns that is encoded in this string)
-        preg_match('/\[Events]\RFormat:(.*)/', $file_content, $formats);
+        preg_match('/\[Events]\R+Format:(.*)/', $file_content, $formats);
         if (!isset($formats[1])) {
             throw new UserException('.ass converter did not found any text');
         }
