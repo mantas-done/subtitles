@@ -12,11 +12,19 @@ class VttTest extends TestCase {
 
     use AdditionalAssertionsTrait;
 
-    public function testRecognizesSrt()
+    public function testRecognizesVtt()
     {
         $content = file_get_contents('./tests/files/vtt.vtt');
         $converter = Helpers::getConverterByFileContent($content);
         $this->assertTrue($converter::class === VttConverter::class);
+    }
+
+    public function testDoesntTakeFilesMentioningVtt()
+    {
+        $content = 'something 
+about WEBVTT';
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class !== VttConverter::class);
     }
 
     public function testConvertFromVttToSrt()
