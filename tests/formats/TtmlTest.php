@@ -327,4 +327,18 @@ X;
         $expected = (new Subtitles())->add(13, 15, '*Lied: "Feeling Good" von Nina Simone*')->add(15, 17, '*leises Windrauschen*')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testConvertFromXml7()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="utf-8" ?><transcript><text start="0.22" dur="3.66">Creating an online shop
+is now easier than ever.</text><text start="3.88" dur="3.177">With a minimum investment of time and
+money,</text></transcript>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0.22, 3.88, ['Creating an online shop', 'is now easier than ever.'])
+            ->add(3.88, 7.057, ['With a minimum investment of time and', 'money,'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

@@ -35,6 +35,9 @@ class TtmlConverter implements ConverterContract
         if (!$divElements->count() && $dom->getElementsByTagName('Subtitle')->count()) {
             return self::subtitleXml($file_content);
         }
+        if (!$divElements->count() && $dom->getElementsByTagName('transcript')->count()) {
+            return self::subtitleXml2($file_content);
+        }
         if ($divElements->count() < 1) {
             $divElements = $dom->getElementsByTagName('body');
         }
@@ -235,6 +238,24 @@ class TtmlConverter implements ConverterContract
                     'lines' => self::getLinesFromTextWithBr($subtitle->Text->asXML()),
                 ];
             }
+        }
+
+        return $internal_format;
+    }
+
+    private static function subtitleXml2(string $file_content)
+    {
+        $xml = simplexml_load_string($file_content);
+
+        $internal_format = [];
+
+        foreach ($xml->text as $text) {
+            $attributes = $text->attributes();
+            $internal_format[] = array(
+                'start' => (string) $attributes['start'],
+                'end' => (float)((string) $attributes['start'] + (string) $attributes['dur']),
+                'lines' => self::getLinesFromTextWithBr(str_replace("\n", "<br>", $text->asXML()))
+            );
         }
 
         return $internal_format;
