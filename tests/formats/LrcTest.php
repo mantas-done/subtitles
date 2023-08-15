@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\formats;
+namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\LrcConverter;
 use Done\Subtitles\Code\Helpers;
@@ -17,6 +17,23 @@ class LrcTest extends TestCase
         $content = file_get_contents('./tests/files/lrc.lrc');
         $converter = Helpers::getConverterByFileContent($content);
         $this->assertTrue($converter::class === LrcConverter::class);
+    }
+
+    public function testNotLrc() // let other converter handle invalid lrc
+    {
+        $content = '[00:02:35]
+Tere Vaaste Falak Se
+Main Chaand Launga
+Solah Satrah Sitaare
+Sang Baandh Launga
+
+[00:02:51]
+Tere Vaaste Falak Se
+Main Chaand Launga
+Solah Satrah Sitaare
+Sang Baandh Launga';
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue($converter::class !== LrcConverter::class);
     }
 
     public function testParsesLrc()

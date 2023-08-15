@@ -11,7 +11,10 @@ class LrcConverter implements ConverterContract
 
     public function canParseFileContent($file_content)
     {
-        return preg_match(self::$regexp . 's', $file_content) === 1;
+        // only select when there is text after the timestamp
+        // do not select files that have timestamp and text somewhere on the other line
+        $regex = rtrim(self::$regexp, '/') . ' *[\p{L}]+' . '/s';
+        return preg_match($regex, $file_content) === 1;
     }
 
     public function fileContentToInternalFormat($file_content)
