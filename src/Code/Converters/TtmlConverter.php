@@ -212,12 +212,29 @@ class TtmlConverter implements ConverterContract
         $internal_format = [];
 
         foreach ($xml->Paragraph as $paragraph) {
-            $subtitle = [
+             $subtitle = [
                 'start' => (int)$paragraph->StartMilliseconds / 1000,
                 'end' => (int)$paragraph->EndMilliseconds / 1000,
                 'lines' => self::getLinesFromTextWithBr($paragraph->Text->asXML()),
             ];
             $internal_format[] = $subtitle;
+        }
+
+        if (count($internal_format) === 0) {
+            // Select and process subtitle data
+            $xml = simplexml_load_string($file_content);
+
+            $namespace = $xml->getNamespaces(true)[''];
+            $xml->registerXPathNamespace('ns', $namespace);
+
+            $subtitles = $xml->xpath('//ns:Subtitle');
+            foreach ($subtitles as $subtitle) {
+                $internal_format[] = [
+                    'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn']),
+                    'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut']),
+                    'lines' => self::getLinesFromTextWithBr($subtitle->Text->asXML()),
+                ];
+            }
         }
 
         return $internal_format;

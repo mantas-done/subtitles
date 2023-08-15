@@ -296,4 +296,35 @@ X;
         $expected = (new Subtitles())->add(0, 2.08, 'Badewetter an der Ostsee.')->add(2.2, 5.4, ['Jetzt im Sommer', 'hat das Meer um die 19°C.'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testConvertFromXml6()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="UTF-8"?>
+<SubtitleReel xmlns="http://www.smpte-ra.org/schemas/428-7/2014/DCST">
+  <Id>urn:uuid:da9af7ab-3375-4082-be52-1fb4e426b1f2</Id>
+  <ContentTitleText>crazy</ContentTitleText>
+  <IssueDate>2023-08-01T13:43:38-01:00</IssueDate>
+  <ReelNumber>1</ReelNumber>
+  <Language>de</Language>
+  <EditRate>25 1</EditRate>
+  <TimeCodeRate>25</TimeCodeRate>
+  <StartTime>10:00:00:00</StartTime>
+  <LoadFont ID="Font1">urn:uuid:45bf5399-4b88-45c3-9200-0a42147b4bed</LoadFont>
+  <SubtitleList>
+    <Font ID="Font1" Color="FFEBEBEB" Effect="border" EffectColor="FF0A0A0A" Feather="yes" EffectSize="1.0" Size="42" Weight="normal">
+      <Subtitle SpotNumber="1" TimeIn="00:00:13:00" TimeOut="00:00:15:00">
+        <Text Halign="center" Valign="bottom" Hposition="0.0" Vposition="8.0">*Lied: "Feeling Good" von Nina Simone*</Text>
+      </Subtitle>
+      <Subtitle SpotNumber="2" TimeIn="00:00:15:00" TimeOut="00:00:17:00">
+        <Text Halign="center" Valign="bottom" Hposition="0.0" Vposition="8.0">*leises Windrauschen*</Text>
+      </Subtitle>
+    </Font>
+  </SubtitleList>
+</SubtitleReel>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(13, 15, '*Lied: "Feeling Good" von Nina Simone*')->add(15, 17, '*leises Windrauschen*')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
