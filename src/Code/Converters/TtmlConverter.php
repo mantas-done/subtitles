@@ -8,9 +8,11 @@ class TtmlConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
+        $first_line = explode("\n", $file_content)[0];
+
         return
             (strpos($file_content, 'xmlns="http://www.w3.org/ns/ttml"') !== false && strpos($file_content, 'xml:id="d1"') === false)
-            || preg_match('/<\?xml /m', $file_content) === 1
+            || preg_match('/<\?xml /m', $first_line) === 1
         ;
     }
 
