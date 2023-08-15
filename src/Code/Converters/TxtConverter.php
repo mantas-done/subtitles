@@ -117,6 +117,12 @@ class TxtConverter implements ConverterContract
             $j++;
         }
 
+        // strip html
+        foreach ($internal_format as &$row) {
+            $row['lines'] = array_map('strip_tags', $row['lines']);
+        }
+        unset($row);
+
         return self::fillStartAndEndTimes($internal_format);
     }
 

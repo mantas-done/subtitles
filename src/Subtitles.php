@@ -315,6 +315,13 @@ class Subtitles
             throw new \Exception('First internal_array element is not a 0');
         }
 
+        // no subtitles with a lot of lines
+        foreach ($internal_format as $block) {
+            if (count($block['lines']) > 10) {
+                throw new \Exception('block has over 10 lines');
+            }
+        }
+
         $converter->internal_format = $internal_format;
 
         return $converter;

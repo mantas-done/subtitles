@@ -361,6 +361,16 @@ a
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testRemovesHtml()
+    {
+        $actual = Subtitles::loadFromString('
+00:01
+<b>a</b>
+        ')->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'a')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

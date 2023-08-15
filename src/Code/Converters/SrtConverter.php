@@ -21,7 +21,13 @@ class SrtConverter implements ConverterContract
     {
         $internal_format = []; // array - where file content will be stored
 
-        $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
+        $lines = explode("\n", trim($file_content));
+        $lines = array_map('trim', $lines);
+        $tmp_content = implode("\n", $lines);
+        unset($lines);
+
+
+        $blocks = explode("\n\n", $tmp_content); // each block contains: start and end times + text
         foreach ($blocks as $block) {
             preg_match('/(?<start>.*) *--> *(?<end>.*)\n(?<text>(\n*.*)*)/m', $block, $matches);
 

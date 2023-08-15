@@ -197,4 +197,17 @@ TEXT;
 THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH
 ')->getInternalFormat();
     }
+
+    public function testParsesWhiteSpaceOnBlankLine()
+    {
+        $actual = Subtitles::loadFromString('1
+00:00:00,283 --> 00:00:01,133
+嗨各位好
+' . ' ' . '
+2
+00:00:01,133 --> 00:00:03,733
+歡迎收看硬點茶壇我是福良賣茶人')->getInternalFormat();
+        $expected = (new Subtitles())->add(0.283, 1.133, '嗨各位好')->add(1.133, 3.733, '歡迎收看硬點茶壇我是福良賣茶人')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
