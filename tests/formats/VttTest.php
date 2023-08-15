@@ -222,11 +222,15 @@ one
 
 00:03.30 --> 00:04.40
 two
+
+1:00:00.000 --> 1:00:01.000 something
+three
 TEXT;
         $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(1.1, 2.5, 'one')
             ->add(3.3, 4.4, 'two')
+            ->add(3600.0, 3601.0, 'three', ['vtt_cue_settings' => 'something'])
             ->getInternalFormat();
 
         $this->assertEquals($expected, $actual);

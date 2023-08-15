@@ -22,7 +22,7 @@ class VttConverter implements ConverterContract
         $blocks = preg_split("/\n{{$block_lines}}/", $file_content);
         $internal_format = [];
         foreach ($blocks as $block) {
-            $found = preg_match('/((?:\d{2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{1,3})(.*?)\n([\s\S]+)/s', $block, $matches);
+            $found = preg_match('/((?:\d{1,2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{1,2}:){1,2}\d{2}\.\d{1,3})(.*?)\n([\s\S]+)/s', $block, $matches);
             if ($found === 0) {
                 continue;
             }
