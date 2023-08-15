@@ -131,7 +131,11 @@ class SmiConverter implements ConverterContract
      */
     protected static function timeToInternal($format_time)
     {
-        return $format_time / 1000;
+        $time = $format_time / 1000;
+        if ($time < 0) {
+            $time = 0;
+        }
+        return $time;
     }
 
     /**

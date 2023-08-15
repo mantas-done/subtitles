@@ -47,6 +47,25 @@ class SmiTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testNegativeTime()
+    {
+        $actual = Subtitles::loadFromString('
+<SAMI>
+<BODY>
+<SYNC Start=-100><P Class=ENUSCC>a</P></SYNC>
+<SYNC Start=140400><P Class=ENUSCC>&nbsp;</P></SYNC>
+<SYNC Start=3740500><P Class=ENUSCC>b</P></SYNC>
+<SYNC Start=3742500><P Class=ENUSCC>&nbsp;</P></SYNC>
+</BODY>
+</SAMI>
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 140.4, 'a')
+            ->add(3740.5, 3742.5, 'b')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function fileContent()
