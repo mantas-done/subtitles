@@ -306,7 +306,10 @@ class Subtitles
             }
             $last_end_time = $row['end'];
             if ($row['start'] > $row['end']) {
-                throw new UserException('Problem with timestamps, probably start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                throw new UserException('Timestamp start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+            }
+            if ($row['start'] == $row['end']) {
+                throw new UserException('Timestamp start and end times are equal near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
             }
         }
 
@@ -322,11 +325,11 @@ class Subtitles
         ) {
             // do nothing
         } else {
-            foreach ($internal_format as $block) {
+            foreach ($internal_format as $row) {
                 if (
-                    count($block['lines']) > 10
+                    count($row['lines']) > 10
                 ) {
-                    throw new \Exception('block has over 10 lines');
+                    throw new UserException('Over 10 lines of text selected, something is wrong with timestamps below this text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
                 }
             }
         }
