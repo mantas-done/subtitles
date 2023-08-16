@@ -63,25 +63,30 @@ about WEBVTT';
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
-    public function testConvertToInternalFormatWhenFileContainsNumbers() // numbers are optional in webvtt format
+    public function testParsesFileWithCue()
     {
         $input_vtt_file_content = <<< TEXT
 WEBVTT
 
 1
-00:00:09.000 --> 00:00:11.000
-Roger Bingham: We are in New York City
+00:00:00.000 --> 00:00:01.000
+a
+
+some text allowed in vtt that is not shown
+00:00:01.000 --> 00:00:02.000
+b
+b
+
+something
+00:00:02.000 --> 00:00:03.000
+c
+
 TEXT;
-        $expected_vtt_file_content = <<< TEXT
-WEBVTT
 
-00:00:09.000 --> 00:00:11.000
-Roger Bingham: We are in New York City
-TEXT;
+        $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, ['b', 'b'])->add(2, 3, 'c')->getInternalFormat();
 
-        $actual_vtt_file_content = (new Subtitles())->loadFromString($input_vtt_file_content)->content('vtt');
-
-        $this->assertStringEqualsStringIgnoringLineEndings($expected_vtt_file_content, $actual_vtt_file_content);
+        $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     public function testParsesFileWithMissingText()
@@ -137,7 +142,7 @@ TEXT;
         $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
 
         $expected = (new Subtitles())
-            ->add(0, 10, 'Hello world.', ['vtt_cue_settings' => 'position:50% line:15% align:middle'])
+            ->add(0.0, 10.0, 'Hello world.', ['vtt_cue_settings' => 'position:50% line:15% align:middle'])
             ->getInternalFormat();
 
         $this->assertEquals($expected, $actual);
@@ -219,20 +224,41 @@ WEBVTT
 
 00:00:01.10 --> 00:00:02.50
 one
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(1.1, 2.5, 'one')
+            ->getInternalFormat();
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testTimeFormats2()
+    {
+        $given = <<< TEXT
+WEBVTT
 
 00:03.30 --> 00:04.40
 two
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(3.3, 4.4, 'two')
+            ->getInternalFormat();
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testTimeFormats3()
+    {
+        $given = <<< TEXT
+WEBVTT
 
 1:00:00.000 --> 1:00:01.000 something
 three
 TEXT;
         $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
         $expected = (new Subtitles())
-            ->add(1.1, 2.5, 'one')
-            ->add(3.3, 4.4, 'two')
             ->add(3600.0, 3601.0, 'three', ['vtt_cue_settings' => 'something'])
             ->getInternalFormat();
-
         $this->assertEquals($expected, $actual);
     }
 

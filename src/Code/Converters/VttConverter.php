@@ -17,32 +17,47 @@ class VttConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content)
     {
-        $file_content = self::fixExtraNewLines($file_content);
-        $block_lines = self::countBlockLines($file_content);
-        $blocks = preg_split("/\n{{$block_lines}}/", $file_content);
+        $lines = mb_split("\n", $file_content);
+        $colon_count = TxtConverter::detectMostlyUsedTimestampType($lines);
         $internal_format = [];
-        foreach ($blocks as $block) {
-            $found = preg_match('/((?:\d{1,2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{1,2}:){1,2}\d{2}\.\d{1,3})(.*?)\n([\s\S]+)/s', $block, $matches);
-            if ($found === 0) {
+        $i = -1;
+        $seen_first_timestamp = false;
+        $last_line_was_empty = true;
+        foreach ($lines as $line) {
+            $parts = TxtConverter::getLineParts($line, $colon_count, 2);
+            if ($seen_first_timestamp === false && $parts['start'] && $parts['end']) {
+                $seen_first_timestamp = true;
+            }
+            if (!$seen_first_timestamp) {
                 continue;
             }
 
-            $trimmed_lines = preg_replace("/\n+/", "\n", trim($matches[4]));
-            $lines = explode("\n", $trimmed_lines);
-            $lines_array = array_map(static::fixLine(), $lines);
-            $format = [
-                'start' => static::vttTimeToInternal($matches[1]),
-                'end' => static::vttTimeToInternal($matches[2]),
-                'lines' => $lines_array,
-            ];
-            if (ltrim($matches[3])) {
-                $format['vtt_cue_settings'] = ltrim($matches[3]);
-            }
-            $internal_format[] = $format;
-        }
+            if ($parts['start'] && $parts['end']) {
+                $i++;
+                $internal_format[$i]['start'] = self::vttTimeToInternal($parts['start']);
+                $internal_format[$i]['end'] = self::vttTimeToInternal($parts['end']);
+                $internal_format[$i]['lines'] = [];
 
-        if (count($internal_format) === 0) {
-            throw new UserException('No valid .vtt subtitles found in this file');
+                // styles
+                preg_match('/((?:\d{1,2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{1,2}:){1,2}\d{2}\.\d{1,3}) *(.*)/', $line, $matches);
+                if (isset($matches[3]) && ltrim($matches[3])) {
+                    $internal_format[$i]['vtt_cue_settings'] = ltrim($matches[3]);
+                }
+
+                // cue
+                if (!$last_line_was_empty && isset($internal_format[$i - 1])) {
+                    $count = count($internal_format[$i - 1]['lines']);
+                    if ($count === 1) {
+                        $internal_format[$i - 1]['lines'][0] = '';
+                    } else {
+                        unset($internal_format[$i - 1]['lines'][$count - 1]);
+                    }
+                }
+            } elseif ($parts['text']) {
+                $internal_format[$i]['lines'][] = self::fixLine($parts['text']);
+            }
+
+            $last_line_was_empty = trim($line) === '';
         }
 
         return $internal_format;
@@ -99,68 +114,17 @@ class VttConverter implements ConverterContract
         return $srt_time;
     }
 
-    protected static function fixLine()
+    protected static function fixLine($line)
     {
-        return function($line) {
-            // speaker
-            if (substr($line, 0, 3) == '<v ') {
-                $line = substr($line, 3);
-                $line = str_replace('>', ': ', $line);
-            }
-
-            // html
-            $line = strip_tags($line);
-
-            return $line;
-        };
-    }
-
-    protected static function countBlockLines($file_content)
-    {
-        $min_block_lines = 2;
-        preg_match_all('/' . self::$time_regexp . '/', $file_content, $matches);
-
-        // file might contain no cues, need at least two cues to determinate lines between blocks;
-        if (count($matches[0]) < 2) {
-            return $min_block_lines;
+        // speaker
+        if (substr($line, 0, 3) == '<v ') {
+            $line = substr($line, 3);
+            $line = str_replace('>', ': ', $line);
         }
 
-        $second_subtitle_timestamp = $matches[0][1];
-        preg_match('/(\s+)' . $second_subtitle_timestamp . '/s', $file_content, $matches);
-        $block_lines = substr_count($matches[0], "\n");
+        // html
+        $line = strip_tags($line);
 
-        return $block_lines < $min_block_lines ? $min_block_lines : $block_lines; // there can not be less than two new line symbols between blocks
-    }
-
-    private static function fixExtraNewLines($file_content) {
-        $lines = mb_split("\n", $file_content);
-        $startCounting = false;
-        $newLineCount = 0;
-
-        foreach ($lines as $line) {
-            if (strpos($line, '-->') !== false) {
-                $startCounting = true;
-                continue;
-            }
-
-            if ($startCounting) {
-                if (trim($line) === '') {
-                    $newLineCount++;
-                } else {
-                    break;
-                }
-            }
-        }
-
-        if ($newLineCount > 0) {
-            $lines = $newLineCount + 1;
-            $lines_double = $lines * 2;
-
-            $file_content = str_replace(str_repeat("\n", $lines_double), '{REPLACEMENT}', $file_content);
-            $file_content = str_replace(str_repeat("\n", $lines), "\n", $file_content);
-            $file_content = str_replace('{REPLACEMENT}', "\n\n", $file_content);
-        }
-
-        return $file_content;
+        return $line;
     }
 }

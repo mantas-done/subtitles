@@ -155,7 +155,7 @@ class TxtConverter implements ConverterContract
         return $diff < $threshold;
     }
 
-    private static function detectMostlyUsedTimestampType(array $lines)
+    public static function detectMostlyUsedTimestampType(array $lines)
     {
         $counts = [];
         foreach ($lines as $line) {
