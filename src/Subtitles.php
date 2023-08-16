@@ -317,8 +317,8 @@ class Subtitles
 
         // no subtitles with a lot of lines
         foreach ($internal_format as $block) {
-            if (count($block['lines']) > 10) {
-                throw new \Exception('block has over 10 lines');
+            if (count($block['lines']) > 50) { // ass format can have a lot of lines, because each subtitle can be in a different place
+                throw new \Exception('block has over 50 lines');
             }
         }
 
