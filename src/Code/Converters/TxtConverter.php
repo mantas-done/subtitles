@@ -268,13 +268,13 @@ class TxtConverter implements ConverterContract
         // there shouldn't be any text before the timestamp
         // if there is text before it, then it is not a timestamp
         $right_timestamp = '';
-        if (isset($timestamps['start']) && substr_count($timestamps['start'], ':') === $colon_count) {
+        if (isset($timestamps['start']) && substr_count($timestamps['start'], ':') >= $colon_count) {
             $text_before_timestamp = substr($line, 0, strpos($line, $timestamps['start']));
             if (!self::hasText($text_before_timestamp)) {
                 // start
                 $matches['start'] = $timestamps['start'];
                 $right_timestamp = $matches['start'];
-                if ($timestamp_count === 2 && isset($timestamps['end']) && substr_count($timestamps['end'], ':') === $colon_count) {
+                if ($timestamp_count === 2 && isset($timestamps['end']) && substr_count($timestamps['end'], ':') >= $colon_count) {
                     // end
                     $matches['end'] = $timestamps['end'];
                     $right_timestamp = $matches['end'];
@@ -322,7 +322,7 @@ class TxtConverter implements ConverterContract
         }
     }
 
-    private static function doesFileUseTimestamps(array $lines)
+    public static function doesFileUseTimestamps(array $lines)
     {
         $lines_count = count($lines);
         $lines_with_timestamp_count = 0;

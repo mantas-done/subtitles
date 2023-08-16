@@ -23,7 +23,7 @@ class Helpers
     public static function removeUtf8Bom($text)
     {
         $bom = pack('H*', 'EFBBBF');
-        $text = preg_replace("/^$bom/", '', $text);
+        $text = preg_replace("/^($bom)+/", '', $text); // some files have multiple BOM at the beginning
 
         return $text;
     }

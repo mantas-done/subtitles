@@ -316,9 +316,18 @@ class Subtitles
         }
 
         // no subtitles with a lot of lines
-        foreach ($internal_format as $block) {
-            if ($input_converter !== AssConverter::class && count($block['lines']) > 10) { // ass format can have a lot of lines, because each subtitle can be in a different place
-                throw new \Exception('block has over 10 lines');
+        if (
+            $input_converter::class === AssConverter::class
+            || ($input_converter::class === TxtConverter::class && !TxtConverter::doesFileUseTimestamps(mb_split("\n", $converter->input)))
+        ) {
+            // do nothing
+        } else {
+            foreach ($internal_format as $block) {
+                if (
+                    count($block['lines']) > 10
+                ) {
+                    throw new \Exception('block has over 10 lines');
+                }
             }
         }
 

@@ -371,6 +371,28 @@ a
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testRecognizesLongerTimestampAfterTheShorter()
+    {
+        $actual = Subtitles::loadFromString('
+00:00
+a
+00:01
+b
+00:02
+c
+00:00:03
+d
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->add(1, 2, 'b')
+            ->add(2, 3, 'c')
+            ->add(3, 4, 'd')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

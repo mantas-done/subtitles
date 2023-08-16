@@ -863,9 +863,11 @@ class SccConverter implements ConverterContract
         '9423' => '',
         '94a2' => '',
 
-        '1520' => '', // codes that I don't know what they do
+        // codes that I don't know what they do
+        '1520' => '',
         '152c' => '',
         '152f' => '',
+        '947c' => '',
     ];
 
     private static $characters = [
