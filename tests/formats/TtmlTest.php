@@ -341,4 +341,33 @@ X;
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testConvertFromXml8()
+    {
+        $text = <<<X
+<?xml version="1.0"?>
+<tt xmlns:vt="http://namespace.itunes.apple.com/itt/ttml-extension#vertical" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:ittp="http://www.w3.org/ns/ttml/profile/imsc1#parameter" xmlns:tt_feature="http://www.w3.org/ns/ttml/feature/" xmlns:ebutts="urn:ebu:tt:style" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:tt_extension="http://www.w3.org/ns/ttml/extension/" xmlns:tt_profile="http://www.w3.org/ns/ttml/profile/" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:ry="http://namespace.itunes.apple.com/itt/ttml-extension#ruby" xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling" xmlns="http://www.w3.org/ns/ttml" xml:lang="cmn-Hant" ttp:dropMode="nonDrop" ttp:frameRate="30" ttp:frameRateMultiplier="1 1" ttp:timeBase="smpte" xmlns:tt="http://www.w3.org/ns/ttml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <head>
+    <styling>
+      <style xml:id="normal" tts:color="white" tts:fontFamily="sansSerif" tts:fontSize="100%" tts:fontStyle="normal" tts:fontWeight="normal"/>
+    </styling>
+    <layout>
+      <region xml:id="bottom" tts:displayAlign="after" tts:extent="100% 15%" tts:origin="0% 85%" tts:writingMode="lrtb"/>
+    </layout>
+  </head>
+  <body tts:color="white" region="bottom" style="normal">
+    <div>
+      <p begin="00:00:12:02" end="00:00:13:06" region="bottom">Hello everyone</p>
+      <p begin="00:00:13:06" end="00:00:15:04" region="bottom">welcome to my channel</p>
+    </div>
+  </body>
+</tt>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(12.066, 13.2, 'Hello everyone')
+            ->add(13.2, 15.133, 'welcome to my channel')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

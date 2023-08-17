@@ -27,13 +27,13 @@ class TtmlConverter implements ConverterContract
             throw new UserException('Invalid XML: ' . trim($errors[0]->message));
         }
 
-        $fps = self::framesPerSecond($dom);
+        $fps = self::framesPerSecond($file_content);
         if (preg_match('/DCSubtitle/', $file_content) === 1) {
-            return self::DCSubtitles($file_content);
+            return self::DCSubtitles($file_content, $fps);
         }
         $divElements = $dom->getElementsByTagName('div');
         if (!$divElements->count() && $dom->getElementsByTagName('Subtitle')->count()) {
-            return self::subtitleXml($file_content);
+            return self::subtitleXml($file_content, $fps);
         }
         if (!$divElements->count() && $dom->getElementsByTagName('transcript')->count()) {
             return self::subtitleXml2($file_content);
@@ -128,7 +128,7 @@ class TtmlConverter implements ConverterContract
         return $file_content;
     }
 
-    public static function ttmlTimeToInternal($ttml_time, $frame_rate = null)
+    public static function ttmlTimeToInternal($ttml_time, $frame_rate)
     {
         if (trim($ttml_time) === '') {
             throw new \Exception("empty time");
@@ -151,6 +151,15 @@ class TtmlConverter implements ConverterContract
             $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + ($milliseconds / 1000);
 
             return $totalSeconds;
+        } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{2})/', $ttml_time, $matches)) {
+            $hours = intval($matches[1]);
+            $minutes = intval($matches[2]);
+            $seconds = intval($matches[3]);
+            $frames = intval($matches[4]);
+
+            $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + $frames / $frame_rate;
+
+            return $totalSeconds;
         } else {
             $time_parts = explode('.', $ttml_time);
             $milliseconds = 0;
@@ -163,14 +172,14 @@ class TtmlConverter implements ConverterContract
         }
     }
 
-    private static function DCSubtitles(string $file_content)
+    private static function DCSubtitles(string $file_content, $fps)
     {
         $xml = simplexml_load_string($file_content);
 
         foreach ($xml->Font->Subtitle as $subtitle) {
             $internal_format[] = array(
-                'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn']),
-                'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut']),
+                'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
+                'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),
                 'lines' => self::getLinesFromTextWithBr((string)$subtitle->Text->asXML()),
             );
         }
@@ -191,24 +200,43 @@ class TtmlConverter implements ConverterContract
         return $formatted_output;
     }
 
-    protected static function framesPerSecond($dom)
+    protected static function framesPerSecond(string $file_content) : float|null
     {
-        $ttElement = $dom->getElementsByTagName('tt')->item(0);
-        $frameRate = $ttElement?->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRate');
-        $frameRateMultiplier = $ttElement?->getAttributeNS('http://www.w3.org/ns/ttml#parameter', 'frameRateMultiplier');
-
-        if ($frameRate && $frameRateMultiplier) {
-            list($numerator, $denominator) = array_map('intval', explode(' ', $frameRateMultiplier));
-            return $frameRate / $denominator * $numerator;
-        } else if ($frameRate) {
-            return (int) $frameRate;
+        $frameRate = null;
+        preg_match('/ttp:frameRate="(\d+)"/', $file_content, $matches);
+        if (isset($matches[1])) {
+            $frameRate = $matches[1];
         }
 
-        //This is a standard frame rate used in many video formats and broadcast television.
-        return 30;
+        preg_match('/ttp:frameRateMultiplier="(\d+) (\d+)"/', $file_content, $matches);
+        if (isset($matches[1]) && isset($matches[2])) {
+            $numerator = $matches[1];
+            $denominator = $matches[2];
+        }
+
+        if ($frameRate && $numerator && $denominator) {
+            return $frameRate / $denominator * $numerator;
+        } else if ($frameRate) {
+            return $frameRate;
+        }
+
+        // calculate framerate automatically
+        preg_match_all('/\d{2}:\d{2}:\d{2}:(\d{2})/', $file_content, $matches);
+        $max_fps = 25;
+        if (count($matches[1])) {
+            foreach ($matches[1] as $tmp_fps) {
+                if ($tmp_fps > $max_fps) {
+                    $max_fps = $tmp_fps;
+                }
+            }
+            return $max_fps + 1;
+        }
+
+        // when no framerate is specified
+        return null;
     }
 
-    private static function subtitleXml(string $file_content)
+    private static function subtitleXml(string $file_content, $fps)
     {
         $xml = simplexml_load_string($file_content);
 
@@ -233,8 +261,8 @@ class TtmlConverter implements ConverterContract
             $subtitles = $xml->xpath('//ns:Subtitle');
             foreach ($subtitles as $subtitle) {
                 $internal_format[] = [
-                    'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn']),
-                    'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut']),
+                    'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
+                    'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),
                     'lines' => self::getLinesFromTextWithBr($subtitle->Text->asXML()),
                 ];
             }
