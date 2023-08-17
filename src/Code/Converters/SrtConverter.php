@@ -19,29 +19,37 @@ class SrtConverter implements ConverterContract
      */
     public function fileContentToInternalFormat($file_content)
     {
-        $internal_format = []; // array - where file content will be stored
+        $lines = mb_split("\n", $file_content);
+        $internal_format = [];
+        $i = -1;
+        foreach ($lines as $k => $line) {
+            $parts = TxtConverter::getLineParts($line, 2, 2);
 
-        $lines = explode("\n", trim($file_content));
-        $lines = array_map('trim', $lines);
-        $tmp_content = implode("\n", $lines);
-        unset($lines);
+            if ($parts['start'] && $parts['end'] && strpos($line, '-->') !== false) {
+                $i++;
+                $next_line = '';
+                if (isset($lines[$k + 1])) {
+                    $next_line = $lines[$k + 1];
+                }
+                $internal_format[$i]['start'] = self::srtTimeToInternal($parts['start'], $next_line);
+                $internal_format[$i]['end'] = self::srtTimeToInternal($parts['end'], $next_line);
+                $internal_format[$i]['lines'] = [];
 
 
-        $blocks = explode("\n\n", $tmp_content); // each block contains: start and end times + text
-        foreach ($blocks as $block) {
-            preg_match('/(?<start>.*) *--> *(?<end>.*)\n(?<text>(\n*.*)*)/m', $block, $matches);
-
-            // if block doesn't contain text (invalid srt file given)
-            if (empty($matches)) {
-                continue;
+                // remove number before timestamp
+                if (isset($internal_format[$i - 1])) {
+                    $count = count($internal_format[$i - 1]['lines']);
+                    if ($count === 1) {
+                        $internal_format[$i - 1]['lines'][0] = '';
+                    } else {
+                        unset($internal_format[$i - 1]['lines'][$count - 1]);
+                    }
+                }
+            } elseif ($parts['start'] && !$parts['end'] && strpos($line, '-->') !== false) {
+                throw new UserException("Something is wrong with timestamps on this line: " . $line);
+            } elseif ($parts['text']) {
+                $internal_format[$i]['lines'][] = strip_tags($parts['text']);
             }
-            $lines = explode("\n", $matches['text']);
-            $lines_array = array_map('strip_tags', $lines);
-            $internal_format[] = [
-                'start' => static::srtTimeToInternal($matches['start'], implode("\n", $lines)),
-                'end' => static::srtTimeToInternal($matches['end'], implode("\n", $lines)),
-                'lines' => $lines_array,
-            ];
         }
 
         return $internal_format;

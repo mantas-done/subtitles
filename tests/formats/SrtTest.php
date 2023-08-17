@@ -188,14 +188,14 @@ TEXT;
 
     public function testWriteUnderstandableMessage()
     {
-        $this->expectException(UserException::class, "Can't parse timestamp: \" \", near: THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH");
+        $this->expectException(UserException::class, "Something is wrong with timestamps on this line: --> 00:09:06,100");
 
         $actual = Subtitles::loadFromString('
 00:09:01,866
 
 --> 00:09:06,100
 THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH
-')->getInternalFormat();
+', 'srt')->getInternalFormat();
     }
 
     public function testParsesWhiteSpaceOnBlankLine()
@@ -209,5 +209,25 @@ THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH
 歡迎收看硬點茶壇我是福良賣茶人')->getInternalFormat();
         $expected = (new Subtitles())->add(0.283, 1.133, '嗨各位好')->add(1.133, 3.733, '歡迎收看硬點茶壇我是福良賣茶人')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testNoNewLine()
+    {
+        $content = <<< TEXT
+1
+00:00:00,000 --> 00:00:01,000
+a
+2
+00:00:01,000 --> 00:00:02,000
+b
+TEXT;
+
+        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected_format = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->add(1, 2, 'b')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected_format, $actual_format);
+
     }
 }
