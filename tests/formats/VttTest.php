@@ -285,4 +285,19 @@ TEXT;
             ->getInternalFormat();
         $this->assertEquals($expected, $actual);
     }
+
+    public function testParsesIncorrectTimestampWithComma()
+    {
+        $given = <<< TEXT
+WEBVTT
+
+00:00:01,01 --> 00:00:02.02
+a
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(1.01, 2.02, 'a')
+            ->getInternalFormat();
+        $this->assertEquals($expected, $actual);
+    }
 }

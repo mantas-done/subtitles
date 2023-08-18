@@ -90,7 +90,8 @@ class VttConverter implements ConverterContract
 
     protected static function vttTimeToInternal($vtt_time)
     {
-        $parts = explode('.', $vtt_time);
+        $corrected_time = str_replace(',', '.', $vtt_time);
+        $parts = explode('.', $corrected_time);
         
         // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
         $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:'.$parts[0];
