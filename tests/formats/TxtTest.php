@@ -393,6 +393,16 @@ d
 
     }
 
+    public function testParsesTimestampsWhenTheyAreIdentical()
+    {
+        $actual = TxtConverter::getLineParts('00:00 00:00 a', 1, 2);
+        $this->assertEquals([
+            'start' => '00:00',
+            'end' => '00:00',
+            'text' => 'a',
+        ], $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

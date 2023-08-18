@@ -60,6 +60,7 @@ class CsvConverter implements ConverterContract
             } else {
                 $data_string .= $row[0] . "\n"; // text
             }
+            $data_string .= "\n";
         }
         return (new TxtConverter)->fileContentToInternalFormat($data_string);
     }

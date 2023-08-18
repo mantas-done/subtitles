@@ -283,12 +283,14 @@ class TxtConverter implements ConverterContract
         }
 
         // check if there is any text after the timestamp
-        $right_text = strstr($line, $right_timestamp);
-        if ($right_text) {
-            $right_text = substr($right_text, strlen($right_timestamp));
-        }
-        if (self::hasText($right_text) || self::hasDigit($right_text)) {
-            $matches['text'] = $right_text;
+        if ($right_timestamp) {
+            $tmp_parts = explode($right_timestamp, $line); // if start and end timestamp are equals
+            $right_text = end($tmp_parts); // take text after the end timestamp
+            if (self::hasText($right_text) || self::hasDigit($right_text)) {
+                $matches['text'] = trim($right_text);
+            }
+        } else {
+            $matches['text'] = $line;
         }
 
         return $matches;
