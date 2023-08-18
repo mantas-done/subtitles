@@ -230,4 +230,13 @@ TEXT;
         $this->assertInternalFormatsEqual($expected_format, $actual_format);
 
     }
+
+    public function testConvertToSrtTime()
+    {
+        $this->assertEquals('00:00:00,001', SrtConverter::internalTimeToSrt(0.001));
+        $this->assertEquals('00:00:00,010', SrtConverter::internalTimeToSrt(0.01));
+        $this->assertEquals('00:00:00,100', SrtConverter::internalTimeToSrt(0.1));
+        $this->assertEquals('99:59:59,000', SrtConverter::internalTimeToSrt(359999));
+        $this->assertEquals('100:00:00,000', SrtConverter::internalTimeToSrt(360000));
+    }
 }

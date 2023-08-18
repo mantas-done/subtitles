@@ -117,12 +117,11 @@ class SrtConverter implements ConverterContract
      */
     public static function internalTimeToSrt($internal_time)
     {
-        $parts = explode('.', $internal_time); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
+        $hours = floor($internal_time / 3600);
+        $minutes = floor(($internal_time % 3600) / 60);
+        $remaining_seconds = $internal_time % 60;
+        $milliseconds = round(($internal_time - floor($internal_time)) * 1000);
 
-        $srt_time = gmdate("H:i:s", floor($whole)) . ',' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
-
-        return $srt_time;
+        return sprintf("%02d:%02d:%02d,%03d", $hours, $minutes, $remaining_seconds, $milliseconds);
     }
 }
