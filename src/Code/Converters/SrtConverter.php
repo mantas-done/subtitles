@@ -22,6 +22,7 @@ class SrtConverter implements ConverterContract
         $lines = mb_split("\n", $file_content);
         $internal_format = [];
         $i = -1;
+        $saw_start = false;
         foreach ($lines as $k => $line) {
             $parts = TxtConverter::getLineParts($line, 2, 2);
 
@@ -49,6 +50,13 @@ class SrtConverter implements ConverterContract
                 throw new UserException("Something is wrong with timestamps on this line: " . $line);
             } elseif ($parts['text']) {
                 $internal_format[$i]['lines'][] = strip_tags($parts['text']);
+            }
+
+            if ($parts['start'] && $parts['end']) {
+                $saw_start = true;
+            }
+            if (!$saw_start) {
+                $internal_format = []; // skip words in front of srt subtitle (invalid subtitles)
             }
         }
 

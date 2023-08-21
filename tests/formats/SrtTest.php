@@ -84,6 +84,25 @@ TEXT;
 
     }
 
+    public function testSkipsInvalidTextAtTheBeggining()
+    {
+        $content = <<< TEXT
+mantas
+
+1
+00:00:01,000-->00:00:02,000
+a
+
+TEXT;
+
+        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected_format = (new Subtitles())
+            ->add(1, 2, 'a')
+            ->getInternalFormat();
+        $this->assertEquals($expected_format, $actual_format);
+
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function fileContent()
