@@ -87,13 +87,16 @@ class Helpers
 
     public static function convertToUtf8($file_content)
     {
-        $encodings = ['UTF-8', 'ISO-8859-1', 'Windows-1252'];
+        // first we need to make sure to detect encoding
+        // as per comment: https://github.com/php/php-src/issues/7871#issuecomment-1461983924
+        $is_utf8 = mb_check_encoding($file_content, 'UTF-8');
+        if ($is_utf8) {
+            return $file_content;
+        }
 
-        foreach ($encodings as $encoding) {
-            $converted_content = mb_convert_encoding($file_content, 'UTF-8', $encoding);
-            if ($converted_content !== false) {
-                return $converted_content;
-            }
+        $encoding = mb_detect_encoding($file_content, ['ISO-8859-1', 'Windows-1252', 'UTF-16LE'], true);
+        if ($encoding !== false) {
+            return mb_convert_encoding($file_content, 'UTF-8', $encoding);
         }
 
         throw new UserException('Unknown file encoding (not utf8)');

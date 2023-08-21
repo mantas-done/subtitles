@@ -109,4 +109,11 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
         $expected = (new Subtitles())->add(1, 2, 'test')->add(3, 4, 'test')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testDetectUtf16Encoding()
+    {
+        $actual = Subtitles::loadFromFile('./tests/files/utf16.srt')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'ترجمه و تنظيم زيرنويس')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
