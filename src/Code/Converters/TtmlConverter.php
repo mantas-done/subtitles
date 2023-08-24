@@ -214,7 +214,7 @@ class TtmlConverter implements ConverterContract
             $denominator = $matches[2];
         }
 
-        if ($frameRate && $numerator && $denominator) {
+        if ($frameRate && isset($numerator) && isset($denominator)) {
             return $frameRate / $denominator * $numerator;
         } else if ($frameRate) {
             return $frameRate;
