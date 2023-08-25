@@ -65,22 +65,22 @@ class SrtConverter implements ConverterContract
         foreach ($internal_format as $key => $internal_format_parts) {
             if (isset($internal_format_parts['speakers'])) {
                 $hasSpeaker = false;
-                $emptySpeakersKeys = [];
+                $empty_speakers_keys = [];
                 // Check speakers if they are null
-                foreach ($internal_format_parts['speakers'] as $speakerKey => $speaker) {
+                foreach ($internal_format_parts['speakers'] as $speaker_key => $speaker) {
                     if ($speaker) {
-                        $emptySpeakersKeys = [];
+                        $empty_speakers_keys = [];
                         $hasSpeaker = true;
                     } else {
-                        $emptySpeakersKeys[] = $speakerKey;
+                        $empty_speakers_keys[] = $speaker_key;
                     }
                 }
                 // Remove speakers key for that time if all speakers are empty or remove empty ones
                 if (!$hasSpeaker) {
                     unset($internal_format[$key]['speakers']);
-                } elseif ($emptySpeakersKeys) {
-                    foreach ($emptySpeakersKeys as $emptySpeakerKey) {
-                        unset($internal_format[$key]['speakers'][$emptySpeakerKey]);
+                } elseif ($empty_speakers_keys) {
+                    foreach ($empty_speakers_keys as $empty_speaker_key) {
+                        unset($internal_format[$key]['speakers'][$empty_speaker_key]);
                     }
                 }
             }
