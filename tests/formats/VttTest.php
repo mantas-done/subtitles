@@ -8,7 +8,8 @@ use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
 
-class VttTest extends TestCase {
+class VttTest extends TestCase
+{
 
     use AdditionalAssertionsTrait;
 
@@ -34,7 +35,16 @@ about WEBVTT';
 
         $expected = (new Subtitles())->loadFromFile($vtt_path)->content('srt');
         $actual = file_get_contents($srt_path);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
+    }
 
+    public function testConvertFromVttToSrtComplex()
+    {
+        $vtt_path = './tests/files/vtt_to_srt.vtt';
+        $srt_path = './tests/files/vtt_to_srt.srt';
+
+        $expected = (new Subtitles())->loadFromFile($vtt_path)->content('srt');
+        $actual = file_get_contents($srt_path);
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
@@ -49,18 +59,90 @@ about WEBVTT';
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
+    public function testConvertFromSrtToVttComplex()
+    {
+        $srt_path = './tests/files/srt_to_vtt.srt';
+        $vtt_path = './tests/files/srt_to_vtt.vtt';
+
+        $expected = file_get_contents($vtt_path);
+        $actual = (new Subtitles())->loadFromFile($srt_path)->content('vtt');
+
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
+    }
+
     public function testFileToInternalFormat()
     {
         $vtt_path = './tests/files/vtt_with_name.vtt';
         $expected_internal_format = [[
             'start' => 9,
             'end' => 11,
-            'lines' => ['Roger Bingham: We are in New York City'],
+            'lines' => ['We are in New York City'],
+            'speakers' => ['Roger Bingham'],
         ]];
 
         $actual_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
-
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
+    public function testFileToInternalFormatComplex()
+    {
+        $vtt_path = './tests/files/vtt_complex.vtt';
+        $expected_internal_format = [
+            [
+                'start' => 9,
+                'end' => 11,
+                'lines' => ['Line 1'],
+                'speakers' => ['speaker1'],
+            ],
+            [
+                'start' => 12,
+                'end' => 13,
+                'lines' => ['Line 2'],
+            ],
+            [
+                'start' => 14,
+                'end' => 15,
+                'lines' => ['Line 3', 'Line 4'],
+                'speakers' => ['speaker1', 'speaker2'],
+            ],
+            [
+                'start' => 16,
+                'end' => 17,
+                'lines' => ['Line 5', 'Line 6'],
+            ],
+            [
+                'start' => 18,
+                'end' => 19,
+                'lines' => ['Line 7', 'Line 8'],
+                // It should not be ['speaker1', '']
+                'speakers' => ['speaker1'],
+                'vtt_cue_settings' => 'line:0 position:20% size:60% align:start'
+            ],
+            [
+                'start' => 20,
+                'end' => 21,
+                'lines' => ['Line 9', 'Line 10'],
+                'speakers' => ['', 'speaker2'],
+            ]
+        ];
+
+        $actual_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
+    public function testConvertingFileFromVttToVttDoesNotChangeItContent()
+    {
+        $vtt_path = './tests/files/vtt_complex.vtt';
+        $temporary_vtt_path = './tests/files/tmp/vtt_complex.vtt';
+
+        @unlink($temporary_vtt_path);
+
+        Subtitles::convert($vtt_path, $temporary_vtt_path);
+        $vtt_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
+        $vtt_tmp_internal_format = Subtitles::loadFromFile($temporary_vtt_path)->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($vtt_internal_format, $vtt_tmp_internal_format);
+        unlink($temporary_vtt_path);
     }
 
     public function testParsesFileWithCue()
@@ -85,7 +167,40 @@ TEXT;
 
         $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, ['b', 'b'])->add(2, 3, 'c')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 
+    public function testParsesFileWithCueComplex()
+    {
+        $input_vtt_file_content = <<< TEXT
+WEBVTT
+
+00:00:00.400 --> 00:00:00.900 something
+<v speaker1>a</v>
+
+some text allowed in vtt that is not shown
+00:00:01.000 --> 00:00:02.000
+<v speaker1>b</v>
+c
+
+something
+00:00:02.000 --> 00:00:03.000 something
+d
+<v speaker2> e</v>
+
+00:00:03.000 --> 00:00:04.000
+f
+g
+
+00:00:04.000 --> 00:00:05.000
+<v speaker2>h</v>
+<v speaker1>i</v>
+
+TEXT;
+
+        $vtt_path = './tests/files/vtt2.vtt';
+        $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        $expected = Subtitles::loadFromFile($vtt_path)->add(1, 2, ['speaker1' => 'b', 'c'])->add(2, 3, ['d', 'speaker2' => 'e'], ['vtt_cue_settings' => 'something'])->add(3, 4, ['f', 'g'])->add(4, 5, ['speaker2' => 'h', 'speaker1' => 'i'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
@@ -111,7 +226,7 @@ TEXT;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-        public function testFileContainingMultipleNewLinesBetweenBlocks()
+    public function testFileContainingMultipleNewLinesBetweenBlocks()
     {
         $given = <<< TEXT
 WEBVTT

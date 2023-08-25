@@ -40,6 +40,50 @@ class SrtTest extends TestCase {
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
 
+    public function testFileToInternalFormatComplex()
+    {
+        $srt_path = './tests/files/srt_with_name.srt';
+        $expected_internal_format = [
+            [
+                'start' => 9,
+                'end' => 11,
+                'lines' => ['Line 1'],
+                'speakers' => ['speaker1'],
+            ],
+            [
+                'start' => 12,
+                'end' => 13,
+                'lines' => ['Line 2'],
+            ],
+            [
+                'start' => 14,
+                'end' => 15,
+                'lines' => ['Line 3', 'Line 4'],
+                'speakers' => ['speaker1', 'speaker2'],
+            ],
+            [
+                'start' => 16,
+                'end' => 17,
+                'lines' => ['Line 5', 'Line 6'],
+            ],
+            [
+                'start' => 18,
+                'end' => 19,
+                'lines' => ['Line 7', 'Line 8'],
+                'speakers' => ['speaker1'],  // It should not be ['speaker1', '']
+            ],
+            [
+                'start' => 20,
+                'end' => 21,
+                'lines' => ['Line 9', 'Line 10'],
+                'speakers' => ['', 'speaker2'],
+            ]
+        ];
+
+        $actual_internal_format = Subtitles::loadFromFile($srt_path)->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
     public function testConvertToFile()
     {
         $actual_file_content = self::generatedSubtitles()->content('srt');

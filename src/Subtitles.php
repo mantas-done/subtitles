@@ -74,11 +74,38 @@ class Subtitles
         $internal_format = [
             'start' => $start,
             'end' => $end,
-            'lines' => is_array($text) ? $text : [$text],
+            'lines' => is_array($text) ? array_values($text) : [$text], // array_values removes possible speakers from keys
         ];
+
+        $speakers = [];
+        // Check if $text is an array containing speakers
+        if (is_array($text) && !array_is_list($text)) {
+            foreach ($text as $key => $textItem) {
+                $speakers[] = $key;
+            }
+            // Cleanup speakers[], remove all empty items at the end of array so ['speaker1', null, null] became ['speaker1']
+            $empty_speakers_keys = [];
+            foreach ($speakers as $key => $speaker) {
+                if ($speaker && !is_int($speaker)) {
+                    $empty_speakers_keys = [];
+                } else {
+                    $empty_speakers_keys[] = $key;
+                }
+            }
+            if ($empty_speakers_keys) {
+                foreach ($empty_speakers_keys as $empty_speaker_key) {
+                    unset($speakers[$empty_speaker_key]);
+                }
+            }
+        }
 
         if (isset($settings['vtt_cue_settings']) && $settings['vtt_cue_settings']) {
             $internal_format['vtt_cue_settings'] = $settings['vtt_cue_settings'];
+        }
+
+        // Finally push speakers to internal format if there is any
+        if ($speakers) {
+            $internal_format['speakers'] = $speakers;
         }
 
         $this->internal_format[] = $internal_format;
@@ -283,7 +310,6 @@ class Subtitles
                 $internal_format[$i] = $row;
                 $i++;
             }
-
         }
 
         // fix up to a 60 seconds time overlap

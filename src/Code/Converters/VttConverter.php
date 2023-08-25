@@ -37,6 +37,7 @@ class VttConverter implements ConverterContract
                 $internal_format[$i]['start'] = self::vttTimeToInternal($parts['start']);
                 $internal_format[$i]['end'] = self::vttTimeToInternal($parts['end']);
                 $internal_format[$i]['lines'] = [];
+                $internal_format[$i]['speakers'] = [];
 
                 // styles
                 preg_match('/((?:\d{1,2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{1,2}:){1,2}\d{2}\.\d{1,3}) *(.*)/', $line, $matches);
@@ -54,23 +55,59 @@ class VttConverter implements ConverterContract
                     }
                 }
             } elseif ($parts['text']) {
-                $internal_format[$i]['lines'][] = self::fixLine($parts['text']);
+                list($linePart, $speakerPart) = self::fixLine($parts['text']);
+                $internal_format[$i]['lines'][] = $linePart;
+                $internal_format[$i]['speakers'][] = $speakerPart;
             }
 
             $last_line_was_empty = trim($line) === '';
         }
-
+        // cleanup speakers, for example ['speaker1', null, null] to ['speaker1']
+        foreach ($internal_format as $key => $internal_format_parts) {
+            if (isset($internal_format_parts['speakers'])) {
+                $hasSpeaker = false;
+                $emptySpeakersKeys = [];
+                // Check speakers if they are null
+                foreach ($internal_format_parts['speakers'] as $speakerKey => $speaker) {
+                    if ($speaker) {
+                        $emptySpeakersKeys = [];
+                        $hasSpeaker = true;
+                    } else {
+                        $emptySpeakersKeys[] = $speakerKey;
+                    }
+                }
+                // Remove speakers key for that time if all speakers are empty or remove empty ones
+                if (!$hasSpeaker) {
+                    unset($internal_format[$key]['speakers']);
+                } elseif ($emptySpeakersKeys) {
+                    foreach ($emptySpeakersKeys as $emptySpeakerKey) {
+                        unset($internal_format[$key]['speakers'][$emptySpeakerKey]);
+                    }
+                }
+            }
+        }
         return $internal_format;
     }
 
     public function internalFormatToFileContent(array $internal_format)
     {
         $file_content = "WEBVTT\r\n\r\n";
-
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToVtt($block['start']);
             $end = static::internalTimeToVtt($block['end']);
-            $lines = implode("\r\n", $block['lines']);
+            $lines_array = [];
+            foreach ($block['lines'] as $key => $line) {
+                $speaker = '';
+                // if speakers is set
+                if (isset($block['speakers'][$key]) && $block['speakers'][$key]) {
+                    // create <v speaker>Line</v>
+                    $speaker = '<v ' . $block['speakers'][$key] . '>';
+                    $lines_array[] = $speaker . $line . '</v>';
+                } else {
+                    $lines_array[] = $line;
+                }
+            }
+            $lines = implode("\r\n", $lines_array);
 
             $vtt_cue_settings = '';
             if (isset($block['vtt_cue_settings'])) {
@@ -92,9 +129,9 @@ class VttConverter implements ConverterContract
     {
         $corrected_time = str_replace(',', '.', $vtt_time);
         $parts = explode('.', $corrected_time);
-        
+
         // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
-        $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:'.$parts[0];
+        $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:' . $parts[0];
 
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float)('0.' . $parts[1]);
@@ -117,15 +154,20 @@ class VttConverter implements ConverterContract
 
     protected static function fixLine($line)
     {
-        // speaker
+        $speaker = null;
+        // Remove <v speaker>
         if (substr($line, 0, 3) == '<v ') {
+            // Remove <v
             $line = substr($line, 3);
-            $line = str_replace('>', ': ', $line);
+            // Get speaker
+            $speaker = substr($line, 0, strpos($line, '>'));
+            // Remove speaker>
+            $line = str_replace($speaker . '>', '', $line);
         }
 
         // html
         $line = strip_tags($line);
 
-        return $line;
+        return array($line, $speaker);
     }
 }

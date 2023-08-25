@@ -90,10 +90,18 @@ Add subtitles
 ```php
 $subtitles->add(0, 5, 'some text'); // from 0, till 5 seconds  
 
+// Add text with speakers
+// Only VTT and SRT file formats apply speaker to the lines
+// For SRT output is like speaker1: some text
+// For VRR output is like <v speaker1>some text</v>
+$subtitles->add(0, 5, [
+    'speaker1' => 'some text',
+]);
+
 // Add multiline text
 $subtitles->add(0, 5, [
     'first line',
-    'second line',
+    'speaker2' => 'second line',
 ]);
 
 // Add styles to VTT file format

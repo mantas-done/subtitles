@@ -35,7 +35,7 @@ class SrtConverter implements ConverterContract
                 $internal_format[$i]['start'] = self::srtTimeToInternal($parts['start'], $next_line);
                 $internal_format[$i]['end'] = self::srtTimeToInternal($parts['end'], $next_line);
                 $internal_format[$i]['lines'] = [];
-
+                $internal_format[$i]['speakers'] = [];
 
                 // remove number before timestamp
                 if (isset($internal_format[$i - 1])) {
@@ -49,7 +49,9 @@ class SrtConverter implements ConverterContract
             } elseif ($parts['start'] && !$parts['end'] && strpos($line, '-->') !== false) {
                 throw new UserException("Something is wrong with timestamps on this line: " . $line);
             } elseif ($parts['text']) {
-                $internal_format[$i]['lines'][] = strip_tags($parts['text']);
+                list($linePart, $speakerPart) = self::fixLine($parts['text']);
+                $internal_format[$i]['lines'][] = $linePart;
+                $internal_format[$i]['speakers'][] = $speakerPart;
             }
 
             if ($parts['start'] && $parts['end']) {
@@ -59,7 +61,30 @@ class SrtConverter implements ConverterContract
                 $internal_format = []; // skip words in front of srt subtitle (invalid subtitles)
             }
         }
-
+        // Cleanup speakers, for example ['speaker1', null, null] became ['speaker1']
+        foreach ($internal_format as $key => $internal_format_parts) {
+            if (isset($internal_format_parts['speakers'])) {
+                $hasSpeaker = false;
+                $emptySpeakersKeys = [];
+                // Check speakers if they are null
+                foreach ($internal_format_parts['speakers'] as $speakerKey => $speaker) {
+                    if ($speaker) {
+                        $emptySpeakersKeys = [];
+                        $hasSpeaker = true;
+                    } else {
+                        $emptySpeakersKeys[] = $speakerKey;
+                    }
+                }
+                // Remove speakers key for that time if all speakers are empty or remove empty ones
+                if (!$hasSpeaker) {
+                    unset($internal_format[$key]['speakers']);
+                } elseif ($emptySpeakersKeys) {
+                    foreach ($emptySpeakersKeys as $emptySpeakerKey) {
+                        unset($internal_format[$key]['speakers'][$emptySpeakerKey]);
+                    }
+                }
+            }
+        }
         return $internal_format;
     }
 
@@ -77,7 +102,19 @@ class SrtConverter implements ConverterContract
             $nr = $k + 1;
             $start = static::internalTimeToSrt($block['start']);
             $end = static::internalTimeToSrt($block['end']);
-            $lines = implode("\r\n", $block['lines']);
+            $lines_array = [];
+            foreach ($block['lines'] as $key => $line) {
+                $speaker = '';
+                // if speakers is set
+                if (isset($block['speakers'][$key]) && $block['speakers'][$key]) {
+                    // create speaker:
+                    $speaker = $block['speakers'][$key] . ': ';
+                    $lines_array[] = $speaker . $line;
+                } else {
+                    $lines_array[] = $line;
+                }
+            }
+            $lines = implode("\r\n", $lines_array);
 
             $file_content .= $nr . "\r\n";
             $file_content .= $start . ' --> ' . $end . "\r\n";
@@ -131,5 +168,20 @@ class SrtConverter implements ConverterContract
         $milliseconds = round(($internal_time - floor($internal_time)) * 1000);
 
         return sprintf("%02d:%02d:%02d,%03d", $hours, $minutes, $remaining_seconds, $milliseconds);
+    }
+
+    protected static function fixLine($line)
+    {
+        $speaker = null;
+        // Check if line is in {speaker: line} format
+        $hasSpeaker = preg_match('/(.*): (.*)/', $line, $matches);
+        if ($hasSpeaker) {
+            $speaker = $matches[1];
+            $line = $matches[2];
+        }
+
+        // html
+        $line = strip_tags($line);
+        return array($line, $speaker);
     }
 }

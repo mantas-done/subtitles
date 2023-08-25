@@ -1,0 +1,24 @@
+WEBVTT
+
+00:00:09.000 --> 00:00:11.000
+<v speaker1>Line 1</v>
+
+00:00:12.000 --> 00:00:13.000
+Line 2
+
+Cue
+00:00:14.000 --> 00:00:15.000
+<v speaker1>Line 3</v>
+<v speaker2>Line 4</v>
+
+00:00:16.000 --> 00:00:17.000
+Line 5
+Line 6
+
+00:00:18.000 --> 00:00:19.000 line:0 position:20% size:60% align:start
+<v speaker1>Line 7</v>
+Line 8
+
+00:00:20.000 --> 00:00:21.000
+Line 9
+<v speaker2>Line 10</v>
