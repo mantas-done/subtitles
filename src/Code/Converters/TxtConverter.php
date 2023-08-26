@@ -248,9 +248,9 @@ class TxtConverter implements ConverterContract
         $file_content = '';
 
         foreach ($internal_format as $block) {
-            $line = implode(" ", $block['lines']);
+            $line = implode("\r\n", $block['lines']);
 
-            $file_content .= $line . "\r\n";
+            $file_content .= $line . "\r\n\r\n";
         }
 
         return trim($file_content);

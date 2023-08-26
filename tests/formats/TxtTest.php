@@ -20,7 +20,9 @@ class TxtTest extends TestCase {
         $actual_file_content = $generated_subtitles->content('txt');
 
         $expected = <<< TEXT
-Senator, we're making our final approach into Coruscant.
+Senator, we're making our
+final approach into Coruscant.
+
 Very good, Lieutenant.
 TEXT;
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual_file_content);
