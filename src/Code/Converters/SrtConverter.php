@@ -26,7 +26,7 @@ class SrtConverter implements ConverterContract
         foreach ($lines as $k => $line) {
             $parts = TxtConverter::getLineParts($line, 2, 2);
 
-            if ($parts['start'] && $parts['end'] && strpos($line, '-->') !== false) {
+            if ($parts['start'] && $parts['end'] && strpos($line, '->') !== false) {
                 $i++;
                 $next_line = '';
                 if (isset($lines[$k + 1])) {
