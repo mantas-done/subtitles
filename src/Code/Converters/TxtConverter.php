@@ -157,7 +157,7 @@ class TxtConverter implements ConverterContract
 
     public static function detectMostlyUsedTimestampType(array $lines)
     {
-        $counts = [];
+        $counts = [-1];
         foreach ($lines as $line) {
             $timestamps = self::timestampsFromLine($line);
             if (!$timestamps['start']) {
