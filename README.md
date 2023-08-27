@@ -4,7 +4,8 @@
 
 🥳🎉👏 Finally, version v1 was released that greatly improves parsing of different formats. 🥳🎉👏
 
-The main focus of this library is conversion between different formats of subtitles. Styles at this point aren't supported.
+💣 Parsing was tested on thousands of user submitted files. 🤯  
+🔥 Also, there is almost 100% unit test coverage. 💥
 
 ## Supported formats
 
