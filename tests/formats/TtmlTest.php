@@ -151,6 +151,28 @@ class TtmlTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testConvertFromUtf16WhenItReallyIsUtf8()
+    {
+        $text = '<?xml version="1.0" encoding="utf-16"?>
+<Subtitle>
+  <Paragraph>
+    <Number>1</Number>
+    <StartMilliseconds>0</StartMilliseconds>
+    <EndMilliseconds>1000</EndMilliseconds>
+    <Text>a<br/>b</Text>
+  </Paragraph>
+  <Paragraph>
+    <Number>2</Number>
+    <StartMilliseconds>1000</StartMilliseconds>
+    <EndMilliseconds>2000</EndMilliseconds>
+    <Text>c</Text>
+  </Paragraph>
+</Subtitle>';
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, ['a', 'b'])->add(1, 2, 'c')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testConvertFromXml2()
     {
         $text = <<<X

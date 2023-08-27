@@ -23,7 +23,12 @@ class TtmlConverter implements ConverterContract
         $dom->loadXML($file_content);
 
         $errors = libxml_get_errors();
+        libxml_clear_errors();
         if (!empty($errors)) {
+            if (str_contains($errors[0]->message, 'Document labelled UTF-16 but has UTF-8 content')) {
+                $new_file_content = str_replace('encoding="utf-16"', 'encoding="utf-8"', $file_content);
+                return (new TtmlConverter())->fileContentToInternalFormat($new_file_content);
+            }
             throw new UserException('Invalid XML: ' . trim($errors[0]->message));
         }
 
