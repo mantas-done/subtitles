@@ -90,6 +90,21 @@ TEXT;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testExceptionIfWrongTimestamp()
+    {
+        $this->expectException(UserException::class);
+
+        $input_vtt_file_content = <<< TEXT
+WEBVTT
+
+1
+00:00:00.00 --> 00:00:01.o0
+a
+TEXT;
+
+        Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+    }
+
     public function testNoExceptionWhenEmptyFile()
     {
         $this->expectException(UserException::class);

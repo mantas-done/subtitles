@@ -96,6 +96,9 @@ class VttConverter implements ConverterContract
         // parts[0] could be mm:ss or hh:mm:ss format -> always use hh:mm:ss
         $parts[0] = substr_count($parts[0], ':') == 2 ? $parts[0] : '00:'.$parts[0];
 
+        if (!isset($parts[1])) {
+            throw new UserException("Time doesn't have milliseconds: " . $vtt_time);
+        }
         $only_seconds = strtotime("1970-01-01 {$parts[0]} UTC");
         $milliseconds = (float)('0.' . $parts[1]);
 
