@@ -27,6 +27,9 @@ class TtmlConverter implements ConverterContract
         if (!empty($errors)) {
             if (str_contains($errors[0]->message, 'Document labelled UTF-16 but has UTF-8 content')) {
                 $new_file_content = str_replace('encoding="utf-16"', 'encoding="utf-8"', $file_content);
+                $new_file_content = str_replace('encoding="UTF-16"', 'encoding="UTF-8"', $new_file_content);
+                $new_file_content = str_replace("encoding='utf-16'", "encoding='utf-8'", $new_file_content);
+                $new_file_content = str_replace("encoding='UTF-16'", "encoding='UTF-8'", $new_file_content);
                 return (new TtmlConverter())->fileContentToInternalFormat($new_file_content);
             }
             throw new UserException('Invalid XML: ' . trim($errors[0]->message));

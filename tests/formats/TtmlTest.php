@@ -159,17 +159,27 @@ class TtmlTest extends TestCase {
     <Number>1</Number>
     <StartMilliseconds>0</StartMilliseconds>
     <EndMilliseconds>1000</EndMilliseconds>
-    <Text>a<br/>b</Text>
-  </Paragraph>
-  <Paragraph>
-    <Number>2</Number>
-    <StartMilliseconds>1000</StartMilliseconds>
-    <EndMilliseconds>2000</EndMilliseconds>
-    <Text>c</Text>
+    <Text>a</Text>
   </Paragraph>
 </Subtitle>';
         $actual = Subtitles::loadFromString($text)->getInternalFormat();
-        $expected = (new Subtitles())->add(0, 1, ['a', 'b'])->add(1, 2, 'c')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testConvertFromUtf16WhenItReallyIsUtf8DifferentQuotesAndUppercase()
+    {
+        $text = '<?xml version="1.0" encoding=\'UTF-16\'?>
+<Subtitle>
+  <Paragraph>
+    <Number>1</Number>
+    <StartMilliseconds>0</StartMilliseconds>
+    <EndMilliseconds>1000</EndMilliseconds>
+    <Text>a</Text>
+  </Paragraph>
+</Subtitle>';
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
