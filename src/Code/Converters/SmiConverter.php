@@ -34,7 +34,7 @@ class SmiConverter implements ConverterContract
             foreach ($syncElement->childNodes as $childNode) {
                 $lines = [];
                 $line = '';
-                if ($childNode->nodeName === 'p') {
+                if ($childNode->nodeName === 'p' || $childNode->nodeName === '#text') {
                     $line = $doc->saveHTML($childNode);
                     $line = preg_replace('/<br\s*\/?>/', '<br>', $line); // normalize <br>
                     $line = str_replace("\u{00a0}", '', $line); // no brake space - &nbsp;

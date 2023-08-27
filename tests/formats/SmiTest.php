@@ -66,6 +66,22 @@ class SmiTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testNoP()
+    {
+        $actual = Subtitles::loadFromString('
+<SAMI>
+<BODY>
+<SYNC Start=0>a</SYNC>
+<SYNC Start=1000>&nbsp;</SYNC>
+</BODY>
+</SAMI>
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function fileContent()
