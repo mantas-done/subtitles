@@ -9,7 +9,6 @@ class CsvConverter implements ConverterContract
     public function canParseFileContent($file_content)
     {
         $csv = self::csvToArray(trim($file_content));
-
         $row_count = null;
         foreach ($csv as $rows) {
             $count = count($rows);
@@ -38,7 +37,7 @@ class CsvConverter implements ConverterContract
      */
     public function fileContentToInternalFormat($file_content)
     {
-        $data = self::csvToArray($file_content);
+        $data = self::csvToArray(trim($file_content));
         $data_string  = '';
 
         $is_start_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][0]);
