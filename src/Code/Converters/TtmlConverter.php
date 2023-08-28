@@ -184,6 +184,7 @@ class TtmlConverter implements ConverterContract
     {
         $xml = simplexml_load_string($file_content);
 
+        $internal_format = [];
         foreach ($xml->Font->Subtitle as $subtitle) {
             $internal_format[] = array(
                 'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
@@ -191,7 +192,7 @@ class TtmlConverter implements ConverterContract
                 'lines' => self::getLinesFromTextWithBr((string)$subtitle->Text->asXML()),
             );
         }
-//var_dump($internal_format); exit;
+
         return $internal_format;
     }
 
