@@ -32,7 +32,7 @@ Can be used from the command line to convert from .srt to .vtt
 ```
 php subtitles.phar input.srt output.vtt
 ```
-subtitles.phar file can be fond here - https://github.com/mantas-done/subtitles/releases
+subtitles.phar file can be found here - https://github.com/mantas-done/subtitles/releases
 
 ## Installation (supports PHP 8.1+)
 ```
