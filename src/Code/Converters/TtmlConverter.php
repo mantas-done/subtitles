@@ -185,7 +185,8 @@ class TtmlConverter implements ConverterContract
         $xml = simplexml_load_string($file_content);
 
         $internal_format = [];
-        foreach ($xml->Font->Subtitle as $subtitle) {
+        $subtitles = $xml->xpath('//Subtitle');
+        foreach ($subtitles as $subtitle) {
             $internal_format[] = array(
                 'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
                 'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),

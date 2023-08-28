@@ -276,6 +276,36 @@ X;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testParsesDCSubtitlesNoFont()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="UTF-8"?>
+<DCSubtitle Version="1.0">
+   <!--Monal 2008 - v6.1.1.1-->
+   <!--Sync - "FFP" - 00:00:00:00-->
+   <!--Running Speed - 24fps-->
+   <SubtitleID>5c652e39-9bf1-4c67-9793-0ec7c8948e83</SubtitleID>
+   <MovieTitle>MAL DE PIERRES</MovieTitle>
+   <ReelNumber>1AB</ReelNumber>
+   <Language>English</Language>
+   <LoadFont Id="Font1" URI="1AB-dci.ttf" />
+  <Subtitle SpotNumber="1" TimeIn="00:00:51:000" TimeOut="00:00:52:000">
+     <Text HAlign="center" HPosition="0.0" VAlign="bottom" VPosition="7">
+        <Font>Here.</Font>
+     </Text>
+  </Subtitle>
+  <Subtitle SpotNumber="2" TimeIn="00:01:30:020" TimeOut="00:01:31:031">
+     <Text HAlign="center" HPosition="0.0" VAlign="bottom" VPosition="7">
+        <Font>No, not now.</Font>
+     </Text>
+  </Subtitle>
+</DCSubtitle>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(51, 52, 'Here.')->add(90.02, 91.031, 'No, not now.')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testConvertFromXml5()
     {
         $text = <<<X
