@@ -13,7 +13,7 @@
 </head>
 <body>
 <div xml:space="preserve">
-    <p xml:id="p1" begin="1374000000t" end="1404000000t" region="bottomCenter">Senator, we're making<br/>our final approach into Coruscant.</p>
+    <p xml:id="p1" begin="1374000000t" end="1404000000t" region="bottomCenter">Senator, we&#039;re making<br/>our final approach into Coruscant.</p>
     <p xml:id="p2" begin="37405000000t" end="37425000000t" region="bottomCenter">Very good, Lieutenant.</p>
   </div>
   </body>

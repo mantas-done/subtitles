@@ -40,7 +40,8 @@ class DfxpConverter implements ConverterContract
             $nr = $k + 1;
             $start = static::internalTimeToDfxp($block['start']);
             $end = static::internalTimeToDfxp($block['end']);
-            $lines = implode("<br/>", $block['lines']);
+            $lines = array_map('htmlspecialchars', $block['lines']);
+            $lines = implode("<br/>", $lines);
 
             $file_content .= "    <p xml:id=\"p{$nr}\" begin=\"{$start}\" end=\"{$end}\" region=\"bottomCenter\">{$lines}</p>\n";
         }

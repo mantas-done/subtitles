@@ -34,6 +34,16 @@ class DfxpTest extends TestCase {
         unlink($temporary_dfxp_path);
     }
 
+    public function testEscapesSpecialCharacters()
+    {
+        $expected = (new Subtitles())->add(0, 1, '&\'"< >')->getInternalFormat();
+
+        $ttml = (new Subtitles())->add(0, 1, '&\'"< >')->content('dfxp');
+        $actual = Subtitles::loadFromString($ttml)->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testConvertFromDfxpToSrt()
     {
         $srt_path = './tests/files/srt.srt';
