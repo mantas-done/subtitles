@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\UserException;
+
 class CsvConverter implements ConverterContract
 {
     public static $allowedSeparators = [",", ";", "|", "\t"];
@@ -42,6 +44,9 @@ class CsvConverter implements ConverterContract
 
         $is_start_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][0]);
         $is_end_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][1]);
+        if ($is_end_time && !isset($data[1][2])) {
+            throw new UserException('No text (TxtConverter)');
+        }
 
         foreach ($data as $k => $row) {
             $timestamp_found = (bool) preg_match(TxtConverter::$time_regexp, $row[0]);

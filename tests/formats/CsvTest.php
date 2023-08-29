@@ -4,6 +4,7 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
@@ -127,5 +128,16 @@ TEXT;
             ->add(20, 24, ['def'])->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
+    public function testNoText()
+    {
+        $this->expectException(UserException::class);
+
+        $string = "
+0\t681.9946
+0.02\t308.0328
+";
+        Subtitles::loadFromString($string)->getInternalFormat();
     }
 }
