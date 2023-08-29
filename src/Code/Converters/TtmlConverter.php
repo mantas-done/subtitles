@@ -121,7 +121,8 @@ class TtmlConverter implements ConverterContract
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToTtml($block['start']);
             $end = static::internalTimeToTtml($block['end']);
-            $lines = implode("<br />", $block['lines']);
+            $lines = array_map('htmlspecialchars', $block['lines']);
+            $lines = implode("<br />", $lines);
 
             $file_content .= "      <p begin=\"{$start}s\" xml:id=\"p{$k}\" end=\"{$end}s\">{$lines}</p>\n";
         }

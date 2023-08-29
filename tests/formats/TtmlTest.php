@@ -35,6 +35,16 @@ class TtmlTest extends TestCase {
         unlink($temporary_ttml_path);
     }
 
+    public function testEscapesSpecialCharacters()
+    {
+        $expected = (new Subtitles())->add(0, 1, '&\'"< >')->getInternalFormat();
+
+        $ttml = (new Subtitles())->add(0, 1, '&\'"< >')->content('ttml');
+        $actual = Subtitles::loadFromString($ttml)->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testConvertFromTtmlToSrt()
     {
         $srt_path = './tests/files/srt.srt';
