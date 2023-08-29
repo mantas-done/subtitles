@@ -22,6 +22,8 @@ class SmiConverter implements ConverterContract
         if (strpos($file_content, '</SYNC>') === false) {
             $file_content = str_replace('<SYNC ', '</SYNC><SYNC ', $file_content);
         }
+        $file_content = str_replace("\n", '', $file_content);
+        $file_content = str_replace("\t", '', $file_content);
 
         $doc = new \DOMDocument();
         @$doc->loadHTML($file_content); // silence warnings about invalid html
@@ -38,6 +40,7 @@ class SmiConverter implements ConverterContract
                     $line = $doc->saveHTML($childNode);
                     $line = preg_replace('/<br\s*\/?>/', '<br>', $line); // normalize <br>
                     $line = str_replace("\u{00a0}", '', $line); // no brake space - &nbsp;
+                    $line = str_replace("&amp;nbsp", '', $line); // somebody didn't have semicolon at the end of &nbsp
                     $line = trim($line);
                     $lines = explode('<br>', $line);
                     $lines = array_map('strip_tags', $lines);
