@@ -212,4 +212,17 @@ class SccTest extends TestCase {
         $actual = SccConverter::internalTimeToScc(3600, 30);
         $this->assertEquals('00:59:59;15', $actual, 0.001);
     }
+
+    public function testSpaceBetweenBlocks()
+    {
+        $scc = "Scenarist_SCC V1.0
+
+00:00:00;21	94ae 94ae 9420 9420 9470  9470 6180 942f 942f
+
+00:00:01;26	942c 942c";
+        $actual = Subtitles::loadFromString($scc)->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'a')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual, 0.1);
+    }
 }

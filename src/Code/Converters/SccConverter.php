@@ -269,7 +269,8 @@ class SccConverter implements ConverterContract
 
     private static function sccToLines($data)
     {
-        $blocks = explode(' ', trim($data));
+        $single_space = preg_replace('/\s+/', ' ', $data);
+        $blocks = explode(' ', trim($single_space));
         $blocks = array_map('strtolower', $blocks);
         $text = '';
         foreach ($blocks as $block) {
