@@ -46,15 +46,13 @@ class SrtConverter implements ConverterContract
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
-            } elseif ($parts['start'] && !$parts['end'] && strpos($line, '-->') !== false) {
-                throw new UserException("Something is wrong with timestamps on this line: " . $line);
+                $saw_start = true;
+            } elseif ($parts['start'] && $parts['end'] && strpos($line, '->') === false) {
+                throw new UserException("Something is wrong with timestamps on this line: " . $line . ' (SrtConverter)');
             } elseif ($parts['text']) {
                 $internal_format[$i]['lines'][] = strip_tags($parts['text']);
             }
 
-            if ($parts['start'] && $parts['end']) {
-                $saw_start = true;
-            }
             if (!$saw_start) {
                 $internal_format = []; // skip words in front of srt subtitle (invalid subtitles)
             }

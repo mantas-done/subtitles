@@ -236,6 +236,20 @@ THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH
 ', 'srt')->getInternalFormat();
     }
 
+    public function testBadTimestamps()
+    {
+        $this->expectException(UserException::class);
+
+        Subtitles::loadFromString('
+00:02:36:13 - 00:02:38:07
+Alright, Bogi.
+
+01:12:40,917 --> 01:12:42,875
+You were the one who
+filed for divorce.
+');
+    }
+
     public function testParsesWhiteSpaceOnBlankLine()
     {
         $actual = Subtitles::loadFromString('1
@@ -276,5 +290,24 @@ TEXT;
         $this->assertEquals('00:00:00,100', SrtConverter::internalTimeToSrt(0.1));
         $this->assertEquals('99:59:59,000', SrtConverter::internalTimeToSrt(359999));
         $this->assertEquals('100:00:00,000', SrtConverter::internalTimeToSrt(360000));
+    }
+
+    public function testBadTimestampWIthFrames()
+    {
+        $this->expectException(UserException::class);
+
+        $content = <<< TEXT
+01:10:43,875 --> 01:11:45,000
+Did it come out?1
+
+01:13:27:14 01:13:30:04
+Just try please…2
+Just go away.3
+
+01:13:43,875 --> 01:13:45,000
+Did it come out?4
+TEXT;
+
+        Subtitles::loadFromString($content);
     }
 }
