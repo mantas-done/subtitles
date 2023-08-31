@@ -157,6 +157,12 @@ e
 5050.81
 f
 ')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(1103.474, 1152.99, ',Speaker 2,""So at any time"""')->getInternalFormat(),
+            Subtitles::loadFromString('
+"00:18:23:46,00:19:12:96,Speaker 2,""So at any time"""
+')->getInternalFormat());
     }
 
     public function testClientFile()

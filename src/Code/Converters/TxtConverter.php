@@ -6,7 +6,7 @@ use Done\Subtitles\Code\UserException;
 
 class TxtConverter implements ConverterContract
 {
-    public static $time_regexp = '/(?<!\d)(?:\d{2}:)?(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,3}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
+    public static $time_regexp = '/(?:\d{2}:)(?:\d{1,2}:)(?:\d{1,2}:)\d{1,3}|(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,3}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
     private static $any_letter_regex = '/\p{L}/u';
 
     public function canParseFileContent($file_content)
@@ -188,6 +188,18 @@ class TxtConverter implements ConverterContract
                 continue;
             }
             $parts = explode(':', $timestamps['start']);
+            if (count($parts) !== 4) {
+                continue;
+            }
+            $fps = end($parts);
+            if ($fps > $max_fps) {
+                $max_fps = $fps;
+            }
+
+            if (!$timestamps['end']) {
+                continue;
+            }
+            $parts = explode(':', $timestamps['end']);
             if (count($parts) !== 4) {
                 continue;
             }
