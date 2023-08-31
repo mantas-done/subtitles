@@ -17,7 +17,7 @@ class VttTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/vtt.vtt');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === VttConverter::class);
+        $this->assertTrue(get_class($converter) === VttConverter::class);
     }
 
     public function testDoesntTakeFilesMentioningVtt()
@@ -25,7 +25,7 @@ class VttTest extends TestCase {
         $content = 'something 
 about WEBVTT';
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class !== VttConverter::class);
+        $this->assertTrue(get_class($converter) !== VttConverter::class);
     }
 
     public function testConvertFromVttToSrt()

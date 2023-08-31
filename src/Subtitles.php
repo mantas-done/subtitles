@@ -246,7 +246,7 @@ class Subtitles
 
         // if empty captions
         if (count($internal_format) === 0) {
-            $converter_name = explode('\\', $input_converter::class);
+            $converter_name = explode('\\', get_class($input_converter));
             throw new UserException('Subtitles were not found in this file (' . end($converter_name) . ')');
         }
 
@@ -314,14 +314,14 @@ class Subtitles
         }
 
         // first key is zero
-        if (array_key_first($internal_format) !== 0) {
+        if (Helpers::arrayKeyFirst($internal_format) !== 0) {
             throw new \Exception('First internal_array element is not a 0');
         }
 
         // no subtitles with a lot of lines
         if (
-            $input_converter::class === AssConverter::class
-            || ($input_converter::class === TxtConverter::class && !TxtConverter::doesFileUseTimestamps(mb_split("\n", $converter->input)))
+            get_class($input_converter) === AssConverter::class
+            || (get_class($input_converter) === TxtConverter::class && !TxtConverter::doesFileUseTimestamps(mb_split("\n", $converter->input)))
         ) {
             // do nothing
         } else {

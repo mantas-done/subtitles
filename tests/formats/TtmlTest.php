@@ -17,7 +17,7 @@ class TtmlTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/ttml.ttml');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertEquals(TtmlConverter::class, $converter::class);
+        $this->assertEquals(TtmlConverter::class, get_class($converter));
     }
 
     public function testConvertFromSrtToTtml()

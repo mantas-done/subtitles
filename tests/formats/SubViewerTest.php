@@ -16,7 +16,7 @@ class SubViewerTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/sub_viewer.sub');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === SubViewerConverter::class);
+        $this->assertTrue(get_class($converter) === SubViewerConverter::class);
     }
 
     public function testConvertFromSubToSrt()

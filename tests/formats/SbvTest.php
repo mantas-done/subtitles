@@ -20,7 +20,7 @@ Don’t think that you can just ignore them
 because they’re not your children or relatives.
 TEXT;
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === SbvConverter::class);
+        $this->assertTrue(get_class($converter) === SbvConverter::class);
         $this->assertTrue(true);
     }
 

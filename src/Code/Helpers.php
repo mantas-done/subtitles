@@ -125,4 +125,15 @@ class Helpers
     {
         return ($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till);
     }
+
+    public static function strContains($haystack, $needle) {
+        return strpos($haystack, $needle) !== false;
+    }
+
+    public static function arrayKeyFirst($array) {
+        foreach ($array as $key => $value) {
+            return $key;
+        }
+        return null; // Return null if the array is empty
+    }
 }

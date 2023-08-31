@@ -17,7 +17,7 @@ class SccTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/scc.scc');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === SccConverter::class);
+        $this->assertTrue(get_class($converter) === SccConverter::class);
     }
 
     public function testShortensTextIfItIsTooLong()

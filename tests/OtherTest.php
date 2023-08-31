@@ -112,6 +112,10 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
 
     public function testDetectUtf16Encoding()
     {
+        if (version_compare(PHP_VERSION, '8.1', '<')) {
+            $this->markTestSkipped('Skipping test on PHP versions earlier than 8.0');
+        }
+
         $actual = Subtitles::loadFromFile('./tests/files/utf16.srt')->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'ترجمه و تنظيم زيرنويس')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);

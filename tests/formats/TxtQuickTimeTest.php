@@ -32,7 +32,7 @@ Very good, Lieutenant.
     {
         $content = $this->qttxt;
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertEquals(TxtQuickTimeConverter::class, $converter::class);
+        $this->assertEquals(TxtQuickTimeConverter::class, get_class($converter));
     }
 
     public function testConvertingToFormat()

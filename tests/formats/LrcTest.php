@@ -16,7 +16,7 @@ class LrcTest extends TestCase
     {
         $content = file_get_contents('./tests/files/lrc.lrc');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === LrcConverter::class);
+        $this->assertTrue(get_class($converter) === LrcConverter::class);
     }
 
     public function testNotLrc() // let other converter handle invalid lrc
@@ -33,7 +33,7 @@ Main Chaand Launga
 Solah Satrah Sitaare
 Sang Baandh Launga';
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class !== LrcConverter::class);
+        $this->assertTrue(get_class($converter) !== LrcConverter::class);
     }
 
     public function testParsesLrc()

@@ -16,7 +16,7 @@ class DfxpTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/dfxp.dfxp');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === DfxpConverter::class);
+        $this->assertTrue(get_class($converter) === DfxpConverter::class);
     }
 
     public function testConvertFromSrtToDfxp()

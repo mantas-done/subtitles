@@ -34,7 +34,7 @@ class PublicInterfaceTest extends TestCase
         $converter = Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path));
         unlink($temporary_srt_path);
 
-        $this->assertEquals(VttConverter::class, $converter::class);
+        $this->assertEquals(VttConverter::class, get_class($converter));
     }
 
     public function testLoadFromFile()

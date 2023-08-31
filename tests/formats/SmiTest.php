@@ -16,7 +16,7 @@ class SmiTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/smi.smi');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === SmiConverter::class);
+        $this->assertTrue(get_class($converter) === SmiConverter::class);
     }
 
     public function testFileToInternalFormat()

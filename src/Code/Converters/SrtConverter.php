@@ -124,8 +124,8 @@ class SrtConverter implements ConverterContract
     public static function internalTimeToSrt($internal_time)
     {
         $hours = floor($internal_time / 3600);
-        $minutes = floor(($internal_time % 3600) / 60);
-        $remaining_seconds = $internal_time % 60;
+        $minutes = floor(((int)$internal_time % 3600) / 60);
+        $remaining_seconds = (int)$internal_time % 60;
         $milliseconds = round(($internal_time - floor($internal_time)) * 1000);
 
         return sprintf("%02d:%02d:%02d,%03d", $hours, $minutes, $remaining_seconds, $milliseconds);

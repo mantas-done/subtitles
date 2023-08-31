@@ -308,7 +308,12 @@ class TxtConverter implements ConverterContract
         return $matches;
     }
 
-    public static function timeToInternal(string $time, int|null $fps)
+    /**
+     * @param string $time
+     * @param int|null $fps
+     * @return false|float|int|mixed
+     */
+    public static function timeToInternal(string $time, $fps)
     {
         $time = trim($time);
         $time_parts = explode(':', $time);

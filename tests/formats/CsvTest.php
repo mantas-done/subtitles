@@ -19,7 +19,7 @@ class CsvTest extends TestCase {
 137.44,140.375,"Senator, we\'re making our final approach into Coruscant."
 3740.476,3742.501,"Very good, Lieutenant."';
         $converter = Helpers::getConverterByFileContent($csv);
-        $this->assertTrue($converter::class === CsvConverter::class, $converter::class);
+        $this->assertTrue(get_class($converter) === CsvConverter::class, get_class($converter));
     }
 
     public function testFileToInternalFormat()

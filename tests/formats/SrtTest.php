@@ -17,7 +17,7 @@ class SrtTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/srt.srt');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === SrtConverter::class);
+        $this->assertTrue(get_class($converter) === SrtConverter::class);
     }
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()

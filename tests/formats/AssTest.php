@@ -16,7 +16,7 @@ class AssTest extends TestCase {
     {
         $content = file_get_contents('./tests/files/ass.ass');
         $converter = Helpers::getConverterByFileContent($content);
-        $this->assertTrue($converter::class === AssConverter::class);
+        $this->assertTrue(get_class($converter) === AssConverter::class);
     }
 
     public function testConvertFromAssToInternalFormat()

@@ -2,6 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Code\UserException;
 
 class TtmlConverter implements ConverterContract
@@ -25,7 +26,7 @@ class TtmlConverter implements ConverterContract
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if (!empty($errors)) {
-            if (str_contains($errors[0]->message, 'Document labelled UTF-16 but has UTF-8 content')) {
+            if (Helpers::strContains($errors[0]->message, 'Document labelled UTF-16 but has UTF-8 content')) {
                 $new_file_content = str_replace('encoding="utf-16"', 'encoding="utf-8"', $file_content);
                 $new_file_content = str_replace('encoding="UTF-16"', 'encoding="UTF-8"', $new_file_content);
                 $new_file_content = str_replace("encoding='utf-16'", "encoding='utf-8'", $new_file_content);
@@ -136,7 +137,9 @@ class TtmlConverter implements ConverterContract
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToTtml($block['start']);
             $end = static::internalTimeToTtml($block['end']);
-            $lines = array_map('htmlspecialchars', $block['lines']);
+            $lines = array_map(function($line) {
+                return htmlspecialchars($line, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+            }, $block['lines']);
             $lines = implode("<br />", $lines);
 
             $file_content .= "      <p begin=\"{$start}s\" xml:id=\"p{$k}\" end=\"{$end}s\">{$lines}</p>\n";
@@ -228,7 +231,11 @@ class TtmlConverter implements ConverterContract
         return $formatted_output;
     }
 
-    protected static function framesPerSecond(string $file_content) : float|null
+    /**
+     * @param string $file_content
+     * @return float|null
+     */
+    protected static function framesPerSecond(string $file_content)
     {
         $frameRate = null;
         preg_match('/ttp:frameRate="(\d+)"/', $file_content, $matches);
