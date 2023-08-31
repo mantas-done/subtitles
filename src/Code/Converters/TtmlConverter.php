@@ -58,13 +58,28 @@ class TtmlConverter implements ConverterContract
             $div_begin = $element->getAttribute('begin');
             $div_end = $element->getAttribute('end');
             foreach ($element->getElementsByTagName('p') as $pElement) {
-                $begin = $pElement->hasAttribute('begin') ? $pElement->getAttribute('begin') : $div_begin;
+                $begin = null;
+                if ($pElement->hasAttribute('begin')) {
+                    $begin = $pElement->getAttribute('begin');
+                } elseif ($pElement->getAttribute('t')) {
+                    $begin = $pElement->getAttribute('t');
+                } elseif ($div_begin) {
+                    $begin = $div_begin;
+                }
                 $begin = static::ttmlTimeToInternal($begin, $fps);
-                $end = $pElement->hasAttribute('end') ? $pElement->getAttribute('end') : $div_end;
+
+                $end = null;
+                if ($pElement->hasAttribute('end')) {
+                    $end = $pElement->getAttribute('end');
+                } elseif ($div_end) {
+                    $end = $div_end;
+                }
                 if ($end) {
                     $end = static::ttmlTimeToInternal($end, $fps);
                 } elseif ($pElement->hasAttribute('dur') && $pElement->getAttribute('dur')) {
                     $end = $begin + static::ttmlTimeToInternal($pElement->getAttribute('dur'), $fps);
+                } elseif ($pElement->hasAttribute('d') && $pElement->getAttribute('d')) {
+                    $end = $begin + static::ttmlTimeToInternal($pElement->getAttribute('d'), $fps);
                 }
                 $lines = '';
 
@@ -169,6 +184,8 @@ class TtmlConverter implements ConverterContract
             $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + $frames / $frame_rate;
 
             return $totalSeconds;
+        } elseif (is_numeric($ttml_time)) {
+            return $ttml_time / 1000;
         } else {
             $time_parts = explode('.', $ttml_time);
             $milliseconds = 0;
@@ -302,9 +319,12 @@ class TtmlConverter implements ConverterContract
 
     private static function getLinesFromTextWithBr(string $text)
     {
+
         $text = preg_replace('/<br\s*\/?>/', '<br>', $text); // normalize <br>*/
         $lines = preg_replace('/<tt:br*\/?>/', '<br>', $text); // normalize <br>*/
-        $lines = explode('<br>', $lines);
+        $lines = str_replace('<br>', "\n", $lines);
+        $lines = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $lines); // remove zero width space characters
+        $lines = explode("\n", $lines);
         $lines = array_map('strip_tags', $lines);
         $lines = array_map('trim', $lines);
 

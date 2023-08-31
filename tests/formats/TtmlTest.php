@@ -124,6 +124,7 @@ class TtmlTest extends TestCase {
             ['00:00:10', 10, null],
             ['00:00:5.100', 5.1, null],
             ['55s', 55, null],
+            ['8500', 8.5, null],
         ];
     }
 
@@ -439,6 +440,22 @@ X;
         $expected = (new Subtitles())
             ->add(12.066, 13.2, 'Hello everyone')
             ->add(13.2, 15.133, 'welcome to my channel')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testConvertFromXml9()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="utf-8" ?>
+<body>
+<p t="9159" d="768" wp="2" ws="1"><s p="2">​</s><s>​</s><s p="3">​ ​チャン チャン​ ​</s><s p="2">​
+​</s><s p="4">​ ​쟌 쟌​ ​</s><s p="2">​</s></p>
+</body>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(9.159, 9.927, ['チャン チャン', '쟌 쟌'])
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
