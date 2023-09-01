@@ -11,6 +11,15 @@ class CsvConverter implements ConverterContract
     public function canParseFileContent($file_content)
     {
         $csv = self::csvToArray(trim($file_content));
+
+        if (!isset($csv[1][0]) || !isset($csv[1][0])) {
+            return false;
+        }
+        $is_end_time = (bool) preg_match(TxtConverter::$time_regexp, $csv[1][1]);
+        if ($is_end_time && !isset($csv[1][2])) {
+            return false;
+        }
+
         $row_count = null;
         foreach ($csv as $rows) {
             $count = count($rows);
@@ -45,7 +54,7 @@ class CsvConverter implements ConverterContract
         $is_start_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][0]);
         $is_end_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][1]);
         if ($is_end_time && !isset($data[1][2])) {
-            throw new UserException('No text (TxtConverter)');
+            throw new UserException('No text (CsvConverter)');
         }
 
         foreach ($data as $k => $row) {

@@ -22,6 +22,14 @@ class CsvTest extends TestCase {
         $this->assertTrue(get_class($converter) === CsvConverter::class, get_class($converter));
     }
 
+    public function testDoesntSelectNonCsvFormat()
+    {
+        $csv = '0:00:15.1,0:00:17.4 Herkese merhaba.
+0:00:17.4,0:00:20.7 Bu videoda Microsoft office ürünlerinin';
+        $converter = Helpers::getConverterByFileContent($csv);
+        $this->assertTrue(get_class($converter) !== CsvConverter::class, get_class($converter));
+    }
+
     public function testFileToInternalFormat()
     {
         $csv = 'Start,End,Text
