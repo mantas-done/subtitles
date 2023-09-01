@@ -50,7 +50,7 @@ Subtitles::convert('subtitles.srt', 'subtitles.vtt');
 // if no input format is specified, library will determine file format by its content
 // if third parameter is specified, library will convert the file to specified format.
 // list of formats are in Subtitle::$formats, they are: ass, dfxp, sbv, srt, stl, sub, ttml, txt_quicktime, vtt 
-Subtitles::convert('subtitles1', 'subtitles2', 'vtt'); 
+Subtitles::convert('subtitles1', 'subtitles2', ['output_format' => 'vtt']); 
 ```
 
 Manually create file
@@ -140,6 +140,13 @@ try {
 } catch (\Done\Subtitles\Code\UserException $e) {
     echo $e->getMessage(); // SCC file can't have more than 4 lines of text each 32 characters long. This text is too long: <text from user file that triggered this error>
 }
+```
+By default, library tries to detect different file errors that can be shown to the user, so he would be able to fix them. 
+If you want to relax the rules and allow the library to convert even somewhat invalid files, use ['strict' => false]
+```php
+Subtitles::convert($input, $output, ['strict' => false]);
+Subtitles::loadFromString($string, ['strict' => false]);
+Subtitles::loadFromFile($input, ['strict' => false]);
 ```
 
 ## How to add new subtitle format?

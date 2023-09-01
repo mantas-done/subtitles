@@ -30,7 +30,7 @@ class PublicInterfaceTest extends TestCase
         $temporary_srt_path = './tests/files/tmp/file.no_extension';
         @unlink($temporary_srt_path);
 
-        Subtitles::convert($srt_path, $temporary_srt_path, 'vtt');
+        Subtitles::convert($srt_path, $temporary_srt_path, ['output_format' => 'vtt']);
         $converter = Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path));
         unlink($temporary_srt_path);
 
@@ -54,7 +54,7 @@ class PublicInterfaceTest extends TestCase
 Senator, we're making
 our final approach into Coruscant.
     ";
-        $subtitles = Subtitles::loadFromString($string, 'srt');
+        $subtitles = Subtitles::loadFromString($string);
 
         $this->assertTrue(!empty($subtitles->getInternalFormat()));
     }

@@ -120,4 +120,18 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
         $expected = (new Subtitles())->add(0, 1, 'ترجمه و تنظيم زيرنويس')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testStrictModeEnabled()
+    {
+        $this->expectException(UserException::class);
+        Subtitles::loadFromString('00:00:00 01:00:00 help')->getInternalFormat();
+    }
+
+    public function testStrictModeDisabled()
+    {
+        $actual = Subtitles::loadFromString('00:00:00 01:00:00 help', false)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 3600, 'help')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+    }
 }

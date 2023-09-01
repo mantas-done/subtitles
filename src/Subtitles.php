@@ -49,9 +49,17 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class], // must be the last one
     ];
 
-    public static function convert($from_file_path, $to_file_path, $to_format = null)
+    public static function convert($from_file_path, $to_file_path, $options = [])
     {
-        static::loadFromFile($from_file_path)->save($to_file_path, $to_format);
+        $output_format = null;
+        if (isset($options['output_format'])) {
+            $output_format = $options['output_format'];
+        }
+        $strict = true;
+        if (isset($options['strict']) && $options['strict'] == false) {
+            $strict = (bool)$options['strict'];
+        }
+        static::loadFromFile($from_file_path, $strict)->save($to_file_path, $output_format);
     }
 
     public function save($path, $format = null)
@@ -189,7 +197,7 @@ class Subtitles
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
-    public static function loadFromFile($path, $format = null)
+    public static function loadFromFile($path, $strict = true)
     {
         if (!file_exists($path)) {
             throw new \Exception("file doesn't exist: " . $path);
@@ -197,10 +205,10 @@ class Subtitles
 
         $string = file_get_contents($path);
 
-        return static::loadFromString($string, $format);
+        return static::loadFromString($string, $strict);
     }
 
-    public static function loadFromString($string, $format = null)
+    public static function loadFromString($string, $strict = true)
     {
         $converter = new static;
         $string = Helpers::convertToUtf8($string);
@@ -208,11 +216,7 @@ class Subtitles
         $string = Helpers::normalizeNewLines($string);
         $converter->input = $string;
 
-        if ($format) {
-            $input_converter = Helpers::getConverterByFormat($format);
-        } else {
-            $input_converter = Helpers::getConverterByFileContent($converter->input);
-        }
+        $input_converter = Helpers::getConverterByFileContent($converter->input);
         $internal_format = $input_converter->fileContentToInternalFormat($converter->input);
 
         // remove empty lines
@@ -248,13 +252,6 @@ class Subtitles
         if (count($internal_format) === 0) {
             $converter_name = explode('\\', get_class($input_converter));
             throw new UserException('Subtitles were not found in this file (' . end($converter_name) . ')');
-        }
-
-        // exception if caption is showing for more than 5 minutes
-        foreach ($internal_format as $row) {
-            if ($row['end'] - $row['start'] > (60 * 5)) {
-                throw new UserException('Error: line duration is longer than 5 minutes: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
-            }
         }
 
         // reorder by time
@@ -298,6 +295,18 @@ class Subtitles
         }
         unset($row);
 
+        if (!$strict) {
+            $converter->internal_format = $internal_format;
+            return $converter;
+        }
+
+        // exception if caption is showing for more than 5 minutes
+        foreach ($internal_format as $row) {
+            if ($row['end'] - $row['start'] > (60 * 5)) {
+                throw new UserException('Error: line duration is longer than 5 minutes: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+            }
+        }
+
         // check if time is increasing
         $last_end_time = 0;
         foreach ($internal_format as $k => $row) {
@@ -311,11 +320,6 @@ class Subtitles
             if ($row['start'] == $row['end']) {
                 throw new UserException('Timestamp start and end times are equal near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
             }
-        }
-
-        // first key is zero
-        if (Helpers::arrayKeyFirst($internal_format) !== 0) {
-            throw new \Exception('First internal_array element is not a 0');
         }
 
         // no subtitles with a lot of lines
@@ -335,7 +339,6 @@ class Subtitles
         }
 
         $converter->internal_format = $internal_format;
-
         return $converter;
     }
 }
