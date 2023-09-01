@@ -158,7 +158,7 @@ class TtmlConverter implements ConverterContract
     public static function ttmlTimeToInternal($ttml_time, $frame_rate)
     {
         if (trim($ttml_time) === '') {
-            throw new \Exception("empty time");
+            throw new UserException("Timestamps were not found in this file (TtmlConverter)");
         }
 
         if (substr($ttml_time, -1) === 't') { // if last symbol is "t"
