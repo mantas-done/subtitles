@@ -18,6 +18,31 @@ trait AdditionalAssertionsTrait
             foreach ($expected[$k]['lines'] as $line_k => $line) {
                 $this->assertEquals($line, $actual[$k]['lines'][$line_k]);
             }
+
+            // We should check if speakers is supported for format first.
+            if (isset($expected[$k]['speakers']) || isset($actual[$k]['speakers'])) {
+                // Check if speakers key is available for both expected and actual
+                $this->assertArrayHasKey('speakers', $expected[$k], "Expected Array doesn't contains 'speakers' as key");
+                $this->assertArrayHasKey('speakers', $actual[$k], "Actual Array doesn't contains 'speakers' as key");
+                // Compare expected and actual
+                if (isset($expected[$k]['speakers']) && isset($actual[$k]['speakers'])) {
+                    $this->assertEquals(count($expected[$k]['speakers']), count($actual[$k]['speakers']), 'Speaker count is different');
+                    foreach ($expected[$k]['speakers'] as $speaker_k => $speaker) {
+                        $this->assertEquals($speaker, $actual[$k]['speakers'][$speaker_k]);
+                    }
+                }
+            }
+
+            // We should check if vtt_cue_settings is supported for format first.
+            if (isset($expected[$k]['vtt_cue_settings']) || isset($actual[$k]['vtt_cue_settings'])) {
+                // Check if vtt_cue_settings key is available for both expected and actual
+                $this->assertArrayHasKey('vtt_cue_settings', $expected[$k], "Expected Array doesn't contains 'vtt_cue_settings' as key");
+                $this->assertArrayHasKey('vtt_cue_settings', $actual[$k], "Actual Array doesn't contains 'vtt_cue_settings' as key");
+                // Compare expected and actual
+                if (isset($expected[$k]['vtt_cue_settings']) && isset($actual[$k]['vtt_cue_settings'])) {
+                    $this->assertEquals($expected[$k]['vtt_cue_settings'], $actual[$k]['vtt_cue_settings'], 'vtt_cue_settings is different');
+                }
+            }
         }
     }
 

@@ -1,0 +1,19 @@
+WEBVTT
+
+When vtt convert to srt, speaker format should be changed and cue should be removed
+00:02:17.400 --> 00:02:20.400
+line 1
+<v speaker2>line 2</v>
+
+01:02:20.500 --> 01:02:22.500
+<v speaker1>line 3</v>
+line 4
+
+Cue
+02:02:20.500 --> 02:02:22.500
+<v speaker2>line 5</v>
+<v speaker1>line 6</v>
+
+03:02:20.500 --> 03:02:22.500 line:0 position:20% size:60% align:start
+line 7
+line 8
