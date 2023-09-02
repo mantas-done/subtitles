@@ -41,7 +41,7 @@ class VttConverter implements ConverterContract
                 // styles
                 preg_match('/((?:\d{1,2}:){1,2}\d{2}\.\d{1,3})\s+-->\s+((?:\d{1,2}:){1,2}\d{2}\.\d{1,3}) *(.*)/', $line, $matches);
                 if (isset($matches[3]) && ltrim($matches[3])) {
-                    $internal_format[$i]['vtt_cue_settings'] = ltrim($matches[3]);
+                    $internal_format[$i]['vtt']['settings'] = ltrim($matches[3]);
                 }
 
                 // cue
@@ -54,7 +54,35 @@ class VttConverter implements ConverterContract
                     }
                 }
             } elseif ($parts['text']) {
-                $internal_format[$i]['lines'][] = self::fixLine($parts['text']);
+                $text_line = $parts['text'];
+                // speaker
+                $speaker = null;
+                if (preg_match('/<v(?: (.*?))?>((?:.*?)<\/v>)/', $text_line, $matches)) {
+                    $speaker = isset($matches[1]) ? $matches[1] : null;
+                    $text_line = $matches[2];
+                }
+
+                // html
+                $text_line = strip_tags($text_line);
+
+                $internal_format[$i]['lines'][] = $text_line;
+                $internal_format[$i]['vtt']['speakers'][] = $speaker;
+            }
+
+            // remove if empty speakers array
+            if (isset($internal_format[$i]['vtt']['speakers'])) {
+                $is_speaker = false;
+                foreach ($internal_format[$i]['vtt']['speakers'] as $tmp_speaker) {
+                    if ($tmp_speaker !== null) {
+                        $is_speaker = true;
+                    }
+                }
+                if (!$is_speaker) {
+                    unset($internal_format[$i]['vtt']['speakers']);
+                    if (count($internal_format[$i]['vtt']) === 0) {
+                        unset($internal_format[$i]['vtt']);
+                    }
+                }
             }
 
             $last_line_was_empty = trim($line) === '';
@@ -70,14 +98,22 @@ class VttConverter implements ConverterContract
         foreach ($internal_format as $k => $block) {
             $start = static::internalTimeToVtt($block['start']);
             $end = static::internalTimeToVtt($block['end']);
-            $lines = implode("\r\n", $block['lines']);
-
-            $vtt_cue_settings = '';
-            if (isset($block['vtt_cue_settings'])) {
-                $vtt_cue_settings = ' ' . $block['vtt_cue_settings'];
+            $new_lines = '';
+            foreach ($block['lines'] as $line_nr => $line) {
+                if (isset($block['vtt']['speakers'][$line_nr]) && $block['vtt']['speakers'][$line_nr] !== null) {
+                    $speaker = $block['vtt']['speakers'][$line_nr];
+                    $new_lines .= '<v ' . $speaker . '>' . $line . "</v>\r\n";
+                } else {
+                    $new_lines .= $line . "\r\n";
+                }
             }
-            $file_content .= $start . ' --> ' . $end . $vtt_cue_settings . "\r\n";
-            $file_content .= $lines . "\r\n";
+
+            $vtt_settings = '';
+            if (isset($block['vtt']['settings'])) {
+                $vtt_settings = ' ' . $block['vtt']['settings'];
+            }
+            $file_content .= $start . ' --> ' . $end . $vtt_settings . "\r\n";
+            $file_content .= $new_lines;
             $file_content .= "\r\n";
         }
 
@@ -116,19 +152,5 @@ class VttConverter implements ConverterContract
         $srt_time = gmdate("H:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
 
         return $srt_time;
-    }
-
-    protected static function fixLine($line)
-    {
-        // speaker
-        if (substr($line, 0, 3) == '<v ') {
-            $line = substr($line, 3);
-            $line = str_replace('>', ': ', $line);
-        }
-
-        // html
-        $line = strip_tags($line);
-
-        return $line;
     }
 }
