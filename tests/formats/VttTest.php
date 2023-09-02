@@ -190,7 +190,7 @@ WEBVTT
 00:00:00.000 --> 00:00:01.000 position:50% line:15% align:middle
 a
 X;
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
     public function testGeneratesSpeakers()
@@ -203,7 +203,7 @@ WEBVTT
 <v John>a</v>
 b
 X;
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
     public function testParsesSpeakers()
