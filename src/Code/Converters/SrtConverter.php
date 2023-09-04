@@ -48,7 +48,7 @@ class SrtConverter implements ConverterContract
                 }
                 $saw_start = true;
             } elseif ($parts['start'] && $parts['end'] && strpos($line, '->') === false) {
-                throw new UserException("Something is wrong with timestamps on this line: " . $line . ' (SrtConverter)');
+                throw new UserException("Arrow should looks like this --> for srt format on line: " . $line . ' (SrtConverter)');
             } elseif ($parts['text']) {
                 $internal_format[$i]['lines'][] = strip_tags($parts['text']);
             }
