@@ -24,6 +24,7 @@ class SmiConverter implements ConverterContract
         }
         $file_content = str_replace("\n", '', $file_content);
         $file_content = str_replace("\t", '', $file_content);
+        $file_content = preg_replace('/>\s+</', '><', $file_content);
 
         $doc = new \DOMDocument();
         @$doc->loadHTML($file_content); // silence warnings about invalid html
