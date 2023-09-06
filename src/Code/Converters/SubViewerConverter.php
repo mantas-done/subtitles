@@ -18,21 +18,9 @@ class SubViewerConverter implements ConverterContract
     public function fileContentToInternalFormat($file_content)
     {
         $file_content = self::removeStyles($file_content);
+        $file_content = str_replace('[br]', "\n", $file_content);
 
-        $internal_format = []; // array - where file content will be stored
-
-        $blocks = explode("\n\n", trim($file_content)); // each block contains: start and end times + text
-        foreach ($blocks as $block) {
-            $lines = explode("\n", trim($block)); // separate all block lines
-            $times = explode(',', $lines[0]); // one the second line there is start and end times
-            $internal_format[] = [
-                'start' => static::timeToInternal($times[0]),
-                'end' => static::timeToInternal($times[1]),
-                'lines' => explode('[br]', $lines[1] ?? ''), // get all the remaining lines from block (if multiple lines of text)
-            ];
-        }
-
-        return $internal_format;
+        return (new TxtConverter())->fileContentToInternalFormat($file_content);
     }
 
     /**
@@ -46,8 +34,8 @@ class SubViewerConverter implements ConverterContract
         $file_content = '';
 
         foreach ($internal_format as $k => $block) {
-            $start = static::internalTimeToSrt($block['start']);
-            $end = static::internalTimeToSrt($block['end']);
+            $start = static::internalTimeToSub($block['start']);
+            $end = static::internalTimeToSub($block['end']);
             $lines = implode("[br]", $block['lines']);
 
             $file_content .= $start . ',' . $end . "\r\n";
@@ -90,16 +78,14 @@ class SubViewerConverter implements ConverterContract
      *
      * @return string
      */
-    protected static function internalTimeToSrt($internal_time)
+    protected static function internalTimeToSub($internal_time)
     {
-        $seconds = floor($internal_time);
-        $remainder = fmod($internal_time, 1);
-        $remainder_string = round($remainder, 2) * 100;
-        $remainder_string = str_pad($remainder_string, 2, '0', STR_PAD_RIGHT);
+        $hours = floor($internal_time / 3600);
+        $minutes = floor(((int)$internal_time % 3600) / 60);
+        $remaining_seconds = (int)$internal_time % 60;
+        $milliseconds = round(($internal_time - floor($internal_time)) * 100);
 
-        $srt_time = gmdate("H:i:s", $seconds) . '.' . $remainder_string;
-
-        return $srt_time;
+        return sprintf("%02d:%02d:%02d.%02d", $hours, $minutes, $remaining_seconds, $milliseconds);
     }
 
     protected static function removeStyles($content)
