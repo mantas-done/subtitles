@@ -53,7 +53,7 @@ class VttConverter implements ConverterContract
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
-            } elseif ($parts['text']) {
+            } elseif ($parts['text'] !== null) {
                 $text_line = $parts['text'];
                 // speaker
                 $speaker = null;

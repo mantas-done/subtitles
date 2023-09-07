@@ -49,7 +49,7 @@ class SrtConverter implements ConverterContract
                 $saw_start = true;
             } elseif ($parts['start'] && $parts['end'] && strpos($line, '->') === false) {
                 throw new UserException("Arrow should looks like this --> for srt format on line: " . $line . ' (SrtConverter)');
-            } elseif ($parts['text']) {
+            } elseif ($parts['text'] !== null) {
                 $internal_format[$i]['lines'][] = strip_tags($parts['text']);
             }
 
@@ -100,7 +100,7 @@ class SrtConverter implements ConverterContract
      */
     protected static function srtTimeToInternal($srt_time, string $lines)
     {
-        $pattern = '/(\d{1,2}):(\d{2}):(\d{1,2})([:.,](\d{1,3}))?/m';
+        $pattern = '/(\d{1,2}):(\d{1,2}):(\d{1,2})([:.,](\d{1,3}))?/m';
         if (preg_match($pattern, $srt_time, $matches)) {
             $hours = $matches[1];
             $minutes = $matches[2];
