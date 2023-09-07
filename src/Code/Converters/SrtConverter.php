@@ -24,7 +24,7 @@ class SrtConverter implements ConverterContract
         $i = -1;
         $saw_start = false;
         foreach ($lines as $k => $line) {
-            $parts = TxtConverter::getLineParts($line, 2, 2);
+            $parts = TxtConverter::getLineParts($line, 1, 2);
 
             if ($parts['start'] && $parts['end'] && strpos($line, '->') !== false) {
                 $i++;
@@ -100,12 +100,12 @@ class SrtConverter implements ConverterContract
      */
     protected static function srtTimeToInternal($srt_time, string $lines)
     {
-        $pattern = '/(\d{1,2}):(\d{1,2}):(\d{1,2})([:.,](\d{1,3}))?/m';
+        $pattern = '/(?:(?<hours>\d{1,2}):)?(?<minutes>\d{1,2}):(?<seconds>\d{1,2})([:.,](?<milliseconds>\d{1,3}))?/m';
         if (preg_match($pattern, $srt_time, $matches)) {
-            $hours = $matches[1];
-            $minutes = $matches[2];
-            $seconds = $matches[3];
-            $milliseconds = isset($matches[5]) ? $matches[5] : "000";
+            $hours = (isset($matches['hours']) && $matches['hours']) ? $matches['hours'] : 0 ;
+            $minutes = isset($matches['minutes']) ? $matches['minutes'] : 0;
+            $seconds = isset($matches['seconds']) ? $matches['seconds'] : 0;
+            $milliseconds = (isset($matches['milliseconds']) && $matches['milliseconds']) ? $matches['milliseconds'] : "000";
         } else {
             throw new UserException("Can't parse timestamp: \"$srt_time\", near: $lines");
         }

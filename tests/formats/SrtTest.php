@@ -330,4 +330,24 @@ TEXT;
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
     }
+
+    public function testParsesShortTimestamp()
+    {
+        $content = <<< TEXT
+1
+00:00:01,000-->00:00:02,000
+srt
+
+2	
+00:06:57,530 --> 07:03,920
+text
+TEXT;
+
+        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected_format = (new Subtitles())
+            ->add(1, 2, 'srt')
+            ->add(417.53, 423.92, 'text')
+            ->getInternalFormat();
+        $this->assertEquals($expected_format, $actual_format);
+    }
 }
