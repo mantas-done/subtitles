@@ -4,6 +4,7 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
@@ -17,6 +18,13 @@ class AssTest extends TestCase {
         $content = file_get_contents('./tests/files/ass.ass');
         $converter = Helpers::getConverterByFileContent($content);
         $this->assertTrue(get_class($converter) === AssConverter::class);
+    }
+
+    public function testThisIsNotAssFormat()
+    {
+        $content = '[Script Info]';
+        $converter = Helpers::getConverterByFileContent($content);
+        $this->assertTrue(get_class($converter) !== AssConverter::class);
     }
 
     public function testConvertFromAssToInternalFormat()
@@ -88,5 +96,18 @@ Dialogue: Marked=0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a
 ')->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testMissingStart()
+    {
+        $this->expectException(UserException::class);
+
+        Subtitles::loadFromString('[Script Info]
+
+[Events]
+Format: Layer, Sxxxx, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+
+Dialogue: Marked=0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a
+')->getInternalFormat();
     }
 }
