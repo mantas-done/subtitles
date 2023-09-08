@@ -148,4 +148,18 @@ TEXT;
 ";
         Subtitles::loadFromString($string)->getInternalFormat();
     }
+
+    public function testNoDecimal()
+    {
+        $string = <<< TEXT
+0,1,text
+1,2,text
+TEXT;
+        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(0, 1, 'text')
+            ->add(1, 2, 'text')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
 }

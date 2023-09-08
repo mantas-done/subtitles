@@ -8,6 +8,11 @@ class CsvConverter implements ConverterContract
 {
     public static $allowedSeparators = [",", ";", "|", "\t"];
 
+    private static function timeRegex()
+    {
+        return rtrim(TxtConverter::$time_regexp, '/') . '|(\d+)/';
+    }
+
     public function canParseFileContent($file_content)
     {
         $csv = self::csvToArray(trim($file_content));
@@ -15,7 +20,7 @@ class CsvConverter implements ConverterContract
         if (!isset($csv[1][0]) || !isset($csv[1][0])) {
             return false;
         }
-        $is_end_time = (bool) preg_match(TxtConverter::$time_regexp, $csv[1][1]);
+        $is_end_time = (bool) preg_match(self::timeRegex(), $csv[1][1]);
         if ($is_end_time && !isset($csv[1][2])) {
             return false;
         }
@@ -35,7 +40,7 @@ class CsvConverter implements ConverterContract
             return false;
         }
         $cell = $csv[1][0];
-        $timestamp = preg_replace(TxtConverter::$time_regexp, '', $cell);
+        $timestamp = preg_replace(self::timeRegex(), '', $cell);
         $only_timestamp_on_first_column = trim($timestamp) === '';
         return count($csv[1]) >= 2 && $only_timestamp_on_first_column; // at least 2 columns: timestamp + text
     }
@@ -51,14 +56,31 @@ class CsvConverter implements ConverterContract
         $data = self::csvToArray(trim($file_content));
         $data_string  = '';
 
-        $is_start_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][0]);
-        $is_end_time = (bool) preg_match(TxtConverter::$time_regexp, $data[1][1]);
+        $is_start_time = (bool) preg_match(self::timeRegex(), $data[1][0]);
+        $is_end_time = (bool) preg_match(self::timeRegex(), $data[1][1]);
         if ($is_end_time && !isset($data[1][2])) {
             throw new UserException('No text (CsvConverter)');
         }
 
+        // format integers to float for txt converter
+        $has_heading = !(bool) preg_match(self::timeRegex(), $data[0][0]);
+        $start = 0;
+        if ($has_heading) {
+            $start = 1;
+        }
+        if ($is_start_time && is_numeric($data[1][0])) {
+            for ($i = $start; $i < count($data); $i++) {
+                $data[$i][0] = number_format($data[$i][0], 3, '.', '');
+            }
+        }
+        if ($is_end_time && is_numeric($data[1][1])) {
+            for ($i = $start; $i < count($data); $i++) {
+                $data[$i][1] = number_format($data[$i][1], 3, '.', '');
+            }
+        }
+
         foreach ($data as $k => $row) {
-            $timestamp_found = (bool) preg_match(TxtConverter::$time_regexp, $row[0]);
+            $timestamp_found = (bool) preg_match(self::timeRegex(), $row[0]);
             if ($k === 0  && $timestamp_found === false) { // heading
                 continue;
             }
@@ -75,6 +97,7 @@ class CsvConverter implements ConverterContract
             }
             $data_string .= "\n";
         }
+
         return (new TxtConverter)->fileContentToInternalFormat($data_string);
     }
 
