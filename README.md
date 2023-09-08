@@ -1,9 +1,9 @@
 # Caption And Subtitle Converter for PHP
 
-🥳🎉👏 Finally, version v1 was released that greatly improves parsing of different formats. 🥳🎉👏
+🥳🎉👏 Probably the best subtitle parser 🥳🎉👏
 
-💣 Parsing was tested on thousands of user submitted files. 🤯  
-🔥 Also, there is almost 100% unit test coverage. 💥
+💣 Tested on thousands of user submitted files 🤯  
+🔥 Almost 100% unit test coverage 💥
 
 ## Supported formats
 
