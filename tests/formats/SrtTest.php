@@ -76,12 +76,17 @@ a
 2
 00:00:03,000->00:00:04,000
 b
+
+3
+00:00:06,000 00:00:07,000
+c
 TEXT;
 
         $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, 'a')
             ->add(3, 4, 'b')
+            ->add(6, 7, 'c')
             ->getInternalFormat();
         $this->assertEquals($expected_format, $actual_format);
     }
@@ -241,20 +246,6 @@ THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH
 ', 'srt')->getInternalFormat();
     }
 
-    public function testBadTimestamps()
-    {
-        $this->expectException(UserException::class);
-
-        Subtitles::loadFromString('
-00:02:36:13 - 00:02:38:07
-Alright, Bogi.
-
-01:12:40,917 --> 01:12:42,875
-You were the one who
-filed for divorce.
-');
-    }
-
     public function testParsesWhiteSpaceOnBlankLine()
     {
         $actual = Subtitles::loadFromString('1
@@ -299,8 +290,6 @@ TEXT;
 
     public function testBadTimestampWIthFrames()
     {
-        $this->expectException(UserException::class);
-
         $content = <<< TEXT
 01:10:43,875 --> 01:11:45,000
 Did it come out?1
@@ -313,7 +302,13 @@ Just go away.3
 Did it come out?4
 TEXT;
 
-        Subtitles::loadFromString($content);
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(4243.875, 4305, 'Did it come out?1')
+            ->add(4407.14, 4410.04, ['Just try please…2', 'Just go away.3'])
+            ->add(4423.875, 4425, 'Did it come out?4')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     public function testParses0()
