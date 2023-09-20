@@ -26,7 +26,7 @@ class SrtConverter implements ConverterContract
         foreach ($lines as $k => $line) {
             $parts = TxtConverter::getLineParts($line, 1, 2);
 
-            if ($parts['start'] && $parts['end']) {
+            if ($parts['start'] && $parts['end'] && strpos($line, '->') !== false) {
                 $i++;
                 $next_line = '';
                 if (isset($lines[$k + 1])) {
@@ -47,6 +47,8 @@ class SrtConverter implements ConverterContract
                     }
                 }
                 $saw_start = true;
+            } elseif ($parts['start'] && $parts['end'] && strpos($line, '->') === false) {
+                throw new UserException("Arrow should looks like this --> for srt format on line: " . $line . ' (SrtConverter)');
             } elseif ($parts['text'] !== null) {
                 $internal_format[$i]['lines'][] = strip_tags($parts['text']);
             }
