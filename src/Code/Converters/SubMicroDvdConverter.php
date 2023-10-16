@@ -12,7 +12,7 @@ class SubMicroDvdConverter implements ConverterContract
         return preg_match($pattern, $file_content, $matches);
     }
 
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $pattern = "/\{(\d+)\}\{(\d+)\}(\{.*\})?(.+)/";
         preg_match_all($pattern, $file_content, $blocks, PREG_SET_ORDER);

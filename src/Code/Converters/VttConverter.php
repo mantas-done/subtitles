@@ -15,7 +15,7 @@ class VttConverter implements ConverterContract
         return preg_match('/WEBVTT/m', $lines[0]) === 1;
     }
 
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $lines = mb_split("\n", $file_content);
         $colon_count = TxtConverter::detectMostlyUsedTimestampType($lines);

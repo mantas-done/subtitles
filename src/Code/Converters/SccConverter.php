@@ -26,7 +26,7 @@ class SccConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         preg_match_all('/^(\d{2}:\d{2}:\d{2}[;:]\d{2})\s+(.*)$/m', $file_content, $matches, PREG_SET_ORDER);
         $parsed = [];

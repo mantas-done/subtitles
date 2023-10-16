@@ -12,6 +12,7 @@
 | [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt | srt |
 | [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt | vtt |
 | [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ) | .stl | stl |
+| [EBU STL (partially implemented)](https://tech.ebu.ch/docs/tech/tech3264.pdf) | .stl | ebu_stl |
 | [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv | sbv |
 | [SubViewer](https://wiki.videolan.org/SubViewer) | .sub | sub_subviewer |
 | [MicroDVD](https://en.wikipedia.org/wiki/MicroDVD) | .sub | sub_microdvd |

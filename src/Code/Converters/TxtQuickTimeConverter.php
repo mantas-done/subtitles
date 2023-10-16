@@ -12,7 +12,7 @@ class TxtQuickTimeConverter implements ConverterContract
 
     private static $fps = 23;
 
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $internal_format = [];
 

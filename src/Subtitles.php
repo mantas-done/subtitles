@@ -5,6 +5,7 @@ namespace Done\Subtitles;
 use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
+use Done\Subtitles\Code\Converters\EbuStlConverter;
 use Done\Subtitles\Code\Converters\LrcConverter;
 use Done\Subtitles\Code\Converters\SbvConverter;
 use Done\Subtitles\Code\Converters\SccConverter;
@@ -37,6 +38,7 @@ class Subtitles
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
         ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => SrtConverter::class],
         ['extension' => 'stl',  'format' => 'stl',              'name' => 'Spruce Subtitle File',       'class' => StlConverter::class],
+        ['extension' => 'stl',  'format' => 'ebu_stl',          'name' => 'EBU STL',                    'class' => EbuStlConverter::class], // text needs to be converted from iso6937 encoding. PHP doesn't support it natively
         ['extension' => 'sub',  'format' => 'sub_microdvd',     'name' => 'MicroDVD',                   'class' => SubMicroDvdConverter::class],
         ['extension' => 'sub',  'format' => 'sub_subviewer',    'name' => 'SubViewer2.0',               'class' => SubViewerConverter::class],
         ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
@@ -205,13 +207,13 @@ class Subtitles
     public static function loadFromString($string, $strict = true)
     {
         $converter = new static;
-        $string = Helpers::convertToUtf8($string);
-        $string = Helpers::removeUtf8Bom($string);
-        $string = Helpers::normalizeNewLines($string);
-        $converter->input = $string;
+        $modified_string = Helpers::convertToUtf8($string);
+        $modified_string = Helpers::removeUtf8Bom($modified_string);
+        $modified_string = Helpers::normalizeNewLines($modified_string);
+        $converter->input = $modified_string;
 
         $input_converter = Helpers::getConverterByFileContent($converter->input);
-        $internal_format = $input_converter->fileContentToInternalFormat($converter->input);
+        $internal_format = $input_converter->fileContentToInternalFormat($converter->input, $string);
 
         // remove empty lines
         foreach ($internal_format as $k => $row) {

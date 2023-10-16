@@ -14,7 +14,7 @@ class TxtConverter implements ConverterContract
         return self::hasText($file_content);
     }
 
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         // just text lines
         // timestamps on the same line

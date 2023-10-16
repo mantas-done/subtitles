@@ -11,7 +11,7 @@ class AssConverter implements ConverterContract
         return preg_match('/\[Script Info\]\R/m', $file_content) === 1;
     }
 
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $internal_format = []; // array - where file content will be stored
         // get column numbers (every file can have a different number of columns that is encoded in this string)

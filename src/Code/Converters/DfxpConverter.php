@@ -12,9 +12,9 @@ class DfxpConverter implements ConverterContract
         ;
     }
 
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
-        return (new TtmlConverter())->fileContentToInternalFormat($file_content);
+        return (new TtmlConverter())->fileContentToInternalFormat($file_content, '');
     }
 
     public function internalFormatToFileContent(array $internal_format)

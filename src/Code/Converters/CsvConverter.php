@@ -51,7 +51,7 @@ class CsvConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content)
+    public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $data = self::csvToArray(trim($file_content));
         $data_string  = '';
@@ -98,7 +98,7 @@ class CsvConverter implements ConverterContract
             $data_string .= "\n";
         }
 
-        return (new TxtConverter)->fileContentToInternalFormat($data_string);
+        return (new TxtConverter)->fileContentToInternalFormat($data_string, '');
     }
 
     /**
