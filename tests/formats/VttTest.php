@@ -372,4 +372,19 @@ TEXT;
             ->getInternalFormat();
         $this->assertEquals($expected, $actual);
     }
+
+    public function testTextIsNotRecognizedAsTimestamp()
+    {
+        $given = <<< TEXT
+WEBVTT
+
+00:04.308 --> 00:06.670
+08:00 next Thursday, or 09:00
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(4.308, 6.670, '08:00 next Thursday, or 09:00')
+            ->getInternalFormat();
+        $this->assertEquals($expected, $actual);
+    }
 }

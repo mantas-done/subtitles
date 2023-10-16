@@ -2,6 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Code\UserException;
 
 class VttConverter implements ConverterContract
@@ -32,7 +33,7 @@ class VttConverter implements ConverterContract
                 continue;
             }
 
-            if ($parts['start'] && $parts['end']) {
+            if ($parts['start'] && $parts['end'] && Helpers::strContains($line, '-->')) {
                 $i++;
                 $internal_format[$i]['start'] = self::vttTimeToInternal($parts['start']);
                 $internal_format[$i]['end'] = self::vttTimeToInternal($parts['end']);
@@ -53,8 +54,8 @@ class VttConverter implements ConverterContract
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
-            } elseif ($parts['text'] !== null) {
-                $text_line = $parts['text'];
+            } elseif (TxtConverter::hasText($line)) {
+                $text_line = $line;
                 // speaker
                 $speaker = null;
                 if (preg_match('/<v(?: (.*?))?>((?:.*?)<\/v>)/', $text_line, $matches)) {

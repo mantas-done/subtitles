@@ -482,7 +482,7 @@ class TxtConverter implements ConverterContract
         return preg_match(self::$time_regexp, $line) === 1;
     }
 
-    private static function hasText($line)
+    public static function hasText($line)
     {
         return preg_match(self::$any_letter_regex, $line) === 1;
     }
