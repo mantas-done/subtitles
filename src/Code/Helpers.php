@@ -94,6 +94,11 @@ class Helpers
             return $file_content;
         }
 
+        // exception for EBU STL
+        if (substr($file_content, 3, 3) === 'STL') {
+            return $file_content; // ANSI encoded, but EbuStlConverter will encode result into UTF8
+        }
+
         $encoding = mb_detect_encoding($file_content, ['ISO-8859-1', 'Windows-1252', 'UTF-16LE'], true);
         if ($encoding !== false) {
             return mb_convert_encoding($file_content, 'UTF-8', $encoding);
