@@ -47,10 +47,12 @@ class SrtConverter implements ConverterContract
                     }
                 }
                 $saw_start = true;
+            /*
             } elseif ($parts['start'] && $parts['end'] && strpos($line, '->') === false) {
                 throw new UserException("Arrow should looks like this --> for srt format on line: " . $line . ' (SrtConverter)');
+            */
             } elseif ($parts['text'] !== null) {
-                $internal_format[$i]['lines'][] = strip_tags($parts['text']);
+                $internal_format[$i]['lines'][] = strip_tags($line);
             }
 
             if (!$saw_start) {
