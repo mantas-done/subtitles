@@ -387,4 +387,25 @@ TEXT;
             ->getInternalFormat();
         $this->assertEquals($expected, $actual);
     }
+
+    public function testClientFile()
+    {
+        $given = <<< TEXT
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:01.000
+a
+
+2
+00:00:01.000 --> 00:00:02.000
+b
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->add(1, 2, 'b')
+            ->getInternalFormat();
+        $this->assertEquals($expected, $actual);
+    }
 }

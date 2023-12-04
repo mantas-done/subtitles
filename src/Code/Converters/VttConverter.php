@@ -54,7 +54,7 @@ class VttConverter implements ConverterContract
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
-            } elseif (TxtConverter::hasText($line)) {
+            } elseif (trim($line) !== '') {
                 $text_line = $line;
                 // speaker
                 $speaker = null;
