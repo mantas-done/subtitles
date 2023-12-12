@@ -109,7 +109,7 @@ TEXT;
         Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
     }
 
-    public function testNoExceptionWhenEmptyFile()
+    public function testExceptionWhenEmptyFile()
     {
         $this->expectException(UserException::class);
 

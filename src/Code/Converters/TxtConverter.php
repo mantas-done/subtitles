@@ -170,8 +170,12 @@ class TxtConverter implements ConverterContract
             $counts[$count]++;
         }
         $max_number = max($counts);
+        if ($max_number === 0) {
+            return 0;
+        }
+
         foreach ($counts as $count => $number) {
-            if ($number === $max_number) {
+            if ($number >= 0 && $number > ($max_number / 10)) {
                 return $count;
             }
         }
@@ -343,11 +347,17 @@ class TxtConverter implements ConverterContract
 
     public static function doesFileUseTimestamps(array $lines)
     {
-        $lines_count = count($lines);
+        $not_empty_lines = [];
+        foreach ($lines as $line) {
+            if (trim($line) !== '') {
+                $not_empty_lines[] = $line;
+            }
+        }
+
+        $not_empty_line_count = count($not_empty_lines);
         $lines_with_timestamp_count = 0;
         foreach ($lines as $line) {
             preg_match_all(self::$time_regexp . 'm', $line, $timestamps);
-            $start = null;
             if (isset($timestamps[0][0])) {
                 $start = $timestamps[0][0];
                 $before = self::strBefore($line, $start);
@@ -357,7 +367,7 @@ class TxtConverter implements ConverterContract
                 $lines_with_timestamp_count++;
             }
         }
-        return $lines_with_timestamp_count >= ($lines_count * 0.2); // if there 20% or more lines with timestamps
+        return $lines_with_timestamp_count >= ($not_empty_line_count * 0.2); // if there 20% or more lines with timestamps
     }
 
     public static function strBefore($subject, $search)

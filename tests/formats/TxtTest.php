@@ -401,6 +401,31 @@ d
 
     }
 
+    public function testLongTimestampCountIsGreaterThanShort()
+    {
+        $actual = Subtitles::loadFromString('
+00:00
+a
+00:01
+b
+00:00:02
+c
+00:00:03
+d
+00:00:04
+e
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->add(1, 2, 'b')
+            ->add(2, 3, 'c')
+            ->add(3, 4, 'd')
+            ->add(4, 5, 'e')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+    }
+
     public function testParsesTimestampsWhenTheyAreIdentical()
     {
         $actual = TxtConverter::getLineParts('00:00 00:00 a', 1, 2);

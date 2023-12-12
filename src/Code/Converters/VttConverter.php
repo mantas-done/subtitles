@@ -19,11 +19,12 @@ class VttConverter implements ConverterContract
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $lines = mb_split("\n", $file_content);
-        $colon_count = TxtConverter::detectMostlyUsedTimestampType($lines);
+        $colon_count = 1;
         $internal_format = [];
         $i = -1;
         $seen_first_timestamp = false;
         $last_line_was_empty = true;
+
         foreach ($lines as $line) {
             $parts = TxtConverter::getLineParts($line, $colon_count, 2);
             if ($seen_first_timestamp === false && $parts['start'] && $parts['end']) {
