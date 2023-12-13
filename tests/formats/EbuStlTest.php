@@ -2,6 +2,7 @@
 
 namespace Tests\Formats;
 
+use Done\Subtitles\Code\Converters\EbuStlConverter;
 use Done\Subtitles\Code\Converters\VttConverter;
 use Done\Subtitles\Code\Formats\Vtt;
 use Done\Subtitles\Code\Helpers;
@@ -24,5 +25,11 @@ class EbuStlTest extends TestCase {
             ->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testTextConversion()
+    {
+        $actual = EbuStlConverter::iso6937ToUtf8("\xA439");
+        $this->assertEquals('$39', $actual);
     }
 }

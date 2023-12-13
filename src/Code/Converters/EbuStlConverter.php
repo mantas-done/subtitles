@@ -39,6 +39,7 @@ class EbuStlConverter implements ConverterContract
             $timestamp_end = substr($subtitlePacket, 9, 4);
             $text = substr($subtitlePacket, 16, 112);
             $text = str_replace(hex2bin('8f'), "", $text);
+            $text = str_replace(["\x80", "\x81", "\x84", "\x85"], '', $text);
             $text = str_replace(hex2bin('8a'), "\n", $text);
             $text = self::iso6937ToUtf8($text);
 
@@ -84,11 +85,96 @@ class EbuStlConverter implements ConverterContract
         return $hours * 3600 + $minutes * 60 + $seconds + $milliseconds / 1000;
     }
 
-    function iso6937ToUtf8($iso6937Text)
+    public static function iso6937ToUtf8($iso6937Text)
     {
         // code table from https://en.wikipedia.org/wiki/T.51/ISO/IEC_6937
 
         $text = $iso6937Text;
+
+        $mappings = [
+            "\xA0" => ' ',
+            "\xA1" => '¡',
+            "\xA2" => '¢',
+            "\xA3" => '£',
+            "\xA4" => '$',
+            "\xA5" => '¥',
+            "\xA6" => '#',
+            "\xA7" => '§',
+            "\xA8" => '¤',
+            "\xA9" => '‘',
+            "\xAA" => '“',
+            "\xAB" => '«',
+            "\xAC" => '←',
+            "\xAD" => '↑',
+            "\xAE" => '→',
+            "\xAF" => '↓',
+            "\xB0" => '°',
+            "\xB1" => '±',
+            "\xB2" => '²',
+            "\xB3" => '³',
+            "\xB4" => '×',
+            "\xB5" => 'µ',
+            "\xB6" => '¶',
+            "\xB7" => '·',
+            "\xB8" => '÷',
+            "\xB9" => '’',
+            "\xBA" => '”',
+            "\xBB" => '»',
+            "\xBC" => '¼',
+            "\xBD" => '½',
+            "\xBE" => '¾',
+            "\xBF" => '¿',
+            "\xD0" => '―',
+            "\xD1" => '¹',
+            "\xD2" => '®',
+            "\xD3" => '©',
+            "\xD4" => '™',
+            "\xD5" => '♪',
+            "\xD6" => '₠',
+            "\xD7" => '‰',
+            "\xD8" => 'α',
+            "\xD9" => '',
+            "\xDA" => '',
+            "\xDB" => '',
+            "\xDC" => '⅛',
+            "\xDD" => '⅜',
+            "\xDE" => '⅝',
+            "\xDF" => '⅞',
+            "\xE0" => 'Ω',
+            "\xE1" => 'Æ',
+            "\xE2" => 'Đ/Ð',
+            "\xE3" => 'ª',
+            "\xE4" => 'Ħ',
+            "\xE5" => '',
+            "\xE6" => 'Ĳ',
+            "\xE7" => 'Ŀ',
+            "\xE8" => 'Ł',
+            "\xE9" => 'Ø',
+            "\xEA" => 'Œ',
+            "\xEB" => 'º',
+            "\xEC" => 'Þ',
+            "\xED" => 'Ŧ',
+            "\xEE" => 'Ŋ',
+            "\xEF" => 'ŉ',
+            "\xF0" => 'ĸ',
+            "\xF1" => 'æ',
+            "\xF2" => 'đ',
+            "\xF3" => 'ð',
+            "\xF4" => 'ħ',
+            "\xF5" => 'ı',
+            "\xF6" => 'ĳ',
+            "\xF7" => 'ŀ',
+            "\xF8" => 'ł',
+            "\xF9" => 'ø',
+            "\xFA" => 'œ',
+            "\xFB" => 'ß',
+            "\xFC" => 'þ',
+            "\xFD" => 'ŧ',
+            "\xFE" => 'ŋ',
+            "\xFF" => '■',
+        ];
+        $text = strtr($text, $mappings);
+
         $text = self::replace($text, "\xC1", 'AEIOUaeiou', 'ÀÈÌÒÙàèìòù');
         $text = self::replace($text, "\xC2", 'ACEILNORSUYZacegilnorsuyz', 'ÁĆÉÍĹŃÓŔŚÚÝŹáćéģíĺńóŕśúýź');
         $text = self::replace($text, "\xC3", 'ACEGHIJOSUWYaceghijosuwy', 'ÂĈÊĜĤÎĴÔŜÛŴŶâĉêĝĥîĵôŝûŵŷ');
@@ -102,12 +188,13 @@ class EbuStlConverter implements ConverterContract
         $text = self::replace($text, "\xCD", 'OUou', 'ŐŰőű');
         $text = self::replace($text, "\xCE", 'AEIUaeiu', 'ĄĘĮŲąęįų');
         $text = self::replace($text, "\xCF", 'CDELNRSTZcdelnrstz', 'ČĎĚĽŇŘŠŤŽčďěľňřšťž');
+
         $utf8 = $text;
 
         return $utf8;
     }
 
-    function replace($text, $x, $y, $z)
+    public static function replace($text, $x, $y, $z)
     {
         $length = strlen($y);
         for ($i = 0; $i < $length; $i++) {
