@@ -4,6 +4,7 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\LrcConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
 use PHPUnit\Framework\TestCase;
@@ -115,5 +116,16 @@ TEXT;
             ->getInternalFormat();
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testNegativeStartTime()
+    {
+        $this->expectException(UserException::class);
+
+        $given = <<< TEXT
+[offset:500]
+[00:00.00]a
+TEXT;
+        (new Subtitles())->loadFromString($given)->getInternalFormat();
     }
 }

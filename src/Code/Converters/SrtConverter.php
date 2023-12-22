@@ -125,11 +125,17 @@ class SrtConverter implements ConverterContract
      */
     public static function internalTimeToSrt($internal_time)
     {
+        $negative = false;
+        if ($internal_time < 0) {
+            $negative = true;
+            $internal_time = abs($internal_time);
+        }
+
         $hours = floor($internal_time / 3600);
         $minutes = floor(((int)$internal_time % 3600) / 60);
         $remaining_seconds = (int)$internal_time % 60;
         $milliseconds = round(($internal_time - floor($internal_time)) * 1000);
 
-        return sprintf("%02d:%02d:%02d,%03d", $hours, $minutes, $remaining_seconds, $milliseconds);
+        return ($negative ? '-' : '') . sprintf("%02d:%02d:%02d,%03d", $hours, $minutes, $remaining_seconds, $milliseconds);
     }
 }

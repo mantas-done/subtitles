@@ -303,6 +303,10 @@ class Subtitles
             }
         }
 
+        if ($internal_format[0]['start'] < 0) {
+            throw new UserException('Start time is a negative number ' . SrtConverter::internalTimeToSrt($internal_format[0]['start']) . ' -> ' . SrtConverter::internalTimeToSrt($internal_format[0]['end']) . ' ' . $internal_format[0]['lines'][0]);
+        }
+
         // check if time is increasing
         $last_end_time = 0;
         foreach ($internal_format as $k => $row) {
