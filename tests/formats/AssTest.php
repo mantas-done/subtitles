@@ -110,4 +110,15 @@ Format: Layer, Sxxxx, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 Dialogue: Marked=0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a
 ')->getInternalFormat();
     }
+
+    public function testMissingEvents()
+    {
+        $this->expectException(UserException::class);
+        $actual = Subtitles::loadFromString('[Script Info]
+
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
