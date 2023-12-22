@@ -408,4 +408,21 @@ TEXT;
             ->getInternalFormat();
         $this->assertEquals($expected, $actual);
     }
+
+    public function testClientFileNoArrow()
+    {
+        $this->expectException(UserException::class);
+        $given = <<< TEXT
+WEBVTT
+
+00:00:07:17 - 00:00:08:14
+Hi team Canada.
+
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(7.17, 8.14, 'Hi team Canada.')
+            ->getInternalFormat();
+        $this->assertEquals($expected, $actual);
+    }
 }

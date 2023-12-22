@@ -27,7 +27,7 @@ class VttConverter implements ConverterContract
 
         foreach ($lines as $line) {
             $parts = TxtConverter::getLineParts($line, $colon_count, 2);
-            if ($seen_first_timestamp === false && $parts['start'] && $parts['end']) {
+            if ($seen_first_timestamp === false && $parts['start'] && $parts['end'] && Helpers::strContains($line, '-->')) {
                 $seen_first_timestamp = true;
             }
             if (!$seen_first_timestamp) {
