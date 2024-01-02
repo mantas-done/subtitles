@@ -19,7 +19,11 @@ class SmiConverter implements ConverterContract
     {
         $internal_format = []; // array - where file content will be stored
 
-        $file_content = mb_convert_encoding($file_content, 'HTML-ENTITIES', "UTF-8");
+        // $file_content = mb_convert_encoding($file_content, 'HTML');
+        // in the future 'HTML' parameter will be deprecated, so use this function instead
+        // https://github.com/mantas-done/subtitles/issues/87
+        $file_content = mb_encode_numericentity($file_content, [0x80, 0x10FFFF, 0, ~0], 'UTF-8');
+
         if (strpos($file_content, '</SYNC>') === false) {
             $file_content = str_replace('<SYNC ', '</SYNC><SYNC ', $file_content);
         }
