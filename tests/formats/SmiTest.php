@@ -134,6 +134,22 @@ class SmiTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testNonEnglishWords()
+    {
+        $actual = Subtitles::loadFromString('
+<SAMI>
+<BODY>
+<SYNC Start=0><P Class=ENUSCC>늘</P></SYNC>
+<SYNC Start=140400><P Class=ENUSCC>&nbsp;</P></SYNC>
+</BODY>
+</SAMI>
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 140.4, '늘')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function fileContent()
