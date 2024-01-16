@@ -417,6 +417,20 @@ X;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testConvertFromXml7a()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="utf-8" ?><transcript><text start="0.22">Creating an online shop
+is now easier than ever.</text><text start="3.88">With a minimum investment of time and
+money,</text></transcript>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0.22, 3.88, ['Creating an online shop', 'is now easier than ever.'])
+            ->add(3.88, 4.88, ['With a minimum investment of time and', 'money,'])
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testConvertFromXml8()
     {
         $text = <<<X

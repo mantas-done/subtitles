@@ -326,13 +326,25 @@ class TtmlConverter implements ConverterContract
 
         $internal_format = [];
 
+        $i = 0;
         foreach ($xml->text as $text) {
             $attributes = $text->attributes();
+            $end = null;
+            if ($attributes['dur'] !== null) {
+                $end = (float) $attributes['start'] + (float) $attributes['dur'];
+            }
             $internal_format[] = array(
-                'start' => (string) $attributes['start'],
-                'end' => (float)((string) $attributes['start'] + (string) $attributes['dur']),
+                'start' => (string)$attributes['start'],
+                'end' => $end,
                 'lines' => self::getLinesFromTextWithBr(str_replace("\n", "<br>", $text->asXML()))
             );
+            if ($i !== 0 && ($internal_format[$i - 1]['end']) === null) {
+                $internal_format[$i - 1]['end'] = (float)$attributes['start'];
+            }
+            $i++;
+        }
+        if ($i !== 0 && $internal_format[$i - 1]['end'] === null) {
+            $internal_format[$i - 1]['end'] = (float)$attributes['start'] + 1;
         }
 
         return $internal_format;
