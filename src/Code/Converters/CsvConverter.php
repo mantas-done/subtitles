@@ -70,6 +70,9 @@ class CsvConverter implements ConverterContract
         }
         if ($is_start_time && is_numeric($data[1][0])) {
             for ($i = $start; $i < count($data); $i++) {
+                if (!is_numeric($data[$i][0])) {
+                    throw new UserException("Can't parse this timestamp: " . $data[$i][0]);
+                }
                 $data[$i][0] = number_format($data[$i][0], 3, '.', '');
             }
         }

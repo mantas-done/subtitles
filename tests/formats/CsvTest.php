@@ -162,4 +162,17 @@ TEXT;
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
+
+    public function testWrongTimestamp()
+    {
+        $this->expectException(UserException::class);
+
+        $string = <<<TEXT
+998.76,1000.79,Here's a little short demo of it.
+1004.51,1.010.366,"So basically what you're seeing here, everything, all of these screenshots were made with default Twenty Twenty-Four."
+1.010.368,1.018.458,"and just editing through the site editor. You can see you can make portfolios, you can make business sites."
+TEXT;
+        Subtitles::loadFromString($string)->getInternalFormat();
+
+    }
 }
