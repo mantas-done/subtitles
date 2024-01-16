@@ -161,15 +161,14 @@ class TtmlConverter implements ConverterContract
             throw new UserException("Timestamps were not found in this file (TtmlConverter)");
         }
 
-        if (substr($ttml_time, -1) === 't') { // if last symbol is "t"
-            // parses 340400000t
+        if (substr($ttml_time, -1) === 't') { // 340400000t
             return substr($ttml_time, 0, -1) / 10000000;
-        } elseif (substr($ttml_time, -1) === 's') {
+        } elseif (substr($ttml_time, -1) === 's') { // 1234s
             return rtrim($ttml_time, 's');
-        } elseif (substr($ttml_time, -1) === 'f' && $frame_rate) {
+        } elseif (substr($ttml_time, -1) === 'f' && $frame_rate) { // 24f
             $seconds = rtrim($ttml_time, 'f');
             return $seconds / $frame_rate;
-        } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{3})/', $ttml_time, $matches)) {
+        } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{3})/', $ttml_time, $matches)) { // 00:00:00:000
             $hours = intval($matches[1]);
             $minutes = intval($matches[2]);
             $seconds = intval($matches[3]);
@@ -178,7 +177,7 @@ class TtmlConverter implements ConverterContract
             $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + ($milliseconds / 1000);
 
             return $totalSeconds;
-        } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{2})/', $ttml_time, $matches)) {
+        } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{2})/', $ttml_time, $matches)) { // 00:00:00:00
             $hours = intval($matches[1]);
             $minutes = intval($matches[2]);
             $seconds = intval($matches[3]);
@@ -187,7 +186,7 @@ class TtmlConverter implements ConverterContract
             $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + $frames / $frame_rate;
 
             return $totalSeconds;
-        } elseif (is_numeric($ttml_time)) {
+        } elseif (is_numeric($ttml_time)) { // 12345
             return $ttml_time / 1000;
         } else {
             $time_parts = explode('.', $ttml_time);
@@ -196,7 +195,20 @@ class TtmlConverter implements ConverterContract
                 $milliseconds = (float) ('0.' . $time_parts[1]);
             }
 
-            list($hours, $minutes, $seconds) = array_map('intval', explode(':', $time_parts[0]));
+            $values = array_map('intval', explode(':', $time_parts[0]));
+            $hours = 0;
+            $minutes = 0;
+
+            $count = count($values);
+            $seconds = $values[$count - 1];
+
+            if (isset($values[$count - 2])) {
+                $minutes = $values[$count - 2];
+            }
+            if (isset($values[$count - 3])) {
+                $hours = $values[$count - 3];
+            }
+
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
         }
     }
