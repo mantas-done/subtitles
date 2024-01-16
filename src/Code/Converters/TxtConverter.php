@@ -24,6 +24,9 @@ class TxtConverter implements ConverterContract
         $file_content2 = trim($file_content);
         $file_content2 = preg_replace("/\n+/", "\n", $file_content2);
         $lines = mb_split("\n", $file_content2);
+        if ($lines === false) {
+            throw new UserException("Can't get lines from this file");
+        }
 
         if (!self::doesFileUseTimestamps($lines)) {
             if (self::areEmptyLinesUsedAsSeparators($file_content)) {

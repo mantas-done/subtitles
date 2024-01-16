@@ -3,6 +3,7 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\TxtConverter;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
@@ -434,6 +435,17 @@ e
             'end' => '00:00',
             'text' => 'a',
         ], $actual);
+    }
+
+    public function testWhenCantGetLinesReturnsUserException()
+    {
+        $this->expectException(UserException::class);
+
+        Subtitles::loadFromString('
+00:00:00.00,00:00:01.00
+rz´2_ÿ¿®ŽÖÅâÖÉ
+<b>a</b>
+        ')->getInternalFormat();
     }
 
     // ---------------------------------- private ----------------------------------------------------------------------
