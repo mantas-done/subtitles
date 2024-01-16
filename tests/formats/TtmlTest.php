@@ -126,6 +126,7 @@ class TtmlTest extends TestCase {
             ['55s', 55, null],
             ['8500', 8.5, null],
             ['03:45.702', 225.702, null],
+            ['1500ms', 1.5, null],
         ];
     }
 
