@@ -1393,6 +1393,9 @@ class SccConverter implements ConverterContract
         '8094' => '',
         '7094' => '',
         '917c' => '',
+        '8380' => '',
+        '0137' => '',
+        '1fad' => '',
     ];
 
     private static $characters = [
