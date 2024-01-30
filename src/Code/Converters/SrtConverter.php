@@ -130,6 +130,7 @@ class SrtConverter implements ConverterContract
             $negative = true;
             $internal_time = abs($internal_time);
         }
+        $internal_time = round($internal_time, 3);
 
         $hours = floor($internal_time / 3600);
         $minutes = floor(((int)$internal_time % 3600) / 60);
