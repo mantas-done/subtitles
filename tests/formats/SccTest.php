@@ -179,37 +179,37 @@ class SccTest extends TestCase {
 
     public function testConvertsNonDropFrameTime()
     {
-        $actual = SccConverter::sccTimeToInternal('00:59:56:12', 0);
+        $actual = SccConverter::sccTimeToInternal('00:59:56:12', 0, 29.97);
         $this->assertEqualsWithDelta(3600.0, $actual, 0.01);
     }
 
     public function testConvertsNonDropFrameTimeWithText()
     {
-        $actual = SccConverter::sccTimeToInternal('00:59:56:12', 30);
+        $actual = SccConverter::sccTimeToInternal('00:59:56:12', 30, 29.97);
         $this->assertEqualsWithDelta(3600.5, $actual, 0.01);
     }
 
     public function testConvertsDropFrameTime()
     {
-        $actual = SccConverter::sccTimeToInternal('01:00:00;00', 0);
+        $actual = SccConverter::sccTimeToInternal('01:00:00;00', 0, 29.97);
         $this->assertEquals(3600.0, $actual);
     }
 
     public function testConvertsDropFrameTimeWithText()
     {
-        $actual = SccConverter::sccTimeToInternal('01:00:00;00', 30);
+        $actual = SccConverter::sccTimeToInternal('01:00:00;00', 30, 29.97);
         $this->assertEqualsWithDelta(3600.5, $actual, 0.001);
     }
 
     public function testInternalTimeToScc()
     {
-        $actual = SccConverter::internalTimeToScc(3600, 0);
+        $actual = SccConverter::internalTimeToScc(3600, 0, 29.97);
         $this->assertEquals('01:00:00;00', $actual, 0.001);
     }
 
     public function testInternalTimeToSccTimeWithText()
     {
-        $actual = SccConverter::internalTimeToScc(3600, 30);
+        $actual = SccConverter::internalTimeToScc(3600, 30, 29.97);
         $this->assertEquals('00:59:59;15', $actual, 0.001);
     }
 

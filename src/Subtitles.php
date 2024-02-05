@@ -55,22 +55,27 @@ class Subtitles
     {
         $output_format = null;
         if (isset($options['output_format'])) {
-            $output_format = $options['output_format'];
+            // do nothing
+        }
+        if (isset($options['fps'])) {
+            // do nothing
         }
         $strict = true;
         if (isset($options['strict']) && $options['strict'] == false) {
             $strict = (bool)$options['strict'];
+            unset($options['strict']);
         }
-        static::loadFromFile($from_file_path, $strict)->save($to_file_path, $output_format);
+        static::loadFromFile($from_file_path, $strict)->save($to_file_path, $options);
     }
 
-    public function save($path, $format = null)
+    public function save($path, $options = [])
     {
         $file_extension = Helpers::fileExtension($path);
-        if ($format === null) {
-            $format = $file_extension;
+        $format = $file_extension;
+        if (isset($options['output_format'])) {
+            $format = $options['output_format'];
         }
-        $content = $this->content($format);
+        $content = $this->content($format, $options);
 
         file_put_contents($path, $content);
 
@@ -145,10 +150,10 @@ class Subtitles
         return $this;
     }
 
-    public function content($format)
+    public function content($format, $options = [])
     {
         $converter = Helpers::getConverterByFormat($format);
-        $content = $converter->internalFormatToFileContent($this->internal_format);
+        $content = $converter->internalFormatToFileContent($this->internal_format, $options);
 
         return $content;
     }

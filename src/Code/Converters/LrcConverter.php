@@ -56,7 +56,7 @@ class LrcConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internal_format , array $options)
     {
         $file_content = '';
         foreach ($internal_format as $i => $block) {

@@ -53,7 +53,7 @@ class AssConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internal_format , array $options)
     {
         $file_content = '[Script Info]
 ; This is an Advanced Sub Station Alpha v4+ script.

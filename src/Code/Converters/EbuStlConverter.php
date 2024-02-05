@@ -59,7 +59,7 @@ class EbuStlConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format)
+    public function internalFormatToFileContent(array $internal_format , array $options)
     {
         throw new \Exception('not implemented');
     }
