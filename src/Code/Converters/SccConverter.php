@@ -313,7 +313,8 @@ class SccConverter implements ConverterContract
             $part1 = substr($block, 0, 2);
             $part2 = substr($block, 2, 2);
             if (!isset(self::$characters[$part1]) || !isset(self::$characters[$part2])) {
-                throw new \Exception('unknown block: ' . $block);
+                continue; // ignore unknown block
+                // throw new \Exception('unknown block: ' . $block);
             }
             $text .= self::$characters[$part1] . self::$characters[$part2];
         }
