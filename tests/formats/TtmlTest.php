@@ -76,8 +76,6 @@ class TtmlTest extends TestCase {
 
     public function testDuplicatedElementIdsParse()
     {
-        $this->expectException(UserException::class);
-
         $ttml_path = './tests/files/ttml_with_duplicated_element_ids.ttml';
         $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
@@ -90,8 +88,6 @@ class TtmlTest extends TestCase {
 
     public function testTimeParseWithFpsAndMultiplierGiven()
     {
-        $this->expectException(UserException::class);
-
         $ttml_path = './tests/files/ttml_with_fps_and_multiplier_given.ttml';
         $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())

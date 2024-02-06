@@ -33,7 +33,7 @@ class TtmlConverter implements ConverterContract
                 $new_file_content = str_replace("encoding='UTF-16'", "encoding='UTF-8'", $new_file_content);
                 return (new TtmlConverter())->fileContentToInternalFormat($new_file_content, '');
             }
-            throw new UserException('Invalid XML: ' . trim($errors[0]->message));
+            // throw new UserException('Invalid XML: ' . trim($errors[0]->message));
         }
 
         $fps = self::framesPerSecond($file_content);
