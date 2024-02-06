@@ -8,7 +8,7 @@ class EbuStlConverter implements ConverterContract
 {
     public function canParseFileContent($file_content)
     {
-        return substr($file_content, 3, 3) === 'STL';
+        return substr($file_content, 3, 3) === 'STL' && is_numeric(substr($file_content, 6, 2));
     }
 
     /**
