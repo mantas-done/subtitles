@@ -1,7 +1,5 @@
 <?php
 
-namespace Done\Subtitles\Code\Converters;
-
 // 32 characters, 4 lines
 // every frame transmits 2 bytes of data (two letters)
 // : - non drop frame - counts frames (not time)
@@ -9,6 +7,16 @@ namespace Done\Subtitles\Code\Converters;
 // non drop frame plays at 29.97 fps, so in one hour there is fewer frames. Non drop frame time in scc 1:00:00:00 = 1:00:03;18 in real time
 // 3.6 seconds difference https://sonix.ai/resources/what-is-drop-frame-vs-non-drop-frame-timecode/
 // scc time is earlier that srt time, because it needs to account for time it takes to send the text
+
+// 94ae - Erase Non-displayed [buffer] Memory, with a code of 94ae
+// 9420 - start pop-on caption
+// 9470 - put the cursor on the bottom line start
+// captions
+// 942f - to display the caption in the buffer on the screen, the command EOC (End Of Caption), code 942f, is used.
+// 942c - To clear the screen in preparation for drawing the caption, the command EDM (Erase Displayed Memory), code 942c, is used.
+
+namespace Done\Subtitles\Code\Converters;
+
 use Done\Subtitles\Code\UserException;
 
 class SccConverter implements ConverterContract
@@ -42,15 +50,21 @@ class SccConverter implements ConverterContract
             $time = $match[1];
             $data = $match[2];
 
+            $tmp_time = self::sccTimeToInternal($time, 0, $fps);
             $parsed[] = [
                 'time' => self::sccTimeToInternal($time, self::codesToBytes($data), $fps),
                 'lines' => self::sccToLines($data),
+                'clear_display_at' => self::clearDisplayAt($tmp_time, $data, $fps),
             ];
         }
 
         $internal_format = [];
         $i = 0;
         foreach ($parsed as $j => $row) {
+            // if there was clear display code in the text
+            if ($i !== 0 && $row['clear_display_at'] !== null) {
+                $internal_format[$i - 1]['end'] = $row['clear_display_at'];
+            }
             if (!empty($row['lines'])) {
                 if ($i !== 0 && !isset($internal_format[$i - 1]['end'])) {
                     $internal_format[$i - 1]['end'] = $row['time'];
@@ -88,38 +102,66 @@ class SccConverter implements ConverterContract
         if (!in_array($fps, self::$valid_fpses)) {
             throw new \Exception('invalid fps ' . $fps);
         }
+        $ndf = false; // non drop frame
+        if (isset($output_settings['ndf'])) {
+            $ndf = $output_settings['ndf'];
+        }
 
         $file_content = "Scenarist_SCC V1.0\r\n\r\n";
 
+        $last_start_time = 0;
         $last_end_time = 0;
-        $last_internal_format = null;
-        foreach ($internal_format as $k => $scc) {
-            $lines = self::splitLongLines($scc['lines']); // max 32 characters per line, max 4 lines
-
-            $time_available = $scc['start'] - $last_end_time;
+        foreach ($internal_format as $k => $block) {
+            $time_available = $block['start'] - $last_start_time;
             $frames_available = floor($fps * $time_available);
-            $blocks_available = ($frames_available - $frames_available % 2) / 2;
-            if ($blocks_available < 8) { // 16 - 94ae 94ae 9420 9420 and 942f 942f (start, end)
-                unset($internal_format[$k]); // to little time to show something
+            if ($k === 0) {
+                $frames_available = 10000; // for the first text no limitations on sending time
+            }
+            if ($frames_available < 6) { // 2 blocks for start + 1 block for line + 1 block of text + 1 block for end + 1 block in case of clearing buffer
+                // to little time to show something
                 continue;
             }
-
+            $lines = self::splitLongLines($block['lines']);
             $codes = self::textToSccText($lines);
-            $codes_array = explode(' ', $codes);
-            $codes_array = array_slice($codes_array, 0, $blocks_available - 6);
-            $codes = implode(' ', $codes_array);
-            $full_codes = "94ae 94ae 9420 9420 $codes 942f 942f";
-            $frames_to_send = substr_count($full_codes, ' ') + 1;
-            $time_to_send = $frames_to_send / $fps;
-            $file_content .= self::internalTimeToScc($scc['start'] - $time_to_send, 0, $fps) . "\t" . $full_codes . "\r\n\r\n";
-            if ($last_internal_format !== null && ($frames_to_send + 4) < $frames_available) {
-                self::internalTimeToScc($last_internal_format['end'], 0, $fps) . "\t" . '942c 942c' . "\r\n\r\n";
+
+            $code_blockes = explode(' ', $codes); // missing 2 start and 1 end block
+            $frames_to_send_text = count($code_blockes);
+            $frames_to_send = $frames_to_send_text + 2 + 1 + 1; // 2 for start, 1 for end, 1 in case need to clear buffer
+            $to_many_frames = $frames_to_send - $frames_available;
+            if ($to_many_frames > 0) {
+                $code_blockes = array_slice($code_blockes, 0, -($to_many_frames + 1)); // remove blocks that we won't be able to send
+                $code_blockes[] = 'aeae'; // ..
             }
-            $last_end_time = $scc['start'];
-            $last_internal_format = $scc;
+            array_unshift($code_blockes, '94ae', '9420');
+            $code_blockes[] = '942f';
+            $frames_to_send_text = count($code_blockes);
+            $frames_to_send = $frames_to_send_text + 1; //  1 in case need to clear buffer
+
+            // do we need to erase display buffer?
+            $probable_start_sending_time = $block['start'] - ($frames_to_send / $fps);
+            $separate_block_end = false;
+            if ($k !== 0 && $last_end_time > $probable_start_sending_time) {
+                $add_after_code_blocks = ($last_end_time - $probable_start_sending_time) * $fps;
+                $add_after_code_blocks = (int)round($add_after_code_blocks);
+                $add_after_code_blocks = max($add_after_code_blocks, 3); // min after 3 blocks
+                $add_after_code_blocks = min($add_after_code_blocks, count($code_blockes) - 1); // do not place code block after the last item
+                array_splice($code_blockes, $add_after_code_blocks, 0, '942c');
+            } else {
+                $separate_block_end = true;
+            }
+
+            $full_codes = implode(' ', $code_blockes);
+            if ($separate_block_end && $k !== 0) {
+                $file_content .= self::internalTimeToScc($last_end_time, 2, $fps, $ndf) . "\t" . '942c aa' . "\r\n\r\n";
+            }
+
+            $file_content .= self::internalTimeToScc($block['start'], count($code_blockes) * 2, $fps, $ndf) . "\t" . $full_codes . "\r\n\r\n";
+
+            $last_start_time = $block['start'];
+            $last_end_time = $block['end'];
         }
-        if (isset($scc)) { // stop last caption
-            $file_content .= self::internalTimeToScc($scc['end'] - (4 / $fps), 0, $fps) . "\t" . '942c 942c' . "\r\n\r\n";
+        if (isset($block)) { // stop last caption
+            $file_content .= self::internalTimeToScc($block['end'], 2, $fps, $ndf) . "\t" . '942c' . "\r\n\r\n";
         }
         return $file_content;
     }
@@ -158,16 +200,22 @@ class SccConverter implements ConverterContract
      *
      * @return string
      */
-    public static function internalTimeToScc($internal_time, $text_bytes, $fps)
+    public static function internalTimeToScc($internal_time, $text_bytes, $fps, $is_ndf)
     {
-        $time = $internal_time - ($text_bytes / 2) / $fps;
+        $time = $internal_time;
+        if ($is_ndf) {
+            $time = $time * 3600 / 3603.6;
+        }
+        $time = $time - (($text_bytes / 2) - 1) / $fps; // -1 - because the last code is parsed before the frame is shown
+        $time = max($time, 0); // min 0
         $parts = explode('.', $time);
         $whole = (int) $parts[0];
         $decimal = isset($parts[1]) ? (float)('0.' . $parts[1]) : 0.0;
         $frame = round($decimal * $fps);
         $frame = min($frame, floor($fps)); // max 29
 
-        $srt_time = gmdate("H:i:s", floor($whole)) . ';' . sprintf("%02d", $frame);
+        $separator = $is_ndf ? ':' : ';';
+        $srt_time = gmdate("H:i:s", floor($whole)) . $separator . sprintf("%02d", $frame);
 
         return $srt_time;
     }
@@ -189,31 +237,40 @@ class SccConverter implements ConverterContract
         ];
         $line_output = '';
         foreach ($lines as $k => $line) {
-            $line_output .= ' ' . $positions[4 - $count + $k] . ' ' . $positions[4 - $count + $k]; // aligns text to the bottom
+            $line_output .= ' ' . $positions[4 - $count + $k]; // aligns text to the bottom
             $line_output .= ' ' . self::lineToText($line);
         }
         return trim($line_output);
     }
 
+    // makes max 4 lines with up to 32 characters each
     public static function splitLongLines($lines)
     {
-        $result = array();
-        foreach ($lines as $line) {
-            while (strlen($line) > 32) {
-                $pos = strrpos(substr($line, 0, 32), ' ');
-                if ($pos === false || $pos < strlen($line) - 32) {
-                    $pos = 32;
-                }
-                $result[] = substr($line, 0, $pos);
-                $line = substr($line, $pos + 1);
+        $new_lines = [];
+        if (mb_strlen($lines[0]) > 32) {
+            $tmp_lines = explode("\n", wordwrap($lines[0], 32));
+            if (isset($tmp_lines[2])) {
+                $tmp_lines[1] = substr_replace($tmp_lines[1], '...', -3);
             }
-            if (!empty($line)) {
-                $result[] = $line;
+            $new_lines[] = $tmp_lines[0];
+            $new_lines[] = $tmp_lines[1];
+        } else {
+            $new_lines[] = $lines[0];
+        }
+        if (isset($lines[1])) {
+            if (mb_strlen($lines[1]) > 32) {
+                $tmp_lines = explode("\n", wordwrap($lines[1], 32));
+                if (isset($tmp_lines[2])) {
+                    $tmp_lines[1] = substr_replace($tmp_lines[1], '...', -3);
+                }
+                $new_lines[] = $tmp_lines[0];
+                $new_lines[] = $tmp_lines[1];
+            } else {
+                $new_lines[] = $lines[1];
             }
         }
 
-        $result = array_slice($result, 0, 4); // max 4 lines
-        return $result;
+        return $new_lines;
     }
 
     protected static function lineToText($line)
@@ -292,6 +349,9 @@ class SccConverter implements ConverterContract
         $text = '';
         foreach ($blocks as $block) {
             // command
+//            if ($block === '942c') { // clear display
+//                continue;
+//            }
             if (isset(self::$commands[$block])) {
                 if (strpos(self::$commands[$block], 'break') !== false) {
                     $text .= "\n";
@@ -337,6 +397,19 @@ class SccConverter implements ConverterContract
     private static function codesToBytes(string $codes): int // AD00 FFAA
     {
         return $bytes = strlen(str_replace(' ', '', $codes)) / 2;
+    }
+
+    private static function clearDisplayAt($time, $data, $fps)
+    {
+        $new_data = preg_replace('/\s+/', ' ', $data);
+        $codes = explode(' ', $new_data);
+        foreach ($codes as $k => $code) {
+            if ($code === '942c') {
+                return $time + $k / $fps;
+            }
+        }
+        return null;
+
     }
 
     // from https://github.com/pbs/pycaption/blob/main/pycaption/scc/constants.py

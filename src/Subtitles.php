@@ -60,6 +60,9 @@ class Subtitles
         if (isset($options['fps'])) {
             // do nothing
         }
+        if (isset($options['ndf'])) {
+            // do nothing
+        }
         $strict = true;
         if (isset($options['strict']) && $options['strict'] == false) {
             $strict = (bool)$options['strict'];
