@@ -204,14 +204,14 @@ class SccTest extends TestCase {
 
     public function testInternalTimeToScc()
     {
-        $actual = SccConverter::internalTimeToScc(3600, 0, 29.97, false);
-        $this->assertEquals('01:00:00;01', $actual, 0.001);
+        $actual = SccConverter::internalTimeToScc(1, 20, 29.97, false);
+        $this->assertEquals('00:00:00;21', $actual, 0.001);
     }
 
     public function testInternalTimeToSccTimeWithText()
     {
-        $actual = SccConverter::internalTimeToScc(3600, 30, 29.97, false);
-        $this->assertEquals('00:59:59;16', $actual, 0.001);
+        $actual = SccConverter::internalTimeToScc(2, 2, 29.97, false);
+        $this->assertEquals('00:00:02;00', $actual, 0.001);
     }
 
     public function testSpaceBetweenBlocks()
