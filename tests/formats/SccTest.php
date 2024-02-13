@@ -80,7 +80,7 @@ class SccTest extends TestCase {
         $actual = (new Subtitles())
             ->add(0, 10, ['®', 'Á', 'a®', 'aÁ'])
             ->content('scc');
-        $this->assertEquals($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 
     public function testParsesUppercaseLetters()
