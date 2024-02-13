@@ -118,7 +118,7 @@ class StlConverter implements ConverterContract
     protected static function toStlTime($seconds)
     {
         if ($seconds >= 86400) {
-            throw new \Exception('conversion function doesnt support more than 1 day, edit the code');
+            throw new \Exception('conversion function doesnt support more than 1 day, edit the code ' . $seconds);
         }
 
         $milliseconds = $seconds - (int)$seconds;
