@@ -67,6 +67,22 @@ class SccTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual, 1000); // 1000 - don't check timestamps
     }
 
+    public function testMoreCharactersToCss()
+    {
+        $expected = "Scenarist_SCC V1.0
+
+00:00:00;00\t94ae 9420 94d0 91b0 9470 9220 942f
+
+00:00:10;00\t942c
+
+";
+
+        $actual = (new Subtitles())
+            ->add(0, 10, ['®', 'Á', 'a®', 'aÁ'])
+            ->content('scc');
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testParsesUppercaseLetters()
     {
         $string = "Scenarist_SCC V1.0

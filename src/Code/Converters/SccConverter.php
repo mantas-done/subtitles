@@ -235,12 +235,12 @@ class SccConverter implements ConverterContract
             '94d0', // 2th from the bottom line
             '9470', // bottom line
         ];
-        $line_output = '';
+        $codes = '';
         foreach ($lines as $k => $line) {
-            $line_output .= ' ' . $positions[4 - $count + $k]; // aligns text to the bottom
-            $line_output .= ' ' . self::lineToText($line);
+            $codes .= ' ' . $positions[4 - $count + $k]; // aligns text to the bottom
+            $codes .= ' ' . self::lineToCodes($line);
         }
-        return trim($line_output);
+        return trim($codes);
     }
 
     // makes max 4 lines with up to 32 characters each
@@ -273,11 +273,11 @@ class SccConverter implements ConverterContract
         return $new_lines;
     }
 
-    protected static function lineToText($line)
+    protected static function lineToCodes($line)
     {
         $reversed_characters = array_flip(self::$characters);
-//        $reversed_special = array_flip(self::$special_chars);
-//        $reversed_extended = array_flip(self::$extended_chars);
+        $reversed_special = array_flip(self::$special_chars);
+        $reversed_extended = array_flip(self::$extended_chars);
         $codes = '';
         $length = mb_strlen($line, 'UTF-8');
         for ($i = 0; $i < $length; $i++) {
@@ -285,16 +285,16 @@ class SccConverter implements ConverterContract
             if (isset($reversed_characters[$character])) {
                 $codes .= $reversed_characters[$character];
 
-//            } elseif (isset($reversed_special[$character])) {
-//                if (strlen($codes) % 4 === 2) {
-//                    $codes .= '80'; // fill
-//                }
-//                $codes .= $reversed_special[$character];
-//            } elseif (isset($reversed_extended[$character])) {
-//                if (strlen($codes) % 4 === 2) {
-//                    $codes .= '80'; // fill
-//                }
-//                $codes .= $reversed_extended[$character];
+            } elseif (isset($reversed_special[$character])) {
+                if (strlen($codes) % 4 === 2) {
+                    $codes .= '80'; // fill
+                }
+                $codes .= $reversed_special[$character];
+            } elseif (isset($reversed_extended[$character])) {
+                if (strlen($codes) % 4 === 2) {
+                    $codes .= '80'; // fill
+                }
+                $codes .= $reversed_extended[$character];
             } else {
                 $codes .= $reversed_characters['#']; // no symbol
             }
