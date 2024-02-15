@@ -17,6 +17,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Code\UserException;
 
 class SccConverter implements ConverterContract
@@ -248,7 +249,7 @@ class SccConverter implements ConverterContract
     {
         $new_lines = [];
         if (mb_strlen($lines[0]) > 32) {
-            $tmp_lines = explode("\n", wordwrap($lines[0], 32));
+            $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[0], 32, "\n", true));
             if (isset($tmp_lines[2])) {
                 $tmp_lines[1] = substr_replace($tmp_lines[1], '...', -3);
             }
@@ -259,7 +260,7 @@ class SccConverter implements ConverterContract
         }
         if (isset($lines[1])) {
             if (mb_strlen($lines[1]) > 32) {
-                $tmp_lines = explode("\n", wordwrap($lines[1], 32));
+                $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[1], 32, "\n", true));
                 if (isset($tmp_lines[2])) {
                     $tmp_lines[1] = substr_replace($tmp_lines[1], '...', -3);
                 }

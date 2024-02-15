@@ -141,4 +141,101 @@ class Helpers
         }
         return null; // Return null if the array is empty
     }
+
+    /**
+     * Wraps any string to a given number of characters.
+     *
+     * This implementation is multi-byte aware and relies on {@link
+     * http://www.php.net/manual/en/book.mbstring.php PHP's multibyte
+     * string extension}.
+     *
+     * @see wordwrap()
+     * @link https://api.drupal.org/api/drupal/core%21vendor%21zendframework%21zend-stdlib%21Zend%21Stdlib%21StringWrapper%21AbstractStringWrapper.php/function/AbstractStringWrapper%3A%3AwordWrap/8
+     * @param string $string
+     *   The input string.
+     * @param int $width [optional]
+     *   The number of characters at which <var>$string</var> will be
+     *   wrapped. Defaults to <code>75</code>.
+     * @param string $break [optional]
+     *   The line is broken using the optional break parameter. Defaults
+     *   to <code>"\n"</code>.
+     * @param boolean $cut [optional]
+     *   If the <var>$cut</var> is set to <code>TRUE</code>, the string is
+     *   always wrapped at or before the specified <var>$width</var>. So if
+     *   you have a word that is larger than the given <var>$width</var>, it
+     *   is broken apart. Defaults to <code>FALSE</code>.
+     * @return string
+     *   Returns the given <var>$string</var> wrapped at the specified
+     *   <var>$width</var>.
+     */
+    public static function mb_wordwrap($string, $width = 75, $break = "\n", $cut = false) {
+        $string = (string) $string;
+        if ($string === '') {
+            return '';
+        }
+
+        $break = (string) $break;
+        if ($break === '') {
+            trigger_error('Break string cannot be empty', E_USER_ERROR);
+        }
+
+        $width = (int) $width;
+        if ($width === 0 && $cut) {
+            trigger_error('Cannot force cut when width is zero', E_USER_ERROR);
+        }
+
+        if (strlen($string) === mb_strlen($string)) {
+            return wordwrap($string, $width, $break, $cut);
+        }
+
+        $stringWidth = mb_strlen($string);
+        $breakWidth = mb_strlen($break);
+
+        $result = '';
+        $lastStart = $lastSpace = 0;
+
+        for ($current = 0; $current < $stringWidth; $current++) {
+            $char = mb_substr($string, $current, 1);
+
+            $possibleBreak = $char;
+            if ($breakWidth !== 1) {
+                $possibleBreak = mb_substr($string, $current, $breakWidth);
+            }
+
+            if ($possibleBreak === $break) {
+                $result .= mb_substr($string, $lastStart, $current - $lastStart + $breakWidth);
+                $current += $breakWidth - 1;
+                $lastStart = $lastSpace = $current + 1;
+                continue;
+            }
+
+            if ($char === ' ') {
+                if ($current - $lastStart >= $width) {
+                    $result .= mb_substr($string, $lastStart, $current - $lastStart) . $break;
+                    $lastStart = $current + 1;
+                }
+
+                $lastSpace = $current;
+                continue;
+            }
+
+            if ($current - $lastStart >= $width && $cut && $lastStart >= $lastSpace) {
+                $result .= mb_substr($string, $lastStart, $current - $lastStart) . $break;
+                $lastStart = $lastSpace = $current;
+                continue;
+            }
+
+            if ($current - $lastStart >= $width && $lastStart < $lastSpace) {
+                $result .= mb_substr($string, $lastStart, $lastSpace - $lastStart) . $break;
+                $lastStart = $lastSpace = $lastSpace + 1;
+                continue;
+            }
+        }
+
+        if ($lastStart !== $current) {
+            $result .= mb_substr($string, $lastStart, $current - $lastStart);
+        }
+
+        return $result;
+    }
 }
