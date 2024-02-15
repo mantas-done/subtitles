@@ -420,7 +420,6 @@ class SccConverter implements ConverterContract
     {
         $replacements = [
             // https://www.uspto.gov/custom-page/characters-conversion-table
-            '€' => 'euro', //	euro sign
             '‚' => ',', //	low left rising single quote
             'ƒ' => 'f', //	small italic f, function of,florin
             '„' => ',,', //	low left rising double quote
@@ -572,6 +571,11 @@ class SccConverter implements ConverterContract
             // more custom letters
             'æ' => 'ae',
             'Æ' => 'AE',
+            '€' => 'EUR',
+            '₹' => 'INR',
+            '₽' => 'RUB',
+            '₱' => 'PHP',
+            '₿' => 'BTC'
         ];
         $string = strtr($string, $replacements);
 
