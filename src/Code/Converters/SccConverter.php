@@ -1,5 +1,7 @@
 <?php
 
+// http://www.theneitherworld.com/mcpoodle/SCC_TOOLS/DOCS/
+
 // 32 characters, 4 lines
 // every frame transmits 2 bytes of data (two letters)
 // : - non drop frame - counts frames (not time)
