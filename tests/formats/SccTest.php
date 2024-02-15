@@ -242,4 +242,13 @@ class SccTest extends TestCase {
 
         $this->assertInternalFormatsEqual($expected, $actual, 0.1);
     }
+
+    public function testCustomCharacters()
+    {
+        $scc = (new Subtitles())
+            ->add(1, 2, ['cœurs défoncés'])
+            ->content('scc');
+        $internal = Subtitles::loadFromString($scc)->getInternalFormat();
+        $this->assertEquals('coeurs défoncés', $internal[0]['lines'][0]);
+    }
 }

@@ -282,6 +282,7 @@ class SccConverter implements ConverterContract
         $reversed_special = array_flip(self::$special_chars);
         $reversed_extended = array_flip(self::$extended_chars);
         $codes = '';
+        $line = self::replaceNotSupportedCharactersByScc($line);
         $length = mb_strlen($line, 'UTF-8');
         for ($i = 0; $i < $length; $i++) {
             $character = mb_substr($line, $i, 1, 'UTF-8');
@@ -413,6 +414,168 @@ class SccConverter implements ConverterContract
         }
         return null;
 
+    }
+
+    private static function replaceNotSupportedCharactersByScc($string)
+    {
+        $replacements = [
+            // https://www.uspto.gov/custom-page/characters-conversion-table
+            '€' => 'euro', //	euro sign
+            '‚' => ',', //	low left rising single quote
+            'ƒ' => 'f', //	small italic f, function of,florin
+            '„' => ',,', //	low left rising double quote
+            '…' => '.', //	low horizontal ellipsis
+            'ˆ' => '^', //	modifier letter circumflex accent
+            '‰' => '0/00', //	per thousand (mille) sign
+            'Š' => 'S', //	capital S caron or hacek
+            '‹' => '<', //	left single angle quote mark
+            'Œ' => 'OE', //	capital OE ligature
+            'Ž' => 'Z', //	latin capital letter Z with caron
+            '˜' => '~', //	small spacing tilde accent
+            'š' => 's', //	small s caron or hacek
+            '›' => '>', //	right single angle quote mark
+            'œ' => 'oe', //	small oe ligature
+            'ž' => 'z', //	latin small letter Z with caron
+            'Ÿ' => 'Y', //	capital Y dieresis or umlaut
+            '¬' => '–', //	not sign
+            'Ā' => 'A', //	Amacr - latin capital letter A with macron
+            'ā' => 'a', //	amacr - latin small letter a with macron
+            'Ă' => 'A', //	Acaron - latin capital letter A with caron (breve)
+            'ă' => 'a', //	acaron - latin small letter a with caron (breve)
+            'Ą' => 'A', //	Acedil - latin capital letter A with cedilla
+            'ą' => 'a', //	acedil - latin small letter a with cedilla
+            'Ć' => 'C', //	Cacute - latin capital letter C with acute
+            'ć' => 'c', //	cacute - latin small letter c with acute
+            'Č' => 'C', //	Ccaron - latin capital letter C with caron
+            'č' => 'c', //	ccaron - latin small letter c with caron
+            'Ď' => 'D', //	dcaron - latin capital letter D with caron
+            'ď' => 'd', //	latin small letter d with caron
+            'Đ' => 'D', //	dstrok - latin capital letter D with stroke
+            'đ' => 'd', //	dstrok - latin small letter d with stroke
+            'Ē' => 'E', //	emacr - latin capital letter E with macron
+            'ē' => 'e', //	latin small letter e with macron
+            'Ĕ' => 'E', //	latin capital letter E with breve
+            'ĕ' => 'e', //	latin small letter e with macron
+            'Ė' => 'E', //	edot - latin capital letter E with dot above
+            'ė' => 'e', //	edot - latin small letter e with dot above
+            'Ę' => 'E', //	ecedil - latin capital letter E with cedilla
+            'ę' => 'e', //	ecedil - latin small letter e with cedilla
+            'Ě' => 'E', //	ecaron - latin capital letter E with caron
+            'ě' => 'e', //	ecaron - latin small letter e with caron
+            'Ğ' => 'G', //	gcaron - latin capital letter G with caron (breve)
+            'ğ' => 'g', //	gcaron - latin small letter g with caron (breve)
+            'Ģ' => 'G', //	gcedil - latin capital letter g with cedilla
+            'ģ' => 'g', //	gapos - latin small letter g with cedilla above
+            'Ĥ' => 'H', //	xxxx - latin capital letter h with circumflex above
+            'ĥ' => 'h', //	latin small letter h with circumflex above
+            'Ħ' => 'H', //	latin capital letter h with stroke
+            'ħ' => 'h', //	latin small letter h with circumflex above
+            'Ĩ' => 'I', //	latin capital letter i with tilde
+            'ĩ' => 'i', //	latin small letter i with tilde
+            'Ī' => 'I', //	imacr - latin capital letter I with macron
+            'ī' => 'i', //	imacr - latin small letter i with macron
+            'Į' => 'I', //	iogon - latin capital letter i with ogonek
+            'į' => 'i', //	iogon - latin small letter i with ogonek
+            'İ' => 'I', //	icedil - latin capital letter i with cedilla
+            'ı' => 'i', //	nodot latin small letter i with no dot
+            'Ĳ' => 'IJ', //	latin capital ligature ij
+            'ĳ' => 'ij', //	latin small ligature ij
+            'Ĵ' => 'K', //	latin capital letter k with circumflex
+            'ĵ' => 'k', //	latin small letter k with circumflex
+            'Ķ' => 'K', //	kcedil - latin capital letter k with cedilla
+            'ķ' => 'k', //	kcedil - latin small letter k with cedilla
+            'ĸ' => 'K', //	latin small letter kra
+            'Ĺ' => 'L', //	lacute - latin capital letter l with acute
+            'ĺ' => 'l', //	lacute - latin small letter l with acute
+            'Ļ' => 'L', //	lcedil - latin capital letter l with cedilla
+            'ļ' => 'l', //	lcedil - latin small letter l with cedilla
+            'Ľ' => 'L', //	lcaron - latin capital letter l with
+            'ľ' => 'l', //	lcaron - latin small letter l with caron
+            'Ŀ' => 'L', //	latin capital letter l with middle dot
+            'ŀ' => 'l', //	latin small letter l with middle dot
+            'Ł' => 'L', //	lstrok - latin capital letter l with stroke
+            'ł' => 'l', //	lstrok - latin small letter l with stroke
+            'Ń' => 'N', //	nacute - latin capital letter n with acute
+            'ń' => 'n', //	nacute - latin small letter n with acute
+            'Ņ' => 'N', //	ncedil - latin capital letter N with cedilla
+            'ņ' => 'n', //	ncedil - latin small letter n with cedilla
+            'Ň' => 'N', //	ncaron - latin capital letter n with caron
+            'ň' => 'n', //	ncaron - latin small letter n with caron
+            'ŉ' => 'n', //	latin small letter n preceded by apostophe
+            'Ŋ' => 'N', //	latin capital letter eng
+            'ŋ' => 'n', //	latin small letter eng
+            'Ō' => 'O', //	omacr - latin capital letter o with macron
+            'ō' => 'o', //	omacr - latin small letter o with macron
+            'Ŏ' => 'O', //	latin capital letter o with breve
+            'ŏ' => 'o', //	latin small letter o with breve
+            'Ő' => 'O', //	odblac - latin capital letter O with double acute
+            'ő' => 'o', //	odblac - latin small letter o with double acute
+            'Ŕ' => 'R', //	racute - latin capital letter r with acute
+            'ŕ' => 'r', //	racute - latin small letter r with acute
+            'Ŗ' => 'R', //	rcedil - latin capital letter r with cedilla
+            'ŗ' => 'r', //	rcedil - latin small letter r with cedilla
+            'Ř' => 'R', //	rcaron - latin capital letter r with caron
+            'ř' => 'r', //	rcaron - latin small letter r with caron
+            'Ś' => 'S', //	sacute - latin capital letter s with acute
+            'ś' => 's', //	sacute - latin small letter s with acute
+            'Ŝ' => 'S', //	latin capital letter s with circumflex
+            'ŝ' => 's', //	latin small letter s with circumflex
+            'Ş' => 'S', //	scedil - latin capital letter s with cedilla
+            'ş' => 's', //	scedil - latin small letter s with cedilla
+            'Ţ' => 'T', //	tcedil - latin capital letter t with cedilla
+            'ţ' => 't', //	tcedil - latin small letter t with cedilla
+            'Ť' => 'T', //	tcaron - latin capital letter t with caron
+            'ť' => 't', //	tcaron - latin small letter t with caron
+            'Ŧ' => 'T', //	latin capital letter t with stroke
+            'ŧ' => 't', //	latin small letter t with stroke
+            'Ũ' => 'U', //	latin capital letter u with tilde
+            'ũ' => 'u', //	latin small letter u with tilde
+            'Ū' => 'U', //	umacr - latin capital letter u with macron
+            'ū' => 'u', //	umacr - latin small letter u with macron
+            'Ŭ' => 'U', //	latin capital letter u with breve
+            'ŭ' => 'u', //	latin small letter u with breve
+            'Ů' => 'U', //	uring - latin capital letter u with ring above
+            'ů' => 'u', //	uring - latin small letter u with ring above
+            'Ű' => 'U', //	udblac - latin capital letter u with double acute
+            'ű' => 'u', //	udblac - latin small letter u with double acute
+            'Ŵ' => 'W', //	latin capital letter w with circumflex
+            'ŵ' => 'w', //	latin small letter w with circumflex
+            'Ŷ' => 'Y', //	latin capital letter y with circumflex
+            'ŷ' => 'y', //	latin smalll letter y with circumflex
+            'Ź' => 'Z', //	zacute - latin capital letter z with acute
+            'ź' => 'z', //	zacute - latin small letter z with acute
+            'Ż' => 'Z', //	zdot - latin capital letter z with dot above
+            'ż' => 'z', //	zdot - latin small letter z with dot above
+            'ʻ' => '\'', //	modifier letter turned comma
+            'ʼ' => '\'', //	modifier letter apostrophe
+            '·' => '.', //	greek and teleia
+            'Φ' => 'Ph', //	greek capital letter phi
+            'Ψ' => 'Ps', //	greek capital letter psi
+            'Ω' => 'O', //	greek capital letter omega
+            'β' => 'B', //	greek small letter beta
+            'Ᾰ' => 'A', //	punctuation
+            'Ᾱ' => 'A', //	thin
+            'Ὰ' => 'A', //	hair
+            '‐' => '-', //	hyphen
+            '‑' => '-', //	non-breaking hyphen
+            '‒' => '-', //	figure dash
+            '–' => '-', //	en dash
+            '‛' => '\'', //	single high reversed quotation mark
+            '‟' => '"', //	double high reversed quotation mark
+            '․' => '.', //	one dot leader
+            '⁚' => ':', //	two dot punctuation
+            '∙' => '.', //	bullet operator
+            'Ⓡ' => '(R)', //	circled latin capital letter R
+            '、' => '\'', //	ideographic comma
+            '〃' => '"', //	ditto mark
+
+            // more custom letters
+            'æ' => 'ae',
+            'Æ' => 'AE',
+        ];
+        $string = strtr($string, $replacements);
+
+        return $string;
     }
 
     // from https://github.com/pbs/pycaption/blob/main/pycaption/scc/constants.py
