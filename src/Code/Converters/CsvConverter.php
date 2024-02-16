@@ -54,51 +54,66 @@ class CsvConverter implements ConverterContract
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $data = self::csvToArray(trim($file_content));
-        $data_string  = '';
 
-        $is_start_time = (bool) preg_match(self::timeRegex(), $data[1][0]);
-        $is_end_time = (bool) preg_match(self::timeRegex(), $data[1][1]);
-        if ($is_end_time && !isset($data[1][2])) {
+        $start_time_column = null;
+        $end_time_column = null;
+        $text_column = null;
+        $last_row = end($data);
+        $column_count = count($last_row);
+        $checked_column = 0;
+        foreach ($last_row as $k => $column) {
+            if (preg_match(self::timeRegex(), $column)) {
+                $start_time_column = $k;
+                $checked_column = $k;
+                break;
+            }
+        }
+        if ($start_time_column !== null) {
+            for ($i = $checked_column + 1; $i < $column_count; $i++) {
+                $column = $last_row[$i];
+                if (preg_match(self::timeRegex(), $column)) {
+                    $end_time_column = $i;
+                    $checked_column = $i;
+                    break;
+                }
+            }
+        }
+        for ($i = $checked_column + 1; $i < $column_count; $i++) {
+            $column = $last_row[$i];
+            if (TxtConverter::hasText($column)) {
+                $text_column = $i;
+                break;
+            }
+        }
+
+        if ($text_column === null) {
             throw new UserException('No text (CsvConverter)');
         }
 
-        // format integers to float for txt converter
-        $has_heading = !(bool) preg_match(self::timeRegex(), $data[0][0]);
-        $start = 0;
-        if ($has_heading) {
-            $start = 1;
-        }
-        if ($is_start_time && is_numeric($data[1][0])) {
-            for ($i = $start; $i < count($data); $i++) {
-                if (!is_numeric($data[$i][0])) {
-                    throw new UserException("Can't parse this timestamp: " . $data[$i][0]);
+        $data_string = '';
+        foreach ($data as $row) {
+            if ($start_time_column !== null) {
+                $is_start_time = preg_match(self::timeRegex(), $row[$start_time_column]);
+                if (!$is_start_time) {
+                    continue; // skip few first rows if label or empty
                 }
-                $data[$i][0] = number_format($data[$i][0], 3, '.', '');
-            }
-        }
-        if ($is_end_time && is_numeric($data[1][1])) {
-            for ($i = $start; $i < count($data); $i++) {
-                $data[$i][1] = number_format($data[$i][1], 3, '.', '');
-            }
-        }
-
-        foreach ($data as $k => $row) {
-            $timestamp_found = (bool) preg_match(self::timeRegex(), $row[0]);
-            if ($k === 0  && $timestamp_found === false) { // heading
-                continue;
             }
 
-            // format csv file as a txt file, so TxtConverter would be able to understand it
-            if ($is_start_time && $is_end_time) {
-                $data_string .= $row[0] . ' ' . $row[1] . "\n"; // start end
-                $data_string .= $row[2] . "\n"; // text
-            } elseif ($is_start_time) {
-                $data_string .= $row[0] . "\n"; // start
-                $data_string .= $row[1] . "\n"; // text
-            } else {
-                $data_string .= $row[0] . "\n"; // text
+            if ($start_time_column !== null) {
+                $start_time = $row[$start_time_column];
+                if (is_numeric($start_time)) {
+                    $start_time = number_format($start_time, 3, '.', '');
+                }
+                $data_string .= "\n" . $start_time;
             }
-            $data_string .= "\n";
+            if ($end_time_column !== null) {
+                $end_time = $row[$end_time_column];
+                if (is_numeric($end_time)) {
+                    $end_time = number_format($end_time, 3, '.', '');
+                }
+                $data_string .= ' ' . $end_time;
+            }
+            $data_string .= "\n" . $row[$text_column];
         }
 
         return (new TxtConverter)->fileContentToInternalFormat($data_string, '');

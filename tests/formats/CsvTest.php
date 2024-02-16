@@ -175,4 +175,21 @@ TEXT;
         Subtitles::loadFromString($string)->getInternalFormat();
 
     }
+
+    public function testGapsInFront()
+    {
+        $string = <<<TEXT
+,,
+,Timecode,Subtitle
+,0:06,"Hello, my name is Cindy Takehara."
+,0:08,I was the project lead for this sound workshop.
+TEXT;
+        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(6, 8, 'Hello, my name is Cindy Takehara.')
+            ->add(8, 9, 'I was the project lead for this sound workshop.')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+
+    }
 }
