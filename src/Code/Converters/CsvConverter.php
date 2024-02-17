@@ -62,6 +62,9 @@ class CsvConverter implements ConverterContract
         $column_count = count($last_row);
         $checked_column = 0;
         foreach ($last_row as $k => $column) {
+            if (TxtConverter::hasText($column)) {
+                break;
+            }
             if (preg_match(self::timeRegex(), $column)) {
                 $start_time_column = $k;
                 $checked_column = $k;
@@ -71,6 +74,9 @@ class CsvConverter implements ConverterContract
         if ($start_time_column !== null) {
             for ($i = $checked_column + 1; $i < $column_count; $i++) {
                 $column = $last_row[$i];
+                if (TxtConverter::hasText($column)) {
+                    break;
+                }
                 if (preg_match(self::timeRegex(), $column)) {
                     $end_time_column = $i;
                     $checked_column = $i;
@@ -91,13 +97,18 @@ class CsvConverter implements ConverterContract
         }
 
         $data_string = '';
+        $found_data = false;
         foreach ($data as $row) {
-            if ($start_time_column !== null) {
+            if (!$found_data && $start_time_column !== null) {
                 $is_start_time = preg_match(self::timeRegex(), $row[$start_time_column]);
                 if (!$is_start_time) {
                     continue; // skip few first rows if label or empty
                 }
             }
+            if (!$found_data && !TxtConverter::hasText($row[$text_column])) {
+                continue;
+            }
+            $found_data = true;
 
             if ($start_time_column !== null) {
                 $start_time = $row[$start_time_column];
