@@ -155,7 +155,7 @@ class SccConverter implements ConverterContract
 
             $full_codes = implode(' ', $code_blockes);
             if ($separate_block_end && $k !== 0) {
-                $file_content .= self::internalTimeToScc($last_end_time, 2, $fps, $ndf) . "\t" . '942c aa' . "\r\n\r\n";
+                $file_content .= self::internalTimeToScc($last_end_time, 2, $fps, $ndf) . "\t" . '942c' . "\r\n\r\n";
             }
 
             $file_content .= self::internalTimeToScc($block['start'], count($code_blockes) * 2, $fps, $ndf) . "\t" . $full_codes . "\r\n\r\n";
