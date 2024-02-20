@@ -47,6 +47,13 @@ class SmiTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testEscapes()
+    {
+        $actual = (new Subtitles())->add(0,  1, '<script>test</script>')->content('smi');
+        $this->assertFalse(Helpers::strContains($actual, '<script>'));
+
+    }
+
     public function testNegativeTime()
     {
         $actual = Subtitles::loadFromString('

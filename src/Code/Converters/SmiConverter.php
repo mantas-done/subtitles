@@ -117,6 +117,11 @@ class SmiConverter implements ConverterContract
                 $file_content .= '<SYNC Start=' . self::internalTimeToFormat($last_time) . '><P Class=ENUSCC>&nbsp;' . "</P></SYNC>\r\n";
             }
 
+            foreach ($block['lines'] as &$line) {
+                $line = self::escape($line);
+            }
+            unset($line);
+
             $file_content .= '<SYNC Start=' . self::internalTimeToFormat($block['start']) . '><P Class=ENUSCC>' . implode('<br>', $block['lines']) .  "</P></SYNC>\r\n";
             $last_time = $block['end'];
         }
@@ -158,5 +163,9 @@ class SmiConverter implements ConverterContract
     protected static function internalTimeToFormat($internal_time)
     {
        return round($internal_time * 1000);
+    }
+
+    protected static function escape($value) {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true);
     }
 }

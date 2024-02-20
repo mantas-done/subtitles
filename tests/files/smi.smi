@@ -15,7 +15,7 @@
 <BODY>
 <-- Open play menu, choose Captions and Subtitles, On if available -->
 <-- Open tools menu, Security, Show local captions when present -->
-<SYNC Start=137400><P Class=ENUSCC>Senator, we're making<br>our final approach into Coruscant.</P></SYNC>
+<SYNC Start=137400><P Class=ENUSCC>Senator, we&#039;re making<br>our final approach into Coruscant.</P></SYNC>
 <SYNC Start=140400><P Class=ENUSCC>&nbsp;</P></SYNC>
 <SYNC Start=3740500><P Class=ENUSCC>Very good, Lieutenant.</P></SYNC>
 <SYNC Start=3742500><P Class=ENUSCC>&nbsp;</P></SYNC>
