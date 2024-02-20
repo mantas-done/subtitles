@@ -276,11 +276,10 @@ class SccConverter implements ConverterContract
         return $new_lines;
     }
 
-    protected static function lineToCodes($line)
+    public static function lineToCodes($line)
     {
         $reversed_characters = array_flip(self::$characters);
         $reversed_special = array_flip(self::$special_chars);
-        $reversed_extended = array_flip(self::$extended_chars);
         $codes = '';
         $line = self::replaceNotSupportedCharactersByScc($line);
         $length = mb_strlen($line, 'UTF-8');
@@ -294,11 +293,12 @@ class SccConverter implements ConverterContract
                     $codes .= '80'; // fill
                 }
                 $codes .= $reversed_special[$character];
-            } elseif (isset($reversed_extended[$character])) {
+            } elseif (($extended = self::getExtendedByCharacter($character)) !== null) {
+                $codes .= $reversed_characters[$extended['prefix']];
                 if (strlen($codes) % 4 === 2) {
                     $codes .= '80'; // fill
                 }
-                $codes .= $reversed_extended[$character];
+                $codes .= $extended['code'];
             } else {
                 $codes .= $reversed_characters['#']; // no symbol
             }
@@ -311,6 +311,26 @@ class SccConverter implements ConverterContract
         $codes = self::addSpaceAfter4Characters($codes);
 
         return $codes;
+    }
+
+    public static function getExtendedByCharacter($character)
+    {
+         foreach (self::$extended_chars2 as $data) {
+             if ($data['letter'] === $character) {
+                return $data;
+             }
+         }
+         return null;
+    }
+
+    public static function getExtendedByCode($code)
+    {
+        foreach (self::$extended_chars2 as $data) {
+            if ($data['code'] === $code) {
+                return $data;
+            }
+        }
+        return null;
     }
 
     public static function shortenLineTextIfTooLong($output, $start, $end, $additional_bytes)
@@ -345,7 +365,7 @@ class SccConverter implements ConverterContract
         return $result;
     }
 
-    private static function sccToLines($data)
+    public static function sccToLines($data)
     {
         $single_space = preg_replace('/\s+/', ' ', $data);
         $blocks = explode(' ', trim($single_space));
@@ -353,9 +373,6 @@ class SccConverter implements ConverterContract
         $text = '';
         foreach ($blocks as $block) {
             // command
-//            if ($block === '942c') { // clear display
-//                continue;
-//            }
             if (isset(self::$commands[$block])) {
                 if (strpos(self::$commands[$block], 'break') !== false) {
                     $text .= "\n";
@@ -363,8 +380,9 @@ class SccConverter implements ConverterContract
                 continue;
             }
 
-            if (isset(self::$extended_chars[$block])) {
-                $text .= self::$extended_chars[$block];
+            if (($extended = self::getExtendedByCode($block)) !== null) {
+                $text = mb_substr($text, 0, -1); // remove one character, because extended characters are composed from 2 characters
+                $text .= $extended['letter'];
                 continue;
             }
 
@@ -1779,70 +1797,263 @@ class SccConverter implements ConverterContract
         '91bf' => 'û',
     ];
 
-     private static $extended_chars = [
-        '9220' => 'Á',
-        '92a1' => 'É',
-        '92a2' => 'Ó',
-        '9223' => 'Ú',
-        '92a4' => 'Ü',
-        '9225' => 'ü',
-        '9226' => '‘',
-        '92a7' => '¡',
-        '92a8' => '*',
-        '9229' => '’',
-        '922a' => '—',
-        '92ab' => '©',
-        '922c' => '℠',
-        '92ad' => '•',
-        '92ae' => '“',
-        '922f' => '”',
-        '92b0' => 'À',
-        '9231' => 'Â',
-        '9232' => 'Ç',
-        '92b3' => 'È',
-        '9234' => 'Ê',
-        '92b5' => 'Ë',
-        '92b6' => 'ë',
-        '9237' => 'Î',
-        '9238' => 'Ï',
-        '92b9' => 'ï',
-        '92ba' => 'Ô',
-        '923b' => 'Ù',
-        '92bc' => 'ù',
-        '923d' => 'Û',
-        '923e' => '«',
-        '92bf' => '»',
-        '1320' => 'Ã',
-        '13a1' => 'ã',
-        '13a2' => 'Í',
-        '1323' => 'Ì',
-        '13a4' => 'ì',
-        '1325' => 'Ò',
-        '1326' => 'ò',
-        '13a7' => 'Õ',
-        '13a8' => 'õ',
-        '1329' => '{',
-        '132a' => '}',
-        '13ab' => '\\',
-        '132c' => '^',
-        '13ad' => '_',
-        '13ae' => '¦',
-        '132f' => '~',
-        '13b0' => 'Ä',
-        '1331' => 'ä',
-        '1332' => 'Ö',
-        '13b3' => 'ö',
-        '1334' => 'ß',
-        '13b5' => '¥',
-        '13b6' => '¤',
-        '1337' => '|',
-        '1338' => 'Å',
-        '13b9' => 'å',
-        '13ba' => 'Ø',
-        '133b' => 'ø',
-        '13bc' => '┌',
-        '133d' => '┐',
-        '133e' => '└',
-        '13bf' => '┘',
+    private static $extended_chars2 = [
+        [
+            'code' => '9220',
+            'prefix' => 'A',
+            'letter' => 'Á',
+        ], [
+            'code' => '92a1',
+            'prefix' => 'E',
+            'letter' => 'É',
+        ], [
+            'code' => '92a2',
+            'prefix' => 'O',
+            'letter' => 'Ó',
+        ], [
+            'code' => '9223',
+            'prefix' => 'U',
+            'letter' => 'Ú',
+        ], [
+            'code' => '92a4',
+            'prefix' => 'U',
+            'letter' => 'Ü',
+        ], [
+            'code' => '9225',
+            'prefix' => 'u',
+            'letter' => 'ü',
+        ], [
+            'code' => '9226',
+            'prefix' => "'",
+            'letter' => '‘',
+        ], [
+            'code' => '92a7',
+            'prefix' => '!',
+            'letter' => '¡',
+        ], [
+            'code' => '92a8',
+            'prefix' => '#',
+            'letter' => '*',
+        ], [
+            'code' => '9229',
+            'prefix' => "'",
+            'letter' => '’',
+        ], [
+            'code' => '922a',
+            'prefix' => '-',
+            'letter' => '—',
+        ], [
+            'code' => '92ab',
+            'prefix' => 'c',
+            'letter' => '©',
+        ], [
+            'code' => '922c',
+            'prefix' => 's',
+            'letter' => '℠',
+        ], [
+            'code' => '92ad',
+            'prefix' => '.',
+            'letter' => '•',
+        ], [
+            'code' => '92ae',
+            'prefix' => '"',
+            'letter' => '“',
+        ], [
+            'code' => '922f',
+            'prefix' => '"',
+            'letter' => '”',
+        ], [
+            'code' => '92b0',
+            'prefix' => 'A',
+            'letter' => 'À',
+        ], [
+            'code' => '9231',
+            'prefix' => 'A',
+            'letter' => 'Â',
+        ], [
+            'code' => '9232',
+            'prefix' => 'C',
+            'letter' => 'Ç',
+        ], [
+            'code' => '92b3',
+            'prefix' => 'E',
+            'letter' => 'È',
+        ], [
+            'code' => '9234',
+            'prefix' => 'E',
+            'letter' => 'Ê',
+        ], [
+            'code' => '92b5',
+            'prefix' => 'E',
+            'letter' => 'Ë',
+        ], [
+            'code' => '92b6',
+            'prefix' => 'e',
+            'letter' => 'ë',
+        ], [
+            'code' => '9237',
+            'prefix' => 'I',
+            'letter' => 'Î',
+        ], [
+            'code' => '9238',
+            'prefix' => 'I',
+            'letter' => 'Ï',
+        ], [
+            'code' => '92b9',
+            'prefix' => 'i',
+            'letter' => 'ï',
+        ], [
+            'code' => '92ba',
+            'prefix' => 'O',
+            'letter' => 'Ô',
+        ], [
+            'code' => '923b',
+            'prefix' => 'U',
+            'letter' => 'Ù',
+        ], [
+            'code' => '92bc',
+            'prefix' => 'u',
+            'letter' => 'ù',
+        ], [
+            'code' => '923d',
+            'prefix' => 'U',
+            'letter' => 'Û',
+        ], [
+            'code' => '923e',
+            'prefix' => '"',
+            'letter' => '«',
+        ], [
+            'code' => '92bf',
+            'prefix' => '"',
+            'letter' => '»',
+        ], [
+            'code' => '1320',
+            'prefix' => 'A',
+            'letter' => 'Ã',
+        ], [
+            'code' => '13a1',
+            'prefix' => 'a',
+            'letter' => 'ã',
+        ], [
+            'code' => '13a2',
+            'prefix' => 'I',
+            'letter' => 'Í',
+        ], [
+            'code' => '1323',
+            'prefix' => 'I',
+            'letter' => 'Ì',
+        ], [
+            'code' => '13a4',
+            'prefix' => 'i',
+            'letter' => 'ì',
+        ], [
+            'code' => '1325',
+            'prefix' => 'O',
+            'letter' => 'Ò',
+        ], [
+            'code' => '1326',
+            'prefix' => 'o',
+            'letter' => 'ò',
+        ], [
+            'code' => '13a7',
+            'prefix' => 'O',
+            'letter' => 'Õ',
+        ], [
+            'code' => '13a8',
+            'prefix' => 'o',
+            'letter' => 'õ',
+        ], [
+            'code' => '1329',
+            'prefix' => '[',
+            'letter' => '{',
+        ], [
+            'code' => '132a',
+            'prefix' => ']',
+            'letter' => '}',
+        ], [
+            'code' => '13ab',
+            'prefix' => '/',
+            'letter' => '\\',
+        ], [
+            'code' => '132c',
+            'prefix' => '/',
+            'letter' => '^',
+        ], [
+            'code' => '13ad',
+            'prefix' => '-',
+            'letter' => '_',
+        ], [
+            'code' => '13ae',
+            'prefix' => '-',
+            'letter' => '¦',
+        ], [
+            'code' => '132f',
+            'prefix' => '-',
+            'letter' => '~',
+        ], [
+            'code' => '13b0',
+            'prefix' => 'A',
+            'letter' => 'Ä',
+        ], [
+            'code' => '1331',
+            'prefix' => 'a',
+            'letter' => 'ä',
+        ], [
+            'code' => '1332',
+            'prefix' => 'O',
+            'letter' => 'Ö',
+        ], [
+            'code' => '13b3',
+            'prefix' => 'o',
+            'letter' => 'ö',
+        ], [
+            'code' => '1334',
+            'prefix' => 's',
+            'letter' => 'ß',
+        ], [
+            'code' => '13b5',
+            'prefix' => 'Y',
+            'letter' => '¥',
+        ], [
+            'code' => '13b6',
+            'prefix' => 'C',
+            'letter' => '¤',
+        ], [
+            'code' => '1337',
+            'prefix' => '/',
+            'letter' => '|',
+        ], [
+            'code' => '1338',
+            'prefix' => 'A',
+            'letter' => 'Å',
+        ], [
+            'code' => '13b9',
+            'prefix' => 'a',
+            'letter' => 'å',
+        ], [
+            'code' => '13ba',
+            'prefix' => 'O',
+            'letter' => 'Ø',
+        ], [
+            'code' => '133b',
+            'prefix' => 'o',
+            'letter' => 'ø',
+        ], [
+            'code' => '13bc',
+            'prefix' => '+',
+            'letter' => '┌',
+        ], [
+            'code' => '133d',
+            'prefix' => '+',
+            'letter' => '┐',
+        ], [
+            'code' => '133e',
+            'prefix' => '+',
+            'letter' => '└',
+        ], [
+            'code' => '13bf',
+            'prefix' => '+',
+            'letter' => '┘',
+        ],
     ];
 }

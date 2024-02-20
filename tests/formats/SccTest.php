@@ -51,54 +51,6 @@ class SccTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual, 0.01);
     }
 
-    public function testFromSccMoreCharacters()
-    {
-        $string = "Scenarist_SCC V1.0
-
-00:00:00;00\t94ae 94ae 9420 9420 13d0 13d0 91b0 1370 1370 9220 94d0 94d0 6180 91b0 9470 9470 6180 9220 942f 942f
-
-00:00:10;00\t942c 942c
-
-";
-        $actual = (new Subtitles())->loadFromString($string)->getInternalFormat();
-        $expected = (new Subtitles())
-            ->add(0, 10, ['®', 'Á', 'a®', 'aÁ'])
-            ->getInternalFormat();
-        $this->assertInternalFormatsEqual($expected, $actual, 1000); // 1000 - don't check timestamps
-    }
-
-    public function testMoreCharactersToCss()
-    {
-        $expected = "Scenarist_SCC V1.0
-
-00:00:00;00\t94ae 9420 94d0 91b0 9470 9220 942f
-
-00:00:10;00\t942c
-
-";
-
-        $actual = (new Subtitles())
-            ->add(0, 10, ['®', 'Á', 'a®', 'aÁ'])
-            ->content('scc');
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
-    }
-
-    public function testParsesUppercaseLetters()
-    {
-        $string = "Scenarist_SCC V1.0
-
-00:00:00;00\t94ae 94AE 9420 9420 13d0 13d0 91b0 1370 1370 9220 94d0 94d0 6180 91b0 9470 9470 6180 9220 942f 942f
-
-00:00:10;00\t942c 942c
-
-";
-        $actual = (new Subtitles())->loadFromString($string)->getInternalFormat();
-        $expected = (new Subtitles())
-            ->add(0, 10, ['®', 'Á', 'a®', 'aÁ'])
-            ->getInternalFormat();
-        $this->assertInternalFormatsEqual($expected, $actual, 1000); // 1000 - don't check timestamps
-    }
-
     public function testSplitLongLines()
     {
         $array = [
@@ -250,5 +202,49 @@ class SccTest extends TestCase {
             ->content('scc');
         $internal = Subtitles::loadFromString($scc)->getInternalFormat();
         $this->assertEquals('coeurs défoncés', $internal[0]['lines'][0]);
+    }
+
+    public function testSpecialChars()
+    {
+        $codes = SccConverter::lineToCodes('®');
+        $this->assertEquals('91b0', $codes);
+
+        $codes = SccConverter::lineToCodes('a®');
+        $this->assertEquals('6180 91b0', $codes);
+
+        $codes = SccConverter::lineToCodes('aa®');
+        $this->assertEquals('6161 91b0', $codes);
+
+
+        $lines = SccConverter::sccToLines('91b0');
+        $this->assertEquals(['®'], $lines);
+
+        $lines = SccConverter::sccToLines('6180 91b0');
+        $this->assertEquals(['a®'], $lines);
+
+        $lines = SccConverter::sccToLines('6161 91b0');
+        $this->assertEquals(['aa®'], $lines);
+    }
+
+    public function testExtendedChars()
+    {
+        $codes = SccConverter::lineToCodes('ß');
+        $this->assertEquals('7380 1334', $codes);
+
+        $codes = SccConverter::lineToCodes('aß');
+        $this->assertEquals('6173 1334', $codes);
+
+        $codes = SccConverter::lineToCodes('aaß');
+        $this->assertEquals('6161 7380 1334', $codes);
+
+
+        $lines = SccConverter::sccToLines('7380 1334');
+        $this->assertEquals(['ß'], $lines);
+
+        $lines = SccConverter::sccToLines('6173 1334');
+        $this->assertEquals(['aß'], $lines);
+
+        $lines = SccConverter::sccToLines('6161 7380 1334');
+        $this->assertEquals(['aaß'], $lines);
     }
 }
