@@ -36,14 +36,28 @@ class SmiConverter implements ConverterContract
 
         $syncElements = $doc->getElementsByTagName('sync');
 
+        $data = [];
         foreach ($syncElements as $syncElement) {
             $time = $syncElement->getAttribute('start');
+
+            if(!$syncElement->childNodes->length) {
+                continue;
+            }
 
             foreach ($syncElement->childNodes as $childNode) {
                 $lines = [];
                 $line = '';
+
+                $contentNode = null;
+
                 if ($childNode->nodeName === 'p' || $childNode->nodeName === '#text') {
-                    $line = $doc->saveHTML($childNode);
+                    $contentNode = $childNode;
+                } else if ($childNode->nodeName === 'font' && $childNode->childNodes->length) {
+                    $contentNode = $childNode->childNodes->item(0);
+                }
+
+                if($contentNode) {
+                    $line = $doc->saveHTML($contentNode);
                     $line = preg_replace('/<br\s*\/?>/', '<br>', $line); // normalize <br>
                     $line = str_replace("\u{00a0}", '', $line); // no brake space - &nbsp;
                     $line = str_replace("&amp;nbsp", '', $line); // somebody didn't have semicolon at the end of &nbsp
@@ -62,6 +76,10 @@ class SmiConverter implements ConverterContract
             ];
         }
 
+        if(empty($data)) {
+            return $internal_format;
+        }
+
         $i = 0;
         foreach ($data as $row) {
             if (!isset($internal_format[$i - 1]['end']) && $i !== 0) {
@@ -76,7 +94,7 @@ class SmiConverter implements ConverterContract
             }
         }
         if (!isset($internal_format[$i - 1]['end'])) {
-            $internal_format[$i - 1]['end'] = $internal_format[$i - 1]['start'] + 2.067; // SubtitleEdit adds this time if there is no last nbsp block
+            $internal_format[$i - 1]['end'] = $internal_format[$i - 1]['start'] + 1;
         }
 
         return $internal_format;

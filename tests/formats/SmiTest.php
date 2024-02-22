@@ -42,7 +42,7 @@ class SmiTest extends TestCase {
                 'When we think',
                 'of E equals m c-squared,',
             ])
-            ->add(17.35, 19.417, 'we have this vision of Einstein')
+            ->add(17.35, 18.35, 'we have this vision of Einstein')
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -136,7 +136,27 @@ class SmiTest extends TestCase {
 </SAMI>
 ')->getInternalFormat();
         $expected = (new Subtitles())
-            ->add(141.516, 143.583, 'test')
+            ->add(141.516, 142.516, 'test')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testClientFile3()
+    {
+        $actual = Subtitles::loadFromString('<SAMI>
+<HEAD>
+<TITLE>금토드라마(열혈사제)-35회(19년04월13일(토))</TITLE>
+<HEAD>
+<BODY>
+<SYNC START=144700>
+<SYNC START=145308><FONT COLOR="FFFF00">-야, 처리해. </FONT>
+<SYNC START=145994>-야, 이중권.
+</BODY>
+</SAMI>
+')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(145.308, 145.994, '-야, 처리해.')
+            ->add(145.994, 146.994, '-야, 이중권.')
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
