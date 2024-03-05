@@ -304,15 +304,20 @@ class TtmlConverter implements ConverterContract
             // Select and process subtitle data
             $xml = simplexml_load_string($file_content);
 
-            $namespace = $xml->getNamespaces(true)[''];
+            $namespace_array = $xml->getNamespaces(true);
+            $namespace = array_pop($namespace_array);
             $xml->registerXPathNamespace('ns', $namespace);
 
             $subtitles = $xml->xpath('//ns:Subtitle');
             foreach ($subtitles as $subtitle) {
+                $text = $subtitle->Text->asXML();
+                if ($text === false) {
+                    $text = $subtitle->children('dcst', true)->Text->asXML();
+                }
                 $internal_format[] = [
                     'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
                     'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),
-                    'lines' => self::getLinesFromTextWithBr($subtitle->Text->asXML()),
+                    'lines' => self::getLinesFromTextWithBr($text),
                 ];
             }
         }

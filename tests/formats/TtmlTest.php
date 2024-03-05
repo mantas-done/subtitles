@@ -399,6 +399,35 @@ X;
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testConvertFromXml6b()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="UTF-8"?>
+<dcst:SubtitleReel xmlns:dcst="http://www.smpte-ra.org/schemas/428-7/2010/DCST" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <dcst:Id>urn:uuid:f7e1802b-9aea-4899-bc33-5a9d9011f0e9</dcst:Id>
+  <dcst:ContentTitleText>title</dcst:ContentTitleText>
+  <dcst:AnnotationText>This is a subtitle file</dcst:AnnotationText>
+  <dcst:IssueDate>2024-02-04T20:17:48.000-00:00</dcst:IssueDate>
+  <dcst:ReelNumber>1</dcst:ReelNumber>
+  <dcst:Language>en</dcst:Language>
+  <dcst:EditRate>25 1</dcst:EditRate>
+  <dcst:TimeCodeRate>25</dcst:TimeCodeRate>
+  <dcst:StartTime>00:00:00:00</dcst:StartTime>
+  <dcst:LoadFont ID="theFontId">urn:uuid:3dec6dc0-39d0-498d-97d0-928d2eb78391</dcst:LoadFont>
+  <dcst:SubtitleList>
+    <dcst:Font ID="theFontId" Size="42" Weight="normal" Color="FFFFFFFF" Effect="border" EffectColor="FF000000">
+      <dcst:Subtitle SpotNumber="1" FadeUpTime="00:00:00:00" FadeDownTime="00:00:00:00" TimeIn="00:00:30:04" TimeOut="00:00:33:21">
+        <dcst:Text Vposition="8" Valign="bottom" Halign="center" Direction="ltr">L'extérieur est différent de l'intérieur.</dcst:Text>
+      </dcst:Subtitle>
+    </dcst:Font>
+  </dcst:SubtitleList>
+</dcst:SubtitleReel>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(30.154, 33.808, "L'extérieur est différent de l'intérieur.")->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testConvertFromXml7()
     {
         $text = <<<X
