@@ -42,4 +42,15 @@ class SubMicroDvdTest extends TestCase {
         $expected = $this->defaultSubtitles()->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual, 0.25);
     }
+
+    public function testParsesLinesWithoutDotAtTheEnd()
+    {
+        $content = <<<TEXT
+{0}{100}Subtitle line 1
+{150}{300}Subtitle line 2
+TEXT;
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 4.17, 'Subtitle line 1')->add(6.26, 12.51, 'Subtitle line 2')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

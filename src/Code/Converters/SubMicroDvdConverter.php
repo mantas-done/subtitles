@@ -4,11 +4,11 @@ namespace Done\Subtitles\Code\Converters;
 
 class SubMicroDvdConverter implements ConverterContract
 {
-    static protected $fps = 23.975; // SubtitleEdit by default uses this fps. Taken that value without much thinking. Change it to a better values if you will find.
+    static protected $fps = 23.976; // SubtitleEdit by default uses this fps. Taken that value without much thinking. Change it to a better values if you will find.
 
     public function canParseFileContent($file_content)
     {
-        $pattern = "/\{\d+\}\{\d+\}(.*)\./";
+        $pattern = "/\{\d+\}\{\d+\}(.*)/";
         return preg_match($pattern, $file_content, $matches);
     }
 
