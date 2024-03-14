@@ -70,12 +70,26 @@ class StlTest extends TestCase {
         $this->assertTrue(true);
     }
 
-    public function testTimesBiggerThan24HoursThrowException()
+    public function testTimesBiggerThan24Hours()
+    {
+        $text = <<<TEXT
+99:00:00:00 , 99:00:01:00 , a
+TEXT;
+
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(99 * 3600, 99 * 3600 + 1, 'a')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+
+        $actual = (new Subtitles())->add(99 * 3600, 99 * 3600 + 1, 'a')->content('stl');
+        $this->assertStringContainsString('99:00:01:00', $actual);
+    }
+
+    public function testTimesBiggerThan99HoursThrowException()
     {
         $this->expectException(\Exception::class);
 
         $subtitles = new Subtitles();
-        $subtitles->add(0, 3600 * 24 * 10, 'text');
+        $subtitles->add(3600 * 123 - 1, 3600 * 123, 'text');
         $subtitles->content('stl');
     }
 

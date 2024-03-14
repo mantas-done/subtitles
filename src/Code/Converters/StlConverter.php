@@ -23,8 +23,8 @@ class StlConverter implements ConverterContract
             }
 
             $internal_format[] = [
-                'start' => static::convertFromSrtTime(static::getStartLine($line), $frames_per_seconds),
-                'end' => static::convertFromSrtTime(static::getEndLine($line), $frames_per_seconds),
+                'start' => TxtConverter::timeToInternal(static::getStartLine($line), $frames_per_seconds),
+                'end' => TxtConverter::timeToInternal(static::getEndLine($line), $frames_per_seconds),
                 'lines' => static::getLines($line),
             ];
         }
@@ -81,24 +81,6 @@ class StlConverter implements ConverterContract
         return $end_string;
     }
 
-    protected static function convertFromSrtTime($srt_time, $frames_per_seconds)
-    {
-        $parts = explode(':', $srt_time);
-        $frames = array_pop($parts);
-
-        $tmp_time = implode(':', $parts); // '21:30:10'
-        $only_seconds = strtotime("1970-01-01 $tmp_time UTC");
-
-        if ($frames > $frames_per_seconds - 1) {
-            $frames = $frames_per_seconds - 1;
-        }
-        $milliseconds = $frames / $frames_per_seconds;
-
-        $seconds = $only_seconds + $milliseconds;
-
-        return $seconds;
-    }
-
     protected static function returnFramesFromTime($srt_time)
     {
         $parts = explode(':', $srt_time);
@@ -115,19 +97,22 @@ class StlConverter implements ConverterContract
     }
 
     // stl counts frames at the end (25 - 30 frames)
-    protected static function toStlTime($seconds)
+    protected static function toStlTime($internal_time)
     {
-        if ($seconds >= 86400) {
-            throw new \Exception('conversion function doesnt support more than 1 day, edit the code ' . $seconds);
+        if ($internal_time >= (3600 * 100)) {
+            throw new \Exception('conversion function doesnt support more than 99 hours, edit the code ' . $internal_time);
         }
 
-        $milliseconds = $seconds - (int)$seconds;
+        $milliseconds = $internal_time - (int)$internal_time;
         $frames_unpadded = floor(25 * $milliseconds); // 25 frames
-        $frames = str_pad($frames_unpadded, 2, '0', STR_PAD_LEFT);
 
-        $stl_time = gmdate("H:i:s:$frames", (int)$seconds);
+        $hours = floor($internal_time / 3600);
+        $minutes = floor(((int)$internal_time % 3600) / 60);
+        $remaining_seconds = (int)$internal_time % 60;
 
-        return $stl_time;
+        return sprintf("%02d:%02d:%02d:%02d", $hours, $minutes, $remaining_seconds, $frames_unpadded);
+
+
     }
 
     protected static function toStlLines($lines)
