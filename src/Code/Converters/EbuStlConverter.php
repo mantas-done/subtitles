@@ -20,7 +20,7 @@ class EbuStlConverter implements ConverterContract
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $fps = (int)substr($original_file_content, 6, 2);
-        if (!in_array($fps, [23, 24, 25, 29, 30])) {
+        if (!in_array($fps, [23, 24, 25, 29, 30, 60])) {
             throw new \Exception('unknown fps: ' . $fps);
         }
 
