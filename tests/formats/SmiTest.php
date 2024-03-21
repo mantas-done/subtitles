@@ -73,6 +73,21 @@ class SmiTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testMsNearTimestamp()
+    {
+        $actual = Subtitles::loadFromString('
+<SAMI>
+<BODY>
+<SYNC Start="1000ms"><P Class=ENUSCC>a</P></SYNC>
+</BODY>
+</SAMI>
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(1, 2, 'a')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     public function testNoP()
     {
         $actual = Subtitles::loadFromString('

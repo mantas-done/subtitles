@@ -163,6 +163,10 @@ class SmiConverter implements ConverterContract
      */
     protected static function timeToInternal($format_time)
     {
+        $format_time = str_replace('ms', '', $format_time);
+        if (!is_numeric($format_time)) {
+            throw new \Exception('Not numeric: ' . $format_time);
+        }
         $time = $format_time / 1000;
         if ($time < 0) {
             $time = 0;
