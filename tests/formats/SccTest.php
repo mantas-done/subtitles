@@ -19,28 +19,7 @@ class SccTest extends TestCase {
         $converter = Helpers::getConverterByFileContent($content);
         $this->assertTrue(get_class($converter) === SccConverter::class);
     }
-/*
-    public function testShortensTextIfItIsTooLong()
-    {
-        $content = (new Subtitles())->add(1, 2, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
-        $this->assertEquals('aaaaaaaaaaaa', $actual[0]['lines'][0]);
-    }
-*/
-/*
-    public function testTimestampsAccountForTheDataSendingTime()
-    {
-        $actual = (new Subtitles())->add(1, 2, 'aaaa')->content('scc');
-        $expected = "Scenarist_SCC V1.0
 
-00:00:00;20\t94ae 94ae 9420 9420 9470 9470 6161 6161 942f 942f
-
-00:00:01;26\t942c 942c
-
-";
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
-    }
-*/
     public function testParsesScc()
     {
         $expected = (new Subtitles())->loadFromFile('./tests/files/scc.scc')->getInternalFormat();
@@ -58,7 +37,7 @@ class SccTest extends TestCase {
             "Short line"
         ];
 
-        $actual = SccConverter::splitLongLines($array);
+        $actual = SccConverter::splitLongLines($array, []);
         $expected = [
             "This is a long line that needs",
             "to be split",
@@ -74,7 +53,7 @@ class SccTest extends TestCase {
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a",
         ];
 
-        $actual = SccConverter::splitLongLines($array);
+        $actual = SccConverter::splitLongLines($array, []);
         $expected = [
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "a"
@@ -88,7 +67,7 @@ class SccTest extends TestCase {
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ];
 
-        $actual = SccConverter::splitLongLines($array);
+        $actual = SccConverter::splitLongLines($array, []);
         $expected = [
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa...",
@@ -96,22 +75,6 @@ class SccTest extends TestCase {
         $this->assertEquals($expected, $actual);
     }
 
-/*
-    public function testDoesntAddStopLineIfTimesAreTouching()
-    {
-        $expected = "Scenarist_SCC V1.0
-
-00:00:00;20\t94ae 94ae 9420 9420 9470 9470 ef6e e580 942f 942f
-
-00:00:01;20\t94ae 94ae 9420 9420 9470 9470 f4f7 ef80 942f 942f
-
-00:00:02;26\t942c 942c
-
-";
-        $actual = (new Subtitles())->add(1, 2, 'one')->add(2.01, 3, 'two')->content('scc');
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
-    }
-*/
     public function testIgnoreErasedDisplayMemoryCodeAtStart()
     {
         $string = "Scenarist_SCC V1.0
@@ -246,5 +209,35 @@ class SccTest extends TestCase {
 
         $lines = SccConverter::sccToLines('6161 7380 1334');
         $this->assertEquals(['aaß'], $lines);
+    }
+
+    public function testNoTimeToSendFullTextInNonStrictMode()
+    {
+        $scc = (new Subtitles())->add(1, 2, 'A')->add(2, 3, '123456789 123456789 123456789 123456789 123456789 123456789 ')->content('scc');
+        $actual = Subtitles::loadFromString($scc)->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'A')->add(2, 3, ['123456789 123456789 123456789', '123456789 1234..'])->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual, 0.04);
+    }
+
+    public function testNoTimeToSendFullTextInStrictMode()
+    {
+        $this->expectException(UserException::class);
+
+        (new Subtitles())->add(1, 2, 'A')->add(2, 3, ['123456789 123456789 123456789 123456789 123456789 123456789 '])->content('scc', ['strict' => true]);
+    }
+
+    public function testSplitsLineOver32Characters()
+    {
+        $scc = (new Subtitles())->add(2, 3, '123456789 123456789 123456789 123456789 123456789 123456789 ')->content('scc');
+        $actual = Subtitles::loadFromString($scc)->getInternalFormat();
+        $expected = (new Subtitles())->add(2, 3, ['123456789 123456789 123456789', '123456789 123456789 123456789'])->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual, 0.05);
+    }
+
+    public function testThrowsExceptionInStrictModeIfLineIsOver32Characters()
+    {
+        $this->expectException(UserException::class);
+
+        (new Subtitles())->add(2, 3, '123456789 123456789 123456789 123456789 123456789 123456789 ')->content('scc', ['strict' => true]);
     }
 }

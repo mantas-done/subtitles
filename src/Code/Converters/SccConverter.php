@@ -124,7 +124,7 @@ class SccConverter implements ConverterContract
                 // to little time to show something
                 continue;
             }
-            $lines = self::splitLongLines($block['lines']);
+            $lines = self::splitLongLines($block['lines'], $output_settings);
             $codes = self::textToSccText($lines);
 
             $code_blockes = explode(' ', $codes); // missing 2 start and 1 end block
@@ -132,6 +132,9 @@ class SccConverter implements ConverterContract
             $frames_to_send = $frames_to_send_text + 2 + 1 + 1; // 2 for start, 1 for end, 1 in case need to clear buffer
             $to_many_frames = $frames_to_send - $frames_available;
             if ($to_many_frames > 0) {
+                if (isset($output_settings['strict']) && $output_settings['strict']) {
+                    throw new UserException('There is no enough time to send text. Shorten the text or increase the time gap between captions. Text: ' . SrtConverter::internalTimeToSrt($block['start']) . ' ' . implode(' / ', $block['lines']));
+                }
                 $code_blockes = array_slice($code_blockes, 0, -($to_many_frames + 1)); // remove blocks that we won't be able to send
                 $code_blockes[] = 'aeae'; // ..
             }
@@ -247,10 +250,13 @@ class SccConverter implements ConverterContract
     }
 
     // makes max 4 lines with up to 32 characters each
-    public static function splitLongLines($lines)
+    public static function splitLongLines($lines, $output_settings)
     {
         $new_lines = [];
         if (mb_strlen($lines[0]) > 32) {
+            if (isset($output_settings['strict']) && $output_settings['strict']) {
+                throw new UserException('Line is longer that 32 characters: "' . $lines[0] . '"');
+            }
             $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[0], 32, "\n", true));
             if (isset($tmp_lines[2])) {
                 $tmp_lines[1] = substr_replace($tmp_lines[1], '...', -3);
@@ -261,6 +267,9 @@ class SccConverter implements ConverterContract
             $new_lines[] = $lines[0];
         }
         if (isset($lines[1])) {
+            if (isset($output_settings['strict']) && $output_settings['strict']) {
+                throw new UserException('Line is longer that 32 characters: "' . $lines[1] . '"');
+            }
             if (mb_strlen($lines[1]) > 32) {
                 $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[1], 32, "\n", true));
                 if (isset($tmp_lines[2])) {
