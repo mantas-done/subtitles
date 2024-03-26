@@ -6,7 +6,7 @@ use Done\Subtitles\Code\UserException;
 
 class TxtConverter implements ConverterContract
 {
-    public static $time_regexp = '/(?:\d{2}:)(?:\d{1,2}:)(?:\d{1,2}:)\d{1,3}|(?:\d{1,2}:)?(?:\d{1,2}:)\d{1,3}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
+    public static $time_regexp = '/(?:\d{2}[:;])(?:\d{1,2}[:;])(?:\d{1,2}[:;])\d{1,3}|(?:\d{1,2}[:;])?(?:\d{1,2}[:;])\d{1,3}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
     private static $any_letter_regex = '/\p{L}/u';
 
     public function canParseFileContent($file_content)
@@ -49,7 +49,7 @@ class TxtConverter implements ConverterContract
         foreach ($lines as $line) {
             $tmp = self::getLineParts($line, $colon_count, $timestamp_count) + ['line' => $line];
             if ($tmp['start'] !== null) { // only if timestamp format matches add timestamps
-                if (substr_count($tmp['start'], ':') >= $colon_count) {
+                if (substr_count($tmp['start'], ':') >= $colon_count || substr_count($tmp['start'], ';') >= $colon_count) {
                     $tmp['start'] = self::timeToInternal($tmp['start'], $fps);
                     $tmp['end'] = $tmp['end'] != null ? self::timeToInternal($tmp['end'], $fps) : null;
                     $seen_first_timestamp = true;
@@ -166,7 +166,9 @@ class TxtConverter implements ConverterContract
             if (!$timestamps['start']) {
                 continue;
             }
-            $count = substr_count($timestamps['start'], ':');
+
+            $tmp = str_replace(';', ':', $timestamps['start']);
+            $count = substr_count($tmp, ':');
             if (!isset($counts[$count])) {
                 $counts[$count] = 0;
             }
@@ -287,13 +289,13 @@ class TxtConverter implements ConverterContract
         // there shouldn't be any text before the timestamp
         // if there is text before it, then it is not a timestamp
         $right_timestamp = '';
-        if (isset($timestamps['start']) && substr_count($timestamps['start'], ':') >= $colon_count) {
+        if (isset($timestamps['start']) && (substr_count($timestamps['start'], ':') >= $colon_count || substr_count($timestamps['start'], ';') >= $colon_count)) {
             $text_before_timestamp = substr($line, 0, strpos($line, $timestamps['start']));
             if (!self::hasText($text_before_timestamp)) {
                 // start
                 $matches['start'] = $timestamps['start'];
                 $right_timestamp = $matches['start'];
-                if ($timestamp_count === 2 && isset($timestamps['end']) && substr_count($timestamps['end'], ':') >= $colon_count) {
+                if ($timestamp_count === 2 && isset($timestamps['end']) && (substr_count($timestamps['end'], ':') >= $colon_count || substr_count($timestamps['end'], ';') >= $colon_count)) {
                     // end
                     $matches['end'] = $timestamps['end'];
                     $right_timestamp = $matches['end'];
@@ -323,6 +325,7 @@ class TxtConverter implements ConverterContract
     public static function timeToInternal(string $time, $fps)
     {
         $time = trim($time);
+        $time = str_replace(';', ':', $time);
         $time_parts = explode(':', $time);
         $total_parts = count($time_parts);
 
