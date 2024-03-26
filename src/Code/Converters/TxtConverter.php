@@ -41,6 +41,7 @@ class TxtConverter implements ConverterContract
         if ($colon_count === 3) {
             $fps = self::maxFps($lines);
         }
+        var_dump($fps);
         $timestamp_count = self::timestampCount($lines);
 
         // line parts to array
@@ -196,6 +197,7 @@ class TxtConverter implements ConverterContract
             if (!$timestamps['start']) {
                 continue;
             }
+            $timestamps['start'] = str_replace(';', ':', $timestamps['start']);
             $parts = explode(':', $timestamps['start']);
             if (count($parts) !== 4) {
                 continue;
@@ -208,6 +210,7 @@ class TxtConverter implements ConverterContract
             if (!$timestamps['end']) {
                 continue;
             }
+            $timestamps['end'] = str_replace(';', ':', $timestamps['end']);
             $parts = explode(':', $timestamps['end']);
             if (count($parts) !== 4) {
                 continue;
