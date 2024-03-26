@@ -133,7 +133,7 @@ class SccConverter implements ConverterContract
             $to_many_frames = $frames_to_send - $frames_available;
             if ($to_many_frames > 0) {
                 if (isset($output_settings['strict']) && $output_settings['strict']) {
-                    throw new UserException('There is no enough time to send text. Shorten the text or increase the time gap between captions. Text: ' . SrtConverter::internalTimeToSrt($block['start']) . ' ' . implode(' / ', $block['lines']));
+                    throw new UserException('There is not enough time to send the text in SCC format. Shorten the text or increase the time gap between captions: ' . SrtConverter::internalTimeToSrt($block['start']) . ' -> ' . implode(' / ', $block['lines']));
                 }
                 $code_blockes = array_slice($code_blockes, 0, -($to_many_frames + 1)); // remove blocks that we won't be able to send
                 $code_blockes[] = 'aeae'; // ..
@@ -255,7 +255,7 @@ class SccConverter implements ConverterContract
         $new_lines = [];
         if (mb_strlen($lines[0]) > 32) {
             if (isset($output_settings['strict']) && $output_settings['strict']) {
-                throw new UserException('Line is longer that 32 characters: "' . $lines[0] . '"');
+                throw new UserException('Line should be up to 32 characters: "' . $lines[0] . '"');
             }
             $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[0], 32, "\n", true));
             if (isset($tmp_lines[2])) {
@@ -267,10 +267,10 @@ class SccConverter implements ConverterContract
             $new_lines[] = $lines[0];
         }
         if (isset($lines[1])) {
-            if (isset($output_settings['strict']) && $output_settings['strict']) {
-                throw new UserException('Line is longer that 32 characters: "' . $lines[1] . '"');
-            }
             if (mb_strlen($lines[1]) > 32) {
+                if (isset($output_settings['strict']) && $output_settings['strict']) {
+                    throw new UserException('Line should be up to 32 characters: "' . $lines[1] . '"');
+                }
                 $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[1], 32, "\n", true));
                 if (isset($tmp_lines[2])) {
                     $tmp_lines[1] = substr_replace($tmp_lines[1], '...', -3);
