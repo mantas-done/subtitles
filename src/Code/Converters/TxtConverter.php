@@ -41,7 +41,6 @@ class TxtConverter implements ConverterContract
         if ($colon_count === 3) {
             $fps = self::maxFps($lines);
         }
-        var_dump($fps);
         $timestamp_count = self::timestampCount($lines);
 
         // line parts to array
