@@ -53,4 +53,15 @@ TEXT;
         $expected = (new Subtitles())->add(0, 4.17, 'Subtitle line 1')->add(6.26, 12.51, 'Subtitle line 2')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testUsesSpecifiedFps()
+    {
+        $content = <<<TEXT
+{1}{1}25
+{25}{50}Subtitle line 2
+TEXT;
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'Subtitle line 2')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

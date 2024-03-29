@@ -14,15 +14,21 @@ class SubMicroDvdConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
+        $fps = self::$fps;
+
         $pattern = "/\{(\d+)\}\{(\d+)\}(\{.*\})?(.+)/";
         preg_match_all($pattern, $file_content, $blocks, PREG_SET_ORDER);
 
         $internal_format = [];
-        foreach ($blocks as $block) {
+        foreach ($blocks as $k => $block) {
+            if ($k === 0 && is_numeric($block[4])) {
+                $fps = $block[4];
+                continue;
+            }
 
             $internal_format[] = [
-                'start' => static::timeToInternal($block[1]),
-                'end' => static::timeToInternal($block[2]),
+                'start' => static::timeToInternal($block[1], $fps),
+                'end' => static::timeToInternal($block[2], $fps),
                 'lines' => explode("|", $block[4]),
             ];
         }
@@ -60,9 +66,9 @@ class SubMicroDvdConverter implements ConverterContract
      *
      * @return float
      */
-    protected static function timeToInternal($sub_time)
+    protected static function timeToInternal($sub_time, $fps)
     {
-        return $sub_time / self::$fps;
+        return $sub_time / $fps;
     }
 
     /**
