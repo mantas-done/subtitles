@@ -193,10 +193,11 @@ TEXT;
 
     }
 
-    public function testSpeakerInFront()
+    public function testSpeakerInFrontAndEmptyLines()
     {
         $string = <<< TEXT
 "Speaker Name","Start Time","End Time","Text"
+
 "Unknown","00:00:00:00","00:00:01:00","a"
 
 TEXT;
