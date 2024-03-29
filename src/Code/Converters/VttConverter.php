@@ -18,7 +18,9 @@ class VttConverter implements ConverterContract
 
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
-        $lines = mb_split("\n", $file_content);
+        $content = self::removeComments($file_content);
+
+        $lines = mb_split("\n", $content);
         $colon_count = 1;
         $internal_format = [];
         $i = -1;
@@ -154,5 +156,27 @@ class VttConverter implements ConverterContract
         $srt_time = gmdate("H:i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
 
         return $srt_time;
+    }
+
+    protected static function removeComments($content)
+    {
+        $lines = mb_split("\n", $content);
+        $lines = array_map('trim', $lines);
+        $new_lines = [];
+        $is_comment = false;
+        foreach ($lines as $line) {
+            if ($is_comment && strlen($line)) {
+                continue;
+            }
+            if (strpos($line, 'NOTE ') === 0) {
+                $is_comment = true;
+                continue;
+            }
+            $is_comment = false;
+            $new_lines[] = $line;
+        }
+
+        $new_content = implode("\n", $new_lines);
+        return $new_content;
     }
 }

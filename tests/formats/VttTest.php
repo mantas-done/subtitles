@@ -425,4 +425,31 @@ TEXT;
             ->getInternalFormat();
         $this->assertEquals($expected, $actual);
     }
+
+    public function testComment()
+    {
+        $input_vtt_file_content = <<< TEXT
+WEBVTT
+
+00:00:00.000 --> 00:00:01.000
+a
+
+NOTE comment
+comment
+
+00:00:01.000 --> 00:00:02.000
+b
+
+NOTE comment
+
+00:00:02.000 --> 00:00:03.000
+c
+
+TEXT;
+
+        $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->add(2, 3, 'c')->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
