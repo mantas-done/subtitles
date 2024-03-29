@@ -222,10 +222,17 @@ class TtmlConverter implements ConverterContract
         $internal_format = [];
         $subtitles = $xml->xpath('//Subtitle');
         foreach ($subtitles as $subtitle) {
+            $lines = [];
+            foreach ($subtitle->Text as $line) {
+                $tmp_lines = self::getLinesFromTextWithBr((string)$line->asXML());
+                foreach ($tmp_lines as $tmp_line) {
+                    $lines[] = $tmp_line;
+                }
+            }
             $internal_format[] = array(
                 'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
                 'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),
-                'lines' => self::getLinesFromTextWithBr((string)$subtitle->Text->asXML()),
+                'lines' => $lines,
             );
         }
 
@@ -292,10 +299,17 @@ class TtmlConverter implements ConverterContract
         $internal_format = [];
 
         foreach ($xml->Paragraph as $paragraph) {
+            $lines = [];
+            foreach ($paragraph->Text as $line) {
+                $tmp_lines = self::getLinesFromTextWithBr((string)$line->asXML());
+                foreach ($tmp_lines as $tmp_line) {
+                    $lines[] = $tmp_line;
+                }
+            }
              $subtitle = [
                 'start' => (int)$paragraph->StartMilliseconds / 1000,
                 'end' => (int)$paragraph->EndMilliseconds / 1000,
-                'lines' => self::getLinesFromTextWithBr($paragraph->Text->asXML()),
+                'lines' => $lines,
             ];
             $internal_format[] = $subtitle;
         }

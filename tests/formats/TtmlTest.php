@@ -500,4 +500,28 @@ X;
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testMultipleLines()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="UTF-8"?>
+<DCSubtitle Version="1.0">
+  <SubtitleID>b74d4623-4dd7-486f-831f-24a453894c7d</SubtitleID>
+  <MovieTitle>CONSEGUENZEen</MovieTitle>
+  <ReelNumber>Unico</ReelNumber>
+  <Language>English</Language>
+  <Font Color="FFFFFFFF" Effect="border" EffectColor="FF000000" Size="42" Weight="normal">
+    <Font Italic="yes">
+      <Subtitle SpotNumber="2" TimeIn="00:00:01:000" TimeOut="00:00:02:000" FadeUpTime="0" FadeDownTime="0">
+        <Text Direction="horizontal" HAlign="center" HPosition="0.0" VAlign="bottom" VPosition="14.0">The worst thing for a man</Text>
+        <Text Direction="horizontal" HAlign="center" HPosition="0.0" VAlign="bottom" VPosition="6.0">who spends a lot of time alone</Text>
+      </Subtitle>
+    </Font>
+  </Font>
+</DCSubtitle>
+X;
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, ['The worst thing for a man', 'who spends a lot of time alone'])->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
