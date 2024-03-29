@@ -17,32 +17,32 @@ class CsvConverter implements ConverterContract
     {
         $csv = self::csvToArray(trim($file_content));
 
-        if (!isset($csv[1][0]) || !isset($csv[1][0])) {
+        $count = count($csv);
+        if ($count <  2) {
             return false;
         }
-        $is_end_time = (bool) preg_match(self::timeRegex(), $csv[1][1]);
-        if ($is_end_time && !isset($csv[1][2])) {
-            return false;
-        }
+        $last_row = $csv[$count - 1];
 
-        $row_count = null;
-        foreach ($csv as $rows) {
-            $count = count($rows);
-            if ($row_count === null) {
-                $row_count = $count;
+        $has_timestamp = false;
+        $has_text = false;
+        foreach ($last_row as $cell) {
+            $is_time = (bool)preg_match(self::timeRegex(), $cell);
+            $timestamp = preg_replace(self::timeRegex(), '', $cell);
+            $only_timestamp_in_cell = trim($timestamp) === '';
+            if ($is_time) {
+                if ($only_timestamp_in_cell) {
+                    $has_timestamp = true;
+                    continue;
+                } else {
+                    return false;
+                }
             }
-            if ($row_count !== $count) {
-                return false; // if not every row has the same column count
+            $is_text = TxtConverter::hasText($cell);
+            if ($has_timestamp && $is_text) {
+                return true;
             }
         }
-
-        if (!isset($csv[1][0])) {
-            return false;
-        }
-        $cell = $csv[1][0];
-        $timestamp = preg_replace(self::timeRegex(), '', $cell);
-        $only_timestamp_on_first_column = trim($timestamp) === '';
-        return count($csv[1]) >= 2 && $only_timestamp_on_first_column; // at least 2 columns: timestamp + text
+        return $has_timestamp && $has_text;
     }
 
     /**
@@ -62,9 +62,6 @@ class CsvConverter implements ConverterContract
         $column_count = count($last_row);
         $checked_column = 0;
         foreach ($last_row as $k => $column) {
-            if (TxtConverter::hasText($column)) {
-                break;
-            }
             if (preg_match(self::timeRegex(), $column)) {
                 $start_time_column = $k;
                 $checked_column = $k;

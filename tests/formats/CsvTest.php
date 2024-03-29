@@ -192,4 +192,19 @@ TEXT;
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
 
     }
+
+    public function testSpeakerInFront()
+    {
+        $string = <<< TEXT
+"Speaker Name","Start Time","End Time","Text"
+"Unknown","00:00:00:00","00:00:01:00","a"
+
+TEXT;
+        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $expected_internal_format = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->getInternalFormat();
+
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
 }
