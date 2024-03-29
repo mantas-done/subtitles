@@ -2,6 +2,7 @@
     "name": "mantas-done/subtitles",
     "description": "Subtitle converter and generator for PHP",
     "type": "library",
+    "license": "MIT",
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
