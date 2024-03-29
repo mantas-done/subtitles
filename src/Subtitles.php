@@ -6,8 +6,9 @@ use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Converters\BinaryFinder;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
-use Done\Subtitles\Code\Converters\EbuStlConverter;
+use Done\Subtitles\Code\Converters\EbuStlReader;
 use Done\Subtitles\Code\Converters\LrcConverter;
+use Done\Subtitles\Code\Converters\RtfReader;
 use Done\Subtitles\Code\Converters\SbvConverter;
 use Done\Subtitles\Code\Converters\SccConverter;
 use Done\Subtitles\Code\Converters\SmiConverter;
@@ -39,7 +40,7 @@ class Subtitles
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
         ['extension' => 'srt',  'format' => 'srt',              'name' => 'SubRip',                     'class' => SrtConverter::class],
         ['extension' => 'stl',  'format' => 'stl',              'name' => 'Spruce Subtitle File',       'class' => StlConverter::class],
-        ['extension' => 'stl',  'format' => 'ebu_stl',          'name' => 'EBU STL',                    'class' => EbuStlConverter::class], // text needs to be converted from iso6937 encoding. PHP doesn't support it natively
+        ['extension' => 'stl',  'format' => 'ebu_stl',          'name' => 'EBU STL',                    'class' => EbuStlReader::class], // text needs to be converted from iso6937 encoding. PHP doesn't support it natively
         ['extension' => 'sub',  'format' => 'sub_microdvd',     'name' => 'MicroDVD',                   'class' => SubMicroDvdConverter::class],
         ['extension' => 'sub',  'format' => 'sub_subviewer',    'name' => 'SubViewer2.0',               'class' => SubViewerConverter::class],
         ['extension' => 'ttml', 'format' => 'ttml',             'name' => 'TimedText 1.0',              'class' => TtmlConverter::class],
@@ -48,8 +49,9 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
         ['extension' => 'scc',  'format' => 'scc',              'name' => 'Scenarist',                  'class' => SccConverter::class],
         ['extension' => 'lrc',  'format' => 'lrc',              'name' => 'LyRiCs',                     'class' => LrcConverter::class],
+//        ['extension' => 'rtf',  'format' => 'rtf',              'name' => 'Rich text format',           'class' => RtfReader::class], // libraryies eather throws exception, not parses, or takes long to parse 2h file
         ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class], // must be last from bottom
-        ['extension' => 'bin',  'format' => 'bin',              'name' => 'Binary',                     'class' => BinaryFinder::class], // must be the last one
+        ['extension' => 'bin',  'format' => 'bin',              'name' => 'Binary',                     'class' => BinaryFinder::class],
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class], // must be the last one
     ];
 
