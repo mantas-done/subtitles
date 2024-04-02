@@ -16,12 +16,15 @@ class RtfReader implements ConverterContract
 
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
-
+        // https://stackoverflow.com/a/63029792/4126621
+        $text = preg_replace("/(\{.*\})|}|(\\\\(?!')\S+)/m", '', $original_file_content);
+        $text = trim($text);
+        return Subtitles::loadFromString($text)->getInternalFormat();
     }
 
     public function internalFormatToFileContent(array $internal_format, array $options)
     {
-        // not implemented
+        throw new \Exception('not implemented');
     }
 
 

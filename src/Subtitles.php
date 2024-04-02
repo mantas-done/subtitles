@@ -49,7 +49,7 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
         ['extension' => 'scc',  'format' => 'scc',              'name' => 'Scenarist',                  'class' => SccConverter::class],
         ['extension' => 'lrc',  'format' => 'lrc',              'name' => 'LyRiCs',                     'class' => LrcConverter::class],
-//        ['extension' => 'rtf',  'format' => 'rtf',              'name' => 'Rich text format',           'class' => RtfReader::class], // libraryies eather throws exception, not parses, or takes long to parse 2h file
+        ['extension' => 'rtf',  'format' => 'rtf',              'name' => 'Rich text format',           'class' => RtfReader::class], // libraryies eather throws exception, not parses, or takes long to parse 2h file
         ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class], // must be last from bottom
         ['extension' => 'bin',  'format' => 'bin',              'name' => 'Binary',                     'class' => BinaryFinder::class],
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class], // must be the last one
