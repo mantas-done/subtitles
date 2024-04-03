@@ -2,34 +2,42 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Helpers;
+
 class SubMicroDvdConverter implements ConverterContract
 {
     static protected $fps = 23.976; // SubtitleEdit by default uses this fps. Taken that value without much thinking. Change it to a better values if you will find.
 
+
+    static $pattern = '/(?:\{|\[)(?<start>\d+)(?:\}|\])(?:\{|\[)(?<end>\d+)(?:\}|\])(?<text>.+)/';
     public function canParseFileContent($file_content)
     {
-        $pattern = "/\{\d+\}\{\d+\}(.*)/";
-        return preg_match($pattern, $file_content, $matches);
+        return preg_match(self::$pattern, $file_content, $matches);
     }
 
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
         $fps = self::$fps;
 
-        $pattern = "/\{(\d+)\}\{(\d+)\}(\{.*\})?(.+)/";
-        preg_match_all($pattern, $file_content, $blocks, PREG_SET_ORDER);
+        preg_match_all(self::$pattern, $file_content, $blocks, PREG_SET_ORDER);
 
         $internal_format = [];
         foreach ($blocks as $k => $block) {
-            if ($k === 0 && is_numeric($block[4])) {
-                $fps = $block[4];
+            if ($k === 0 && is_numeric($block['text'])) {
+                $fps = $block['text'];
                 continue;
             }
 
+            $lines = explode("|", $block['text']);
+            foreach ($lines as &$line) {
+                $line = Helpers::strAfterLast($line, '}');
+            }
+            unset($line);
+
             $internal_format[] = [
-                'start' => static::timeToInternal($block[1], $fps),
-                'end' => static::timeToInternal($block[2], $fps),
-                'lines' => explode("|", $block[4]),
+                'start' => static::timeToInternal($block['start'], $fps),
+                'end' => static::timeToInternal($block['end'], $fps),
+                'lines' => $lines,
             ];
         }
         return $internal_format;

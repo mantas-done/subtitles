@@ -64,4 +64,14 @@ TEXT;
         $expected = (new Subtitles())->add(1, 2, 'Subtitle line 2')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testParsesSquareBrackets()
+    {
+        $content = <<<TEXT
+[0][100]{y:i}text
+TEXT;
+        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 4.17, 'text')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

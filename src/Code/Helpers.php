@@ -238,4 +238,19 @@ class Helpers
 
         return $result;
     }
+
+    public static function strAfterLast($subject, $search)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $position = strrpos($subject, (string) $search);
+
+        if ($position === false) {
+            return $subject;
+        }
+
+        return substr($subject, $position + strlen($search));
+    }
 }
