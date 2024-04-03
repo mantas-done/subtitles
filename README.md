@@ -9,24 +9,25 @@
 
 ## Supported formats
 
-| Format | Extension | Internal format name |
-| --- | --- | --- |
-| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format) | .srt | srt |
-| [WebVTT](https://en.wikipedia.org/wiki/WebVTT) | .vtt | vtt |
-| [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ) | .stl | stl |
-| [EBU STL (only decoder)](https://tech.ebu.ch/docs/tech/tech3264.pdf) | .stl | ebu_stl |
-| [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv | sbv |
-| [SubViewer](https://wiki.videolan.org/SubViewer) | .sub | sub_subviewer |
-| [MicroDVD](https://en.wikipedia.org/wiki/MicroDVD) | .sub | sub_microdvd |
-| Advanced Sub Station | .ass | ass |
-| [Netflix Timed Text](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .dfxp | dfxp |
-| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language) | .ttml | ttml |
-| [SAMI](https://en.wikipedia.org/wiki/SAMI) | .smi | smi |
-| QuickTime | .qt.txt | txt_quicktime |
-| [Scenarist](http://www.theneitherworld.com/mcpoodle/SCC_TOOLS/DOCS/SCC_FORMAT.HTML) | .scc | scc |
-| [LyRiCs](https://en.wikipedia.org/wiki/LRC_(file_format)) | .lrc | lrc |
-| Comma separated values | .csv | csv |
-| Plaintext | .txt | txt |
+| Format                                                                                                | Extension | Internal format name |
+|-------------------------------------------------------------------------------------------------------|-----------|----------------------|
+| [SubRip](https://en.wikipedia.org/wiki/SubRip#SubRip_text_file_format)                                | .srt      | srt                  |
+| [WebVTT](https://en.wikipedia.org/wiki/WebVTT)                                                        | .vtt      | vtt                  |
+| [Scenarist](http://www.theneitherworld.com/mcpoodle/SCC_TOOLS/DOCS/SCC_FORMAT.HTML)                   | .scc      | scc                  |
+| [EBU STL (only reader)](https://tech.ebu.ch/docs/tech/tech3264.pdf)                                   | .stl      | ebu_stl              |
+| [Spruce Technologies SubTitles](https://pastebin.com/ykGM9qjZ)                                        | .stl      | stl                  |
+| [Youtube Subtitles](https://webdev-il.blogspot.lt/2010/01/sbv-file-format-for-youtube-subtitles.html) | .sbv      | sbv                  |
+| [SubViewer](https://wiki.videolan.org/SubViewer)                                                      | .sub      | sub_subviewer        |
+| [MicroDVD](https://en.wikipedia.org/wiki/MicroDVD)                                                    | .sub      | sub_microdvd         |
+| Advanced Sub Station                                                                                  | .ass      | ass                  |
+| [Netflix Timed Text](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language)                        | .dfxp     | dfxp                 |
+| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language)                                      | .ttml     | ttml                 |
+| [SAMI](https://en.wikipedia.org/wiki/SAMI)                                                            | .smi      | smi                  |
+| QuickTime                                                                                             | .qt.txt   | txt_quicktime        |
+| Rich text format (only reader)                                                                        | .rtf      | rtf                  |
+| [LyRiCs](https://en.wikipedia.org/wiki/LRC_(file_format))                                             | .lrc      | lrc                  |
+| Comma separated values                                                                                | .csv      | csv                  |
+| Plaintext                                                                                             | .txt      | txt                  |
 
 ## Command line
 Can be used from the command line to convert from .srt to .vtt
