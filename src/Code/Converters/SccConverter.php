@@ -255,7 +255,7 @@ class SccConverter implements ConverterContract
         $new_lines = [];
         if (mb_strlen($lines[0]) > 32) {
             if (isset($output_settings['strict']) && $output_settings['strict']) {
-                throw new UserException('Line should be up to 32 characters: "' . $lines[0] . '"');
+                throw new UserException('SCC format supports lines up to 32 characters, this line is longer: "' . $lines[0] . '"');
             }
             $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[0], 32, "\n", true));
             if (isset($tmp_lines[2])) {
@@ -269,7 +269,7 @@ class SccConverter implements ConverterContract
         if (isset($lines[1])) {
             if (mb_strlen($lines[1]) > 32) {
                 if (isset($output_settings['strict']) && $output_settings['strict']) {
-                    throw new UserException('Line should be up to 32 characters: "' . $lines[1] . '"');
+                    throw new UserException('SCC format supports lines up to 32 characters, this line is longer: "' . $lines[1] . '"');
                 }
                 $tmp_lines = explode("\n", Helpers::mb_wordwrap($lines[1], 32, "\n", true));
                 if (isset($tmp_lines[2])) {
