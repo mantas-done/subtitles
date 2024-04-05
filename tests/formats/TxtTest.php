@@ -455,6 +455,20 @@ rz´2_ÿ¿®ŽÖÅâÖÉ
         ')->getInternalFormat();
     }
 
+    public function testNumberBeforeTimestamp()
+    {
+        $actual = Subtitles::loadFromString('1 00:00:01:00 00:00:02:00 a')->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'a')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testDoesNotRemoveNotHtmlTag()
+    {
+        $actual = Subtitles::loadFromString('text <a sentence> <div>')->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'text <a sentence>')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

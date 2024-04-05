@@ -23,6 +23,14 @@ class CsvConverter implements ConverterContract
         }
         $last_row = $csv[$count - 1];
 
+        // check if each row has the same column count
+        $last_row_count = count($last_row);
+        foreach ($csv as $row) {
+            if (count($row) !== $last_row_count) {
+                return false; // this is not a csv file
+            }
+        }
+
         $has_timestamp = false;
         $has_text = false;
         foreach ($last_row as $cell) {

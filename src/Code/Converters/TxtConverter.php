@@ -2,6 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Code\UserException;
 
 class TxtConverter implements ConverterContract
@@ -122,7 +123,10 @@ class TxtConverter implements ConverterContract
 
         // strip html
         foreach ($internal_format as &$row) {
-            $row['lines'] = array_map('strip_tags', $row['lines']);
+            foreach ($row['lines'] as &$line) {
+                $line = Helpers::removeOnlyHtmlTags($line);
+            }
+            unset($line);
         }
         unset($row);
 
@@ -369,7 +373,7 @@ class TxtConverter implements ConverterContract
             if (isset($timestamps[0][0])) {
                 $start = $timestamps[0][0];
                 $before = self::strBefore($line, $start);
-                if (self::hasText($before) || self::hasDigit($before)) {
+                if (self::hasText($before)) {
                     continue;
                 }
                 $lines_with_timestamp_count++;
@@ -422,6 +426,16 @@ class TxtConverter implements ConverterContract
             $internal_format[] = ['lines' => [$line]];
         }
         $internal_format = self::fillStartAndEndTimes($internal_format);
+
+        // strip html
+        foreach ($internal_format as &$row) {
+            foreach ($row['lines'] as &$line) {
+                $line = Helpers::removeOnlyHtmlTags($line);
+            }
+            unset($line);
+        }
+        unset($row);
+
         return $internal_format;
     }
 
@@ -491,6 +505,15 @@ class TxtConverter implements ConverterContract
                 }
             }
         }
+
+        // strip html
+        foreach ($internal_format as &$row) {
+            foreach ($row['lines'] as &$line) {
+                $line = Helpers::removeOnlyHtmlTags($line);
+            }
+            unset($line);
+        }
+        unset($row);
 
         return self::fillStartAndEndTimes($internal_format);
     }

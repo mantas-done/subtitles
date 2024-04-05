@@ -253,4 +253,83 @@ class Helpers
 
         return substr($subject, $position + strlen($search));
     }
+
+    public static function strBefore($subject, $search)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $result = strstr($subject, (string) $search, true);
+
+        return $result === false ? $subject : $result;
+    }
+
+    public static function removeOnlyHtmlTags($string)
+    {
+        $letters = preg_split('//u', $string, null, PREG_SPLIT_NO_EMPTY);
+        $parts = [];
+        $current_text = '';
+        foreach ($letters as $letter) {
+            if ($letter === '<') {
+                if ($current_text !== '') {
+                    $parts[] = $current_text;
+                    $current_text = '<';
+                } else {
+                    $current_text = '<';
+                }
+            } elseif ($letter === '>') {
+                $current_text .= '>';
+                $parts[] = $current_text;
+                $current_text = '';
+            } else {
+                $current_text .= $letter;
+            }
+        }
+        if ($current_text !== '') {
+            $parts[] = $current_text;
+        }
+
+        $text = '';
+        foreach ($parts as $part) {
+            if (!Helpers::isRealHtmlTag($part)) {
+                $text .= $part;
+            }
+        }
+        $text = preg_replace('/\s+/', ' ', $text);
+        return $text;
+    }
+
+    private static function isRealHtmlTag($tag)
+    {
+        $starts = ['div', 'p', 'a', 'b', 'i', 'u', 'strong', 'img', 'ul', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'input', 'br', 'font'];
+        $attributes = ['id', 'class', 'href', 'src', 'alt', 'title', 'style', 'target', 'rel', 'type', 'color', 'size'];
+
+        $found_start = false;
+        foreach ($starts as $start) {
+            if (preg_match("/^<\s*\/?\s*$start\s*\/?\s*>/i", $tag)) {
+                return true;
+            }
+
+            $tag_start = Helpers::strBefore($tag, ' ');
+            if ($tag_start === "<$start") {
+                $found_start = true;
+                break;
+            }
+        }
+        if (!$found_start) {
+            return false;
+        }
+
+        if (strpos($tag, '>') === false) {
+            return false; // no closing tag
+        }
+
+        foreach ($attributes as $attribute) {
+            if (preg_match("/ $attribute\s*=/i", $tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

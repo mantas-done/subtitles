@@ -2,6 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Code\UserException;
 
 class SrtConverter implements ConverterContract
@@ -52,7 +53,7 @@ class SrtConverter implements ConverterContract
                 throw new UserException("Arrow should looks like this --> for srt format on line: " . $line . ' (SrtConverter)');
             */
             } elseif ($parts['text'] !== null) {
-                $internal_format[$i]['lines'][] = strip_tags($line);
+                $internal_format[$i]['lines'][] = Helpers::removeOnlyHtmlTags($line);
             }
 
             if (!$saw_start) {
