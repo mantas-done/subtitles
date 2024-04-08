@@ -93,4 +93,19 @@ TEXT;
         $subtitles->content('stl');
     }
 
+    public function testClientFile()
+    {
+        $text = '
+$FadeOut			=	0
+$TapeOffset			=	TRUE
+ 
+$HorzAlign	=	Center
+'."00:00:00:00\t,\t00:00:01:00\t,\ta
+00:00:01:00\t,\t00:00:02:00\t,\tb
+";
+
+        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }
