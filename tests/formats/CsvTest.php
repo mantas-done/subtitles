@@ -208,4 +208,13 @@ TEXT;
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
+
+    public function testDifferentElementCountShouldntBeInterpretedAsCsv()
+    {
+        $csv = 'Start,End,Text
+hi
+3740.476,3742.501,"Very good, Lieutenant."';
+        $converter = Helpers::getConverterByFileContent($csv);
+        $this->assertTrue(get_class($converter) !== CsvConverter::class, get_class($converter));
+    }
 }
