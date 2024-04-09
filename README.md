@@ -25,6 +25,7 @@
 | [SAMI](https://en.wikipedia.org/wiki/SAMI)                                                            | .smi      | smi                  |
 | QuickTime                                                                                             | .qt.txt   | txt_quicktime        |
 | Rich text format (only reader)                                                                        | .rtf      | rtf                  |
+| DOCX (only reader)                                                                                    | .docx  | docx                 |
 | [LyRiCs](https://en.wikipedia.org/wiki/LRC_(file_format))                                             | .lrc      | lrc                  |
 | Comma separated values                                                                                | .csv      | csv                  |
 | Plaintext                                                                                             | .txt      | txt                  |

@@ -6,6 +6,7 @@ use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Converters\BinaryFinder;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
+use Done\Subtitles\Code\Converters\DocxReader;
 use Done\Subtitles\Code\Converters\EbuStlReader;
 use Done\Subtitles\Code\Converters\LrcConverter;
 use Done\Subtitles\Code\Converters\RtfReader;
@@ -49,6 +50,7 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt_quicktime',    'name' => 'Quick Time Text',            'class' => TxtQuickTimeConverter::class],
         ['extension' => 'scc',  'format' => 'scc',              'name' => 'Scenarist',                  'class' => SccConverter::class],
         ['extension' => 'lrc',  'format' => 'lrc',              'name' => 'LyRiCs',                     'class' => LrcConverter::class],
+        ['extension' => 'docx', 'format' => 'docx',             'name' => 'DOCX',                       'class' => DocxReader::class],
         ['extension' => 'rtf',  'format' => 'rtf',              'name' => 'Rich text format',           'class' => RtfReader::class], // libraryies eather throws exception, not parses, or takes long to parse 2h file
         ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class], // must be last from bottom
         ['extension' => 'bin',  'format' => 'bin',              'name' => 'Binary',                     'class' => BinaryFinder::class],
