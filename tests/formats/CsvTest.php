@@ -217,4 +217,12 @@ hi
         $converter = Helpers::getConverterByFileContent($csv);
         $this->assertTrue(get_class($converter) !== CsvConverter::class, get_class($converter));
     }
+    public function testShouldntThrowException()
+    {
+        $csv = '1,a
+' . ' ' . '
+2,b';
+        $converter = Helpers::getConverterByFileContent($csv);
+        $this->assertTrue(get_class($converter) !== CsvConverter::class, get_class($converter));
+    }
 }

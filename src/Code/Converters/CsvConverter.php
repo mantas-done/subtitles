@@ -178,10 +178,7 @@ class CsvConverter implements ConverterContract
 
         $csv2 = [];
         foreach ($csv as $row) {
-             if ($row[0] == '' && !isset($row[1])) { // empty line
-                continue;
-            }
-            if (trim($row[0]) === '' && trim($row[1]) === '') {
+            if ($row[0] == '' && (!isset($row[1]) || trim($row[1]) === '')) { // empty line
                 continue;
             }
             $csv2[] = $row;
