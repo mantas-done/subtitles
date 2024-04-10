@@ -18,7 +18,16 @@ class RtfReader implements ConverterContract
     {
         // https://stackoverflow.com/a/63029792/4126621
         $text = preg_replace("/(\{.*\})|}|(\\\\(?!')\S+)/m", '', $original_file_content);
-        $text = trim($text);
+
+        // remove backslashes
+        $lines = mb_split("\n", $text);
+        foreach ($lines as &$line) {
+            $line = trim($line);
+            $line = rtrim($line, '\\');
+        }
+        unset($line);
+        $text = implode("\n", $lines);
+
         return Subtitles::loadFromString($text)->getInternalFormat();
     }
 
