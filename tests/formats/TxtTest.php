@@ -469,6 +469,21 @@ rz´2_ÿ¿®ŽÖÅâÖÉ
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testRemoveRepeatingTextFromBeginningOfText()
+    {
+        $actual = Subtitles::loadFromString('
+00:00:00:a
+00:00:01:b
+00:00:02:c
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'a')
+            ->add(1, 2, 'b')
+            ->add(2, 3, 'c')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

@@ -130,7 +130,10 @@ class TxtConverter implements ConverterContract
         }
         unset($row);
 
-        return self::fillStartAndEndTimes($internal_format);
+        $internal_format = self::fillStartAndEndTimes($internal_format);
+        $internal_format = self::removeRepeatingTextStarts($internal_format);
+
+        return $internal_format;
     }
 
     // start and end timestamp
@@ -516,6 +519,44 @@ class TxtConverter implements ConverterContract
         unset($row);
 
         return self::fillStartAndEndTimes($internal_format);
+    }
+
+    public static function removeRepeatingTextStarts($internal_format)
+    {
+        if (count($internal_format) <= 2) {
+            return $internal_format; // don't try to filter if there almost no lines
+        }
+
+        $repeating_string = '';
+
+        $first_lines = [];
+        foreach ($internal_format as $subtitle) {
+            $first_lines[] = $subtitle['lines'][0];
+        }
+
+        $length = strlen($first_lines[0]);
+        for ($i = 0; $i < $length; $i++) {
+            $letter = $first_lines[0][$i];
+
+            foreach ($first_lines as $line) {
+                if (!isset($line[$i])) {
+                    break 2;
+                }
+                $line_letter = $line[$i];
+                if ($line_letter !== $letter) {
+                    break 2;
+                }
+            }
+            $repeating_string .= $letter;
+        }
+
+        $repeating_length = strlen($repeating_string);
+        foreach ($internal_format as &$subtitle) {
+            $subtitle['lines'][0] = substr($subtitle['lines'][0], $repeating_length);
+        }
+        unset($subtitle);
+
+        return $internal_format;
     }
 
     private static function hasTime($line)
