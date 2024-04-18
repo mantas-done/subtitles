@@ -12,7 +12,7 @@ class TxtConverter implements ConverterContract
 
     public function canParseFileContent($file_content)
     {
-        return self::hasText($file_content);
+        return self::hasText($file_content) && !Helpers::strContains($file_content, "\x00"); // not a binary file
     }
 
     public function fileContentToInternalFormat($file_content, $original_file_content)

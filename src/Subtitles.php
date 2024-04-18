@@ -53,7 +53,6 @@ class Subtitles
         ['extension' => 'docx', 'format' => 'docx',             'name' => 'DOCX',                       'class' => DocxReader::class],
         ['extension' => 'rtf',  'format' => 'rtf',              'name' => 'Rich text format',           'class' => RtfReader::class], // libraryies eather throws exception, not parses, or takes long to parse 2h file
         ['extension' => 'csv',  'format' => 'csv',              'name' => 'Coma Separated Values',      'class' => CsvConverter::class], // must be last from bottom
-        ['extension' => 'bin',  'format' => 'bin',              'name' => 'Binary',                     'class' => BinaryFinder::class],
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class], // must be the last one
     ];
 
