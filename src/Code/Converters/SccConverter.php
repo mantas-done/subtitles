@@ -29,7 +29,7 @@ class SccConverter implements ConverterContract
         23.976,
     ];
 
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return preg_match('/Scenarist_SCC V1.0/', $file_content) === 1;
     }

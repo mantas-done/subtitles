@@ -54,14 +54,14 @@ class Helpers
         throw new \Exception("Can't find suitable converter, for format: $format");
     }
 
-    public static function getConverterByFileContent($file_content)
+    public static function getConverterByFileContent($file_content, $original_file_content)
     {
         foreach (Subtitles::$formats as $row) {
             $class_name = $row['class'];
             $full_class_name = $class_name;
             /** @var ConverterContract $converter */
             $converter = new $full_class_name();
-            if ($converter->canParseFileContent($file_content)) {
+            if ($converter->canParseFileContent($file_content, $original_file_content)) {
                 return $converter;
             }
         }

@@ -13,7 +13,7 @@ class CsvConverter implements ConverterContract
         return rtrim(TxtConverter::$time_regexp, '/') . '|(\d+)/';
     }
 
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         $csv = self::csvToArray(trim($file_content));
 

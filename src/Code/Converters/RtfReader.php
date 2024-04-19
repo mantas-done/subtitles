@@ -9,7 +9,7 @@ use Jstewmc\Rtf\Document;
 
 class RtfReader implements ConverterContract
 {
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return strpos($file_content, '{\rtf1') === 0;
     }

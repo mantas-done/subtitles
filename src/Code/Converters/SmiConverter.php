@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class SmiConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return preg_match('/<SAMI>/m', $file_content) === 1;
     }

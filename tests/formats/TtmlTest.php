@@ -16,7 +16,7 @@ class TtmlTest extends TestCase {
     public function testRecognizesTtml()
     {
         $content = file_get_contents('./tests/files/ttml.ttml');
-        $converter = Helpers::getConverterByFileContent($content);
+        $converter = Helpers::getConverterByFileContent($content, $content);
         $this->assertEquals(TtmlConverter::class, get_class($converter));
     }
 

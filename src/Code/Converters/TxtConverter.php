@@ -10,7 +10,7 @@ class TxtConverter implements ConverterContract
     public static $time_regexp = '/(?:\d{2}[:;])(?:\d{1,2}[:;])(?:\d{1,2}[:;])\d{1,3}|(?:\d{1,2}[:;])?(?:\d{1,2}[:;])\d{1,3}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
     private static $any_letter_regex = '/\p{L}/u';
 
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return self::hasText($file_content) && !Helpers::strContains($file_content, "\x00"); // not a binary file
     }

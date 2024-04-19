@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class SbvConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return preg_match('/^\d{1,2}:\d{2}:\d{2}\.\d{3},\d{1,2}:\d{2}:\d{2}\.\d{3}\R(.*)/m', $file_content) === 1;
     }

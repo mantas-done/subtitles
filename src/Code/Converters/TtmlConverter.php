@@ -7,7 +7,7 @@ use Done\Subtitles\Code\UserException;
 
 class TtmlConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         $first_line = explode("\n", $file_content)[0];
 

@@ -38,7 +38,8 @@ class DocxToText
         $zip = new \ZipArchive();
         $opened = $zip->open($tmp_file, \ZipArchive::RDONLY); // zip archive can only open real file
         if ($opened !== true) {
-            throw new \Exception();
+            unlink($tmp_file);
+            throw new \Exception("Can't open zip");
         }
         $this->zip = $zip;
         $this->tmp_path = $tmp_file;

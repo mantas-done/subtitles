@@ -15,7 +15,7 @@ class SmiTest extends TestCase {
     public function testRecognizesSmi()
     {
         $content = file_get_contents('./tests/files/smi.smi');
-        $converter = Helpers::getConverterByFileContent($content);
+        $converter = Helpers::getConverterByFileContent($content, $content);
         $this->assertTrue(get_class($converter) === SmiConverter::class);
     }
 

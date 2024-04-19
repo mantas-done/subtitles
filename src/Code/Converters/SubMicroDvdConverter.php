@@ -10,7 +10,7 @@ class SubMicroDvdConverter implements ConverterContract
 
 
     static $pattern = '/(?:\{|\[)(?<start>\d+)(?:\}|\])(?:\{|\[)(?<end>\d+)(?:\}|\])(?<text>.+)/';
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return preg_match(self::$pattern, $file_content, $matches);
     }

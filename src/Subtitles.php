@@ -225,7 +225,7 @@ class Subtitles
         $modified_string = Helpers::normalizeNewLines($modified_string);
         $converter->input = $modified_string;
 
-        $input_converter = Helpers::getConverterByFileContent($converter->input);
+        $input_converter = Helpers::getConverterByFileContent($converter->input, $string);
         $internal_format = $input_converter->fileContentToInternalFormat($converter->input, $string);
 
         // remove empty lines

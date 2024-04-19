@@ -16,8 +16,20 @@ class SrtTest extends TestCase {
     public function testRecognizesSrt()
     {
         $content = file_get_contents('./tests/files/srt.srt');
-        $converter = Helpers::getConverterByFileContent($content);
+        $converter = Helpers::getConverterByFileContent($content, $content);
         $this->assertTrue(get_class($converter) === SrtConverter::class);
+    }
+
+    public function testRecognizesSrtWithDot()
+    {
+        $content = <<< TEXT
+1
+00:00:00.000 --> 00:00:01.000
+a
+TEXT;
+        $converter = Helpers::getConverterByFileContent($content, $content);
+
+        $this->assertEquals(SrtConverter::class, get_class($converter));
     }
 
     public function testConvertingFileFromSrtToSrtDoesNotChangeItContent()

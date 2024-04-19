@@ -9,7 +9,7 @@ class VttConverter implements ConverterContract
 {
     protected static $time_regexp = '((?:\d{2}:){1,2}\d{2}\.\d{3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{3})';
 
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         $lines = explode("\n", $file_content);
 

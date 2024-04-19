@@ -5,7 +5,7 @@ namespace Done\Subtitles\Code\Converters;
 // qt.txt
 class TxtQuickTimeConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return preg_match('/{QTtext}/m', $file_content) === 1;
     }

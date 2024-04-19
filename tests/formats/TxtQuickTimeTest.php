@@ -31,7 +31,7 @@ Very good, Lieutenant.
     public function testRecognizesTxtQuictime()
     {
         $content = $this->qttxt;
-        $converter = Helpers::getConverterByFileContent($content);
+        $converter = Helpers::getConverterByFileContent($content, $content);
         $this->assertEquals(TxtQuickTimeConverter::class, get_class($converter));
     }
 

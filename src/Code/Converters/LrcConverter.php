@@ -9,7 +9,7 @@ class LrcConverter implements ConverterContract
     protected static $regexp = '/\[\s*(\d{2}:\d{2}(?:[:.]\d{1,3})?)\s*]/';
     protected static $time_offset_regexp = '/\[offset:\s*\+?(-?\d+)\s*]/s';
 
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         // only select when there is text after the timestamp
         // do not select files that have timestamp and text somewhere on the other line

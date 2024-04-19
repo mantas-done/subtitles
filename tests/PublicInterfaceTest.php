@@ -31,7 +31,7 @@ class PublicInterfaceTest extends TestCase
         @unlink($temporary_srt_path);
 
         Subtitles::convert($srt_path, $temporary_srt_path, ['output_format' => 'vtt']);
-        $converter = Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path));
+        $converter = Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path), file_get_contents($temporary_srt_path));
         unlink($temporary_srt_path);
 
         $this->assertEquals(VttConverter::class, get_class($converter));

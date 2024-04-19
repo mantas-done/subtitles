@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class StlConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return preg_match('/^\d{2}:\d{2}:\d{2}:\d{2}\s,\s\d{2}:\d{2}:\d{2}:\d{2}\s,.+/m', $file_content) === 1;
     }

@@ -2,15 +2,16 @@
 
 namespace Formats;
 
+use Done\Subtitles\Code\Converters\DocxReader;
+use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
 
 class DocxTest extends TestCase
 {
-
     use AdditionalAssertionsTrait;
-
     public function testParsesDocxFile()
     {
         $content = file_get_contents('./tests/files/docx.docx');
@@ -20,5 +21,13 @@ class DocxTest extends TestCase
             ->add(3740.5, 3742.5, ['Very good, Lieutenant.'])
             ->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
+    public function testCorruptedZip()
+    {
+        $this->expectExceptionMessage("Can't find suitable converter for the file");
+
+        $content = file_get_contents('./tests/files/corrupted.zip');
+        Helpers::getConverterByFileContent($content, $content);
     }
 }

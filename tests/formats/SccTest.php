@@ -16,7 +16,7 @@ class SccTest extends TestCase {
     public function testRecognizesScc()
     {
         $content = file_get_contents('./tests/files/scc.scc');
-        $converter = Helpers::getConverterByFileContent($content);
+        $converter = Helpers::getConverterByFileContent($content, $content);
         $this->assertTrue(get_class($converter) === SccConverter::class);
     }
 

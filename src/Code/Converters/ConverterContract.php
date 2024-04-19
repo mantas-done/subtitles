@@ -10,7 +10,7 @@ interface ConverterContract
      * @param string $file_content
      * @return bool
      */
-    public function canParseFileContent($file_content);
+    public function canParseFileContent($file_content, $original_file_content);
 
     /**
      * Converts file content (.srt, .stl... file content) to library's "internal format"

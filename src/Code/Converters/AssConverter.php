@@ -6,7 +6,7 @@ use Done\Subtitles\Code\UserException;
 
 class AssConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content)
+    public function canParseFileContent($file_content, $original_file_content)
     {
         return preg_match('/\[Script Info\]\R/m', $file_content) === 1;
     }

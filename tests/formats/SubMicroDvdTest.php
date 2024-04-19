@@ -15,7 +15,7 @@ class SubMicroDvdTest extends TestCase {
     public function testRecognizesSub()
     {
         $content = file_get_contents('./tests/files/sub_microdvd.sub');
-        $converter = Helpers::getConverterByFileContent($content);
+        $converter = Helpers::getConverterByFileContent($content, $content);
         $this->assertTrue(get_class($converter) === SubMicroDvdConverter::class);
     }
 
