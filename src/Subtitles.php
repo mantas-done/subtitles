@@ -166,6 +166,21 @@ class Subtitles
         return $content;
     }
 
+    public static function getFormat($string)
+    {
+        $modified_string = Helpers::convertToUtf8($string);
+        $modified_string = Helpers::removeUtf8Bom($modified_string);
+        $modified_string = Helpers::normalizeNewLines($modified_string);
+
+        $input_converter = Helpers::getConverterByFileContent($modified_string, $string);
+
+        foreach (self::$formats as $format) {
+            if ($format['class'] === get_class($input_converter)) {
+                return $format;
+            }
+        }
+    }
+
     // for testing only
     public function getInternalFormat()
     {

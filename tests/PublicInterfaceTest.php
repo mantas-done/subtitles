@@ -4,6 +4,7 @@ namespace Tests;
 
 use Done\Subtitles\Code\Converters\VttConverter;
 use Done\Subtitles\Code\Helpers;
+use Done\Subtitles\Code\UserException;
 use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
@@ -343,5 +344,20 @@ text
             ->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+    }
+
+    public function testGetsFormat()
+    {
+        $srt_path = './tests/files/srt.srt';
+        $format = Subtitles::getFormat(file_get_contents($srt_path));
+        $this->assertEquals('srt', $format['extension']);
+    }
+
+    public function testNotASubtitleFormatThrowsException()
+    {
+        $this->expectException(UserException::class);
+
+        $srt_path = './tests/files/slick.bin';
+        Subtitles::getFormat(file_get_contents($srt_path));
     }
 }
