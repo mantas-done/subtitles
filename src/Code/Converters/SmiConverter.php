@@ -93,7 +93,7 @@ class SmiConverter implements ConverterContract
                 $i++;
             }
         }
-        if (!isset($internal_format[$i - 1]['end'])) {
+        if (isset($internal_format[$i - 1]['start']) && !isset($internal_format[$i - 1]['end'])) {
             $internal_format[$i - 1]['end'] = $internal_format[$i - 1]['start'] + 1;
         }
 
