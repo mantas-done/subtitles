@@ -78,7 +78,7 @@ $string = "
 Senator, we're making our final approach
 ";  
 
-$subtitles = Subtitles::loadFromString($string, 'srt');
+$subtitles = Subtitles::loadFromString($string);
 ```
 
 Save subtitles to file
