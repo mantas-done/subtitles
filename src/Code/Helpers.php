@@ -267,7 +267,7 @@ class Helpers
 
     public static function removeOnlyHtmlTags($string)
     {
-        $letters = preg_split('//u', $string, null, PREG_SPLIT_NO_EMPTY);
+        $letters = preg_split('//u', $string, -1, PREG_SPLIT_NO_EMPTY);
         $parts = [];
         $current_text = '';
         foreach ($letters as $letter) {

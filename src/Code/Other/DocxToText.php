@@ -4,6 +4,8 @@ namespace Done\Subtitles\Code\Other;
 
 class DocxToText
 {
+    private $tmp_path;
+
     // text might not be correctly ordered
     public static function text($path): string
     {

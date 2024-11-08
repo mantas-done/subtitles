@@ -484,6 +484,24 @@ rz´2_ÿ¿®ŽÖÅâÖÉ
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testCorrectlyParsesCyrillic()
+    {
+        $actual = Subtitles::loadFromString('
+00:00
+Да.
+00:01
+Привет
+00:02
+Сегодня
+        ')->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(0, 1, 'Да.')
+            ->add(1, 2, 'Привет')
+            ->add(2, 3, 'Сегодня')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function generatedSubtitles()

@@ -524,7 +524,7 @@ class TxtConverter implements ConverterContract
     public static function removeRepeatingTextStarts($internal_format)
     {
         if (count($internal_format) <= 2) {
-            return $internal_format; // don't try to filter if there almost no lines
+            return $internal_format; // don't try to filter if there are almost no lines
         }
 
         $repeating_string = '';
@@ -534,15 +534,15 @@ class TxtConverter implements ConverterContract
             $first_lines[] = $subtitle['lines'][0];
         }
 
-        $length = strlen($first_lines[0]);
+        $length = mb_strlen($first_lines[0]);
         for ($i = 0; $i < $length; $i++) {
-            $letter = $first_lines[0][$i];
+            $letter = mb_substr($first_lines[0], $i, 1);
 
             foreach ($first_lines as $line) {
-                if (!isset($line[$i])) {
+                if (!mb_strlen($line) > $i) {
                     break 2;
                 }
-                $line_letter = $line[$i];
+                $line_letter = mb_substr($line, $i, 1);
                 if ($line_letter !== $letter) {
                     break 2;
                 }
@@ -550,14 +550,15 @@ class TxtConverter implements ConverterContract
             $repeating_string .= $letter;
         }
 
-        $repeating_length = strlen($repeating_string);
+        $repeating_length = mb_strlen($repeating_string);
         foreach ($internal_format as &$subtitle) {
-            $subtitle['lines'][0] = substr($subtitle['lines'][0], $repeating_length);
+            $subtitle['lines'][0] = mb_substr($subtitle['lines'][0], $repeating_length);
         }
         unset($subtitle);
 
         return $internal_format;
     }
+
 
     private static function hasTime($line)
     {
