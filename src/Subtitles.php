@@ -181,13 +181,11 @@ class Subtitles
         }
     }
 
-    // for testing only
     public function getInternalFormat()
     {
         return $this->internal_format;
     }
 
-    // for testing only
     public function setInternalFormat(array $internal_format)
     {
         $this->internal_format = $internal_format;
