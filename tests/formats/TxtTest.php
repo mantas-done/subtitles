@@ -171,6 +171,13 @@ f
             Subtitles::loadFromString('
 "00:18:23:46,00:19:12:96,Speaker 2,""So at any time"""
 ')->getInternalFormat());
+
+        $this->assertInternalFormatsEqual(
+            (new Subtitles())->add(3723.16, 3724.16, 'g')->getInternalFormat(),
+            Subtitles::loadFromString('
+01.02.03.04
+g
+')->getInternalFormat());
     }
 
     public function testClientFile()
