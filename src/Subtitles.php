@@ -4,6 +4,7 @@ namespace Done\Subtitles;
 
 use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Converters\BinaryFinder;
+use Done\Subtitles\Code\Converters\CapConverter;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
 use Done\Subtitles\Code\Converters\DocxReader;
@@ -36,6 +37,7 @@ class Subtitles
     public static $formats = [
         ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
         ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
+        ['extension' => 'cap',  'format' => 'cap',              'name' => 'Cheetah CAP',                'class' => CapConverter::class],
         ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => DfxpConverter::class],
         ['extension' => 'sbv',  'format' => 'sbv',              'name' => 'YouTube',                    'class' => SbvConverter::class],
         ['extension' => 'vtt',  'format' => 'vtt',              'name' => 'WebVTT',                     'class' => VttConverter::class],
