@@ -364,14 +364,17 @@ text
 
     public function testRegisterConverter()
     {
-        // replacing the class
+        // add new converter
         $initial_format_count = count(Subtitles::$formats);
-        Subtitles::registerConverter(FakeDocxConverter::class, 'docx', 'docx', 'Fake docx converter');
-        $after_format_count = count(Subtitles::$formats);
-        Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx', 'Fake docx converter');
-        $final_format_count = count(Subtitles::$formats);
-        $this->assertEquals($initial_format_count, $after_format_count); // replaces with the same name (count the same)
-        $this->assertEquals($initial_format_count + 1, $final_format_count); // adds new
+        Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx2', 'Fake docx converter');
+        $after_addition_count = count(Subtitles::$formats);
+        $this->assertEquals($initial_format_count + 1, $after_addition_count);
+
+        // replacing existing converter
+        $initial_format_count = count(Subtitles::$formats);
+        Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx2', 'Fake docx converter');
+        $after_replacement_count = count(Subtitles::$formats);
+        $this->assertEquals($initial_format_count, $after_replacement_count); // adds new
 
         // from format
         $actual_internal_format = Subtitles::loadFromString('fake_docx')->getInternalFormat();
@@ -379,7 +382,7 @@ text
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
 
         // to format
-        $actual = (new Subtitles)->add(1, 2, 'a')->content('docx');
+        $actual = (new Subtitles)->add(1, 2, 'a')->content('docx_fake');
         $this->assertEquals('fake docx text', $actual);
     }
 }
