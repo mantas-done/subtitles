@@ -181,6 +181,20 @@ class Subtitles
         }
     }
 
+    public static function registerConverter($class, $string_format, $extension, $name)
+    {
+        // unset class if the name of format is the same
+        foreach (self::$formats as $k => $format) {
+            if ($format['format'] === $string_format) {
+                unset(self::$formats[$k]);
+            }
+        }
+        unset($format);
+
+        // add at the beginning
+        array_unshift(self::$formats, ['extension' => $extension, 'format' => $string_format, 'name' => $name, 'class' => $class]);
+    }
+
     public function getInternalFormat()
     {
         return $this->internal_format;

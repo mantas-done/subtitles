@@ -170,6 +170,14 @@ Basically what your implementation should be able to do, is convert subtitle fil
 Best example is to look how [SrtConverter.php](https://github.com/mantas783/subtitle-converter/blob/master/src/code/Converters/SrtConverter.php) is implemented.  
 And this is example of [.srt file](https://github.com/mantas783/subtitle-converter/blob/master/tests/files/srt.srt).
 
+## Registering your converter
+
+```php
+Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx', 'Fake docx converter');
+```
+
+You can add a new converter or replace the existing one if the format name is the same (the second parameter).
+
 ### "Internal Format" 
 
 "Internal Format" is just a PHP array. It is used internally in library to be able to convert between different formats.

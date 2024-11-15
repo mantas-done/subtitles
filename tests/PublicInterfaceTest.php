@@ -8,6 +8,7 @@ use Done\Subtitles\Code\UserException;
 use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
+use Tests\Stubs\FakeDocxConverter;
 
 class PublicInterfaceTest extends TestCase
 {
@@ -359,5 +360,26 @@ text
 
         $srt_path = './tests/files/slick.bin';
         Subtitles::getFormat(file_get_contents($srt_path));
+    }
+
+    public function testRegisterConverter()
+    {
+        // replacing the class
+        $initial_format_count = count(Subtitles::$formats);
+        Subtitles::registerConverter(FakeDocxConverter::class, 'docx', 'docx', 'Fake docx converter');
+        $after_format_count = count(Subtitles::$formats);
+        Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx', 'Fake docx converter');
+        $final_format_count = count(Subtitles::$formats);
+        $this->assertEquals($initial_format_count, $after_format_count); // replaces with the same name (count the same)
+        $this->assertEquals($initial_format_count + 1, $final_format_count); // adds new
+
+        // from format
+        $actual_internal_format = Subtitles::loadFromString('fake_docx')->getInternalFormat();
+        $expected_internal_format = [['start' => 22, 'end' => 33, 'lines' => ['fake']]];
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+
+        // to format
+        $actual = (new Subtitles)->add(1, 2, 'a')->content('docx');
+        $this->assertEquals('fake docx text', $actual);
     }
 }
