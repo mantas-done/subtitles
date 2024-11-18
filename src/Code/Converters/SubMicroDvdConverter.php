@@ -89,6 +89,6 @@ class SubMicroDvdConverter implements ConverterContract
      */
     protected static function internalTimeToSub($internal_time)
     {
-        return $internal_time * self::$fps;
+        return (string)($internal_time * self::$fps);
     }
 }

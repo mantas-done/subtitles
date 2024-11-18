@@ -261,7 +261,7 @@ class TtmlConverter implements ConverterContract
         $frameRate = null;
         preg_match('/ttp:frameRate="(\d+)"/', $file_content, $matches);
         if (isset($matches[1])) {
-            $frameRate = $matches[1];
+            $frameRate = (float)$matches[1];
         }
 
         preg_match('/ttp:frameRateMultiplier="(\d+) (\d+)"/', $file_content, $matches);

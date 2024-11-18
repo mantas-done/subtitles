@@ -186,7 +186,7 @@ class SmiConverter implements ConverterContract
      */
     protected static function internalTimeToFormat($internal_time)
     {
-       return round($internal_time * 1000);
+       return (string)round($internal_time * 1000);
     }
 
     protected static function escape($value) {
