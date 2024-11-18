@@ -32,7 +32,6 @@ class CsvConverter implements ConverterContract
         }
 
         $has_timestamp = false;
-        $has_text = false;
         foreach ($last_row as $cell) {
             $is_time = (bool)preg_match(self::timeRegex(), $cell);
             $timestamp = preg_replace(self::timeRegex(), '', $cell);
@@ -50,7 +49,7 @@ class CsvConverter implements ConverterContract
                 return true;
             }
         }
-        return $has_timestamp && $has_text;
+        return false;
     }
 
     /**

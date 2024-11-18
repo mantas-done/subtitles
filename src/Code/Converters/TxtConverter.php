@@ -74,6 +74,7 @@ class TxtConverter implements ConverterContract
                 continue;
             }
             if (preg_match('/^[0-9]+$/', $row['text'])) { // only number on the line
+                // @phpstan-ignore-next-line
                 if (isset($array[$i + 1]['start']) && $array[$i + 1]['start'] !== null) { // timestamp
                     continue; // probably a number from an srt file, because after the number goes the timestamp
                 }
@@ -565,11 +566,6 @@ class TxtConverter implements ConverterContract
         return $internal_format;
     }
 
-
-    private static function hasTime($line)
-    {
-        return preg_match(self::$time_regexp, $line) === 1;
-    }
 
     public static function hasText($line)
     {

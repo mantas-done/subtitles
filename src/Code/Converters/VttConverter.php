@@ -51,6 +51,7 @@ class VttConverter implements ConverterContract
                 // cue
                 if (!$last_line_was_empty && isset($internal_format[$i - 1])) {
                     $count = count($internal_format[$i - 1]['lines']);
+                    // @phpstan-ignore-next-line
                     if ($count === 1) {
                         $internal_format[$i - 1]['lines'][0] = '';
                     } else {
@@ -63,6 +64,7 @@ class VttConverter implements ConverterContract
                 // speaker
                 $speaker = null;
                 if (preg_match('/<v(?: (.*?))?>((?:.*?)<\/v>)/', $text_line, $matches)) {
+                    // @phpstan-ignore-next-line
                     $speaker = isset($matches[1]) ? $matches[1] : null;
                     $text_line = $matches[2];
                 }
@@ -105,6 +107,7 @@ class VttConverter implements ConverterContract
             $end = static::internalTimeToVtt($block['end']);
             $new_lines = '';
             foreach ($block['lines'] as $line_nr => $line) {
+                // @phpstan-ignore-next-line
                 if (isset($block['vtt']['speakers'][$line_nr]) && $block['vtt']['speakers'][$line_nr] !== null) {
                     $speaker = $block['vtt']['speakers'][$line_nr];
                     $new_lines .= '<v ' . $speaker . '>' . $line . "</v>\r\n";

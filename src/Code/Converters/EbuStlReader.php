@@ -19,7 +19,7 @@ class EbuStlReader implements ConverterContract
      */
     public function fileContentToInternalFormat($file_content, $original_file_content)
     {
-        $fps = (int)substr($original_file_content, 6, 2);
+        $fps = substr($original_file_content, 6, 2);
         if (!is_numeric($fps)) {
             throw new \Exception('unknown fps: ' . $fps);
         }

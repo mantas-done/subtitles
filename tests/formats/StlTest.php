@@ -67,6 +67,7 @@ class StlTest extends TestCase {
         Subtitles::loadFromFile('./tests/files/stl_with_comments.stl')->content('stl');
 
         // phpunit complains if no assertions are made
+        // @phpstan-ignore-next-line
         $this->assertTrue(true);
     }
 

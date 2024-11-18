@@ -21,7 +21,6 @@ because they’re not your children or relatives.
 TEXT;
         $converter = Helpers::getConverterByFileContent($content, $content);
         $this->assertTrue(get_class($converter) === SbvConverter::class);
-        $this->assertTrue(true);
     }
 
     public function testFileToInternalFormat()

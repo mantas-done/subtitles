@@ -20,6 +20,7 @@ class AssConverter implements ConverterContract
             throw new UserException('No [Events] tag');
         }
         $formats_line = $formats[1];
+        // @phpstan-ignore-next-line
         if (!isset($formats[1])) {
             throw new UserException('.ass converter did not found any text');
         }

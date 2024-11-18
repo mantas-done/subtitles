@@ -41,6 +41,7 @@ class SrtConverter implements ConverterContract
                 // remove number before timestamp
                 if (isset($internal_format[$i - 1])) {
                     $count = count($internal_format[$i - 1]['lines']);
+                    // @phpstan-ignore-next-line
                     if ($count === 1) {
                         $internal_format[$i - 1]['lines'][0] = '';
                     } else {
@@ -106,8 +107,11 @@ class SrtConverter implements ConverterContract
     {
         $pattern = '/(?:(?<hours>\d{1,2}):)?(?<minutes>\d{1,2}):(?<seconds>\d{1,2})([:.,](?<milliseconds>\d{1,3}))?/m';
         if (preg_match($pattern, $srt_time, $matches)) {
+            // @phpstan-ignore-next-line
             $hours = (isset($matches['hours']) && $matches['hours']) ? $matches['hours'] : 0 ;
+            // @phpstan-ignore-next-line
             $minutes = isset($matches['minutes']) ? $matches['minutes'] : 0;
+            // @phpstan-ignore-next-line
             $seconds = isset($matches['seconds']) ? $matches['seconds'] : 0;
             $milliseconds = (isset($matches['milliseconds']) && $matches['milliseconds']) ? $matches['milliseconds'] : "000";
         } else {
