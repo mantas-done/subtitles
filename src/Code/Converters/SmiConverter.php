@@ -44,6 +44,8 @@ class SmiConverter implements ConverterContract
                 continue;
             }
 
+            $lines = [];
+            $line = '';
             foreach ($syncElement->childNodes as $childNode) {
                 $lines = [];
                 $line = '';

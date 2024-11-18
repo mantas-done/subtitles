@@ -363,6 +363,7 @@ class TtmlConverter implements ConverterContract
             $i++;
         }
         if ($i !== 0 && $internal_format[$i - 1]['end'] === null) {
+            // @phpstan-ignore-next-line
             $internal_format[$i - 1]['end'] = (float)$attributes['start'] + 1;
         }
 
