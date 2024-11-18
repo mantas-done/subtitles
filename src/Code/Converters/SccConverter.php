@@ -342,22 +342,6 @@ class SccConverter implements ConverterContract
         return null;
     }
 
-    public static function shortenLineTextIfTooLong($output, $start, $end, $additional_bytes)
-    {
-        $blocks = explode(' ', $output);
-        $start_frame = (int)ceil($start * self::$fps);
-        $end_frame = (int)floor($end * self::$fps);
-        $frame_count = $end_frame - $start_frame - $additional_bytes; // 1 byte is transmitted during 1 frame
-        if ($frame_count < 0) {
-            throw new UserException("There is to little time between $start and $end timestamps to show text", 123);
-        }
-        $frame_count = $frame_count - ($frame_count % 2); // nearest event number down
-        $block_count = $frame_count / 2;
-        $new_blocks = array_slice($blocks, 0, $block_count);
-
-        return implode(' ', $new_blocks);
-    }
-
     protected static function addSpaceAfter4Characters($string) {
         $result = '';
         $length = strlen($string);

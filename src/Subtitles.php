@@ -246,7 +246,7 @@ class Subtitles
 
     public static function loadFromString($string, $strict = true)
     {
-        $converter = new static;
+        $converter = new self;
         $modified_string = Helpers::convertToUtf8($string);
         $modified_string = Helpers::removeUtf8Bom($modified_string);
         $modified_string = Helpers::normalizeNewLines($modified_string);

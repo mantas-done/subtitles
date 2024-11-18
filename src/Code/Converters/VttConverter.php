@@ -54,6 +54,7 @@ class VttConverter implements ConverterContract
                     if ($count === 1) {
                         $internal_format[$i - 1]['lines'][0] = '';
                     } else {
+                        // @phpstan-ignore-next-line
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
