@@ -162,9 +162,9 @@ class TtmlConverter implements ConverterContract
         }
 
         if (substr($ttml_time, -1) === 't') { // 340400000t
-            return substr($ttml_time, 0, -1) / 10000000;
+            return (int)substr($ttml_time, 0, -1) / 10000000;
         } elseif (substr($ttml_time, -2) === 'ms') { // 1500ms
-            return rtrim($ttml_time, 'ms') / 1000;
+            return (int)rtrim($ttml_time, 'ms') / 1000;
         } elseif (substr($ttml_time, -1) === 's') { // 1234s
             return rtrim($ttml_time, 's');
         } elseif (substr($ttml_time, -1) === 'f' && $frame_rate) { // 24f

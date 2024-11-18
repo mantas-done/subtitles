@@ -243,7 +243,7 @@ TEXT;
 
     public function testWriteUnderstandableMessage()
     {
-        $this->expectException(UserException::class, "Something is wrong with timestamps on this line: --> 00:09:06,100");
+        $this->expectException(UserException::class);
 
         $actual = Subtitles::loadFromString('
 00:09:01,866

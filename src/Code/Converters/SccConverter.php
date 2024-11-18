@@ -186,7 +186,7 @@ class SccConverter implements ConverterContract
     {
         $tmp = str_replace(';', ':', $scc_time);
         $parts = explode(':', $tmp);
-        $time = $parts[0] * 3600 + $parts[1] * 60 + $parts[2] + $parts[3] / $fps;
+        $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2] + (int)$parts[3] / $fps;
         $time += ($text_bytes / 2) / $fps;
 
         if (strstr($scc_time, ';') !== false) {

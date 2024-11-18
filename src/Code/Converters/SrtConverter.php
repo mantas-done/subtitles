@@ -114,7 +114,7 @@ class SrtConverter implements ConverterContract
             throw new UserException("Can't parse timestamp: \"$srt_time\", near: $lines");
         }
 
-        return $hours * 3600 + $minutes * 60 + $seconds + str_pad($milliseconds, 3, "0", STR_PAD_RIGHT) / 1000;
+        return $hours * 3600 + $minutes * 60 + $seconds + (float)str_pad($milliseconds, 3, "0", STR_PAD_RIGHT) / 1000;
     }
 
     /**
