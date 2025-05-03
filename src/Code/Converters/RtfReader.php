@@ -2,8 +2,6 @@
 
 namespace Done\Subtitles\Code\Converters;
 
-use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use Jstewmc\Rtf\Document;
 

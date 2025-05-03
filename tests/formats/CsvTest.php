@@ -3,11 +3,12 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\CsvConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class CsvTest extends TestCase {
 
@@ -67,9 +68,7 @@ class CsvTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-    /**
-     * @dataProvider differentContentSeparatorProvider
-     */
+    #[DataProvider('differentContentSeparatorProvider')]
     public function testDifferentContentSeparators($string)
     {
         $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();

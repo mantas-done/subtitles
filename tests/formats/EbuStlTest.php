@@ -3,13 +3,9 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\EbuStlReader;
-use Done\Subtitles\Code\Converters\VttConverter;
-use Done\Subtitles\Code\Formats\Vtt;
-use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class EbuStlTest extends TestCase {
 

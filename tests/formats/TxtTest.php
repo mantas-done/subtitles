@@ -3,10 +3,10 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\TxtConverter;
-use Done\Subtitles\Code\UserException;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class TxtTest extends TestCase {
 

@@ -139,10 +139,11 @@ $subtitles->shiftTimeGradually(2, 0, 3600);
 ## Exceptions ##
 
 Library will throw UserException, it's message can be shown to the user.
+
 ```php
 try {
     (new \Done\Subtitles\Subtitles())->add(0, 1, 'very long text... aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
-} catch (\Done\Subtitles\Code\UserException $e) {
+} catch (\Done\Subtitles\Code\Exceptions\UserException $e) {
     echo $e->getMessage(); // SCC file can't have more than 4 lines of text each 32 characters long. This text is too long: <text from user file that triggered this error>
 }
 ```

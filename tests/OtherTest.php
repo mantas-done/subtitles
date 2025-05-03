@@ -2,10 +2,10 @@
 
 namespace Tests;
 
-use Done\Subtitles\Code\UserException;
-use PHPUnit\Framework\TestCase;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class OtherTest extends TestCase
 {

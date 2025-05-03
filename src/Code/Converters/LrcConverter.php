@@ -2,7 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
-use Done\Subtitles\Code\UserException;
+use Done\Subtitles\Code\Exceptions\UserException;
 
 class LrcConverter implements ConverterContract
 {

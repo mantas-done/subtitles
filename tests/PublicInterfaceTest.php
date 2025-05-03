@@ -3,11 +3,11 @@
 namespace Tests;
 
 use Done\Subtitles\Code\Converters\VttConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
-use PHPUnit\Framework\TestCase;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 use Tests\Stubs\FakeDocxConverter;
 
 class PublicInterfaceTest extends TestCase
@@ -63,21 +63,21 @@ our final approach into Coruscant.
 
     public function testLoadWithoutExtensionThrowsException()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\RuntimeException::class);
 
         Subtitles::loadFromFile("normal file\nnormal file");
     }
 
     public function testLoadFileThatDoesNotExist()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\RuntimeException::class);
 
         Subtitles::loadFromFile("some_random_name.srt");
     }
 
     public function testLoadFileWithNotSupportedExtension()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\RuntimeException::class);
 
         Subtitles::loadFromFile("subtitles.exe");
     }
@@ -123,7 +123,7 @@ our final approach into Coruscant.
             'lines' => ['Hello World'],
         ]];
 
-        $this->assertTrue($expected_internal_format === $actual_internal_format);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
     public function testAddOrdersSubtitlesByTime()
@@ -219,7 +219,7 @@ text
             'lines' => ['Hello World'],
         ]];
 
-        $this->assertTrue($expected_internal_format === $actual_internal_format);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
     public function testSubtractTime()
@@ -234,7 +234,7 @@ text
             'lines' => ['Hello World'],
         ]];
 
-        $this->assertTrue($expected_internal_format === $actual_internal_format);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
     public function testFromTillTime()
@@ -249,7 +249,7 @@ text
             'lines' => ['a'],
         ]];
 
-        $this->assertTrue($expected_internal_format === $actual_internal_format);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
     public function testFromTillTimeWhenNotInRange()
@@ -268,8 +268,8 @@ text
             'lines' => ['a'],
         ]];
 
-        $this->assertTrue($expected_internal_format === $actual_internal_format1);
-        $this->assertTrue($expected_internal_format === $actual_internal_format2);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format1);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format2);
     }
 
     public function testFromTillTimeOverlappingStart()
@@ -284,7 +284,7 @@ text
             'lines' => ['a'],
         ]];
 
-        $this->assertTrue($expected_internal_format === $actual_internal_format);
+        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
     public function testSiftTimeGradually()

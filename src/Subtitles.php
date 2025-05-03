@@ -4,6 +4,7 @@ namespace Done\Subtitles;
 
 use Done\Subtitles\Code\Converters\AssConverter;
 use Done\Subtitles\Code\Converters\BinaryFinder;
+use Done\Subtitles\Code\Converters\ConverterContract;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
 use Done\Subtitles\Code\Converters\DocxReader;
@@ -21,19 +22,22 @@ use Done\Subtitles\Code\Converters\TtmlConverter;
 use Done\Subtitles\Code\Converters\TxtConverter;
 use Done\Subtitles\Code\Converters\TxtQuickTimeConverter;
 use Done\Subtitles\Code\Converters\VttConverter;
+use Done\Subtitles\Code\Exceptions\DisableStrictSuggestionException;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 
 class Subtitles
 {
-    protected $input;
+    protected string $input;
 
-    protected $internal_format; // data in internal format (when file is converted)
+    /** @var array<array{start: float, end: float, lines: array<string>}> */
+    protected array $internal_format; // data in internal format (when file is converted)
 
-    protected $converter;
-    protected $output;
+    protected ConverterContract $converter;
+//    protected $output;
 
-    public static $formats = [
+    /** @var array<int, array{extension: string, format: string, name: string, class: class-string}> */
+    public static array $formats = [
         ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
         ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
         ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => DfxpConverter::class],
@@ -56,7 +60,12 @@ class Subtitles
         ['extension' => 'txt',  'format' => 'txt',              'name' => 'Plaintext',                  'class' => TxtConverter::class], // must be the last one
     ];
 
-    public static function convert($from_file_path, $to_file_path, $options = [])
+    /**
+     * @param array{strict?: bool, output_format?: string, fps?: float, ndf?: bool} $options
+     *
+     * @throws UserException
+     */
+    public static function convert(string $from_file_path, string $to_file_path, array $options = []): void
     {
         $output_format = null;
         if (isset($options['output_format'])) {
@@ -70,13 +79,14 @@ class Subtitles
         }
         $strict = true;
         if (isset($options['strict']) && $options['strict'] == false) {
-            $strict = (bool)$options['strict'];
+            $strict = $options['strict'];
             unset($options['strict']);
         }
         static::loadFromFile($from_file_path, $strict)->save($to_file_path, $options);
     }
 
-    public function save($path, $options = [])
+    /** @param array{output_format?: string} $options */
+    public function save(string $path, array $options = []): self
     {
         $file_extension = Helpers::fileExtension($path);
         $format = $file_extension;
@@ -90,7 +100,8 @@ class Subtitles
         return $this;
     }
 
-    public function add($start, $end, $text, $settings = [])
+    /** @param string|array<string> $text */
+    public function add(float $start, float $end, string|array $text): self
     {
         $internal_format = [
             'start' => $start,
@@ -104,15 +115,15 @@ class Subtitles
         return $this;
     }
 
-    public function trim($startTime, $endTime)
+    public function trim(float $startTime, float $endTime): self
     {
-        $this->remove('0', $startTime);
+        $this->remove(0, $startTime);
         $this->remove($endTime, $this->maxTime());
 
         return $this;
     }
 
-    public function remove($from, $till)
+    public function remove(float $from, float $till): self
     {
         foreach ($this->internal_format as $k => $block) {
             if ($this->shouldBlockBeRemoved($block, $from, $till)) {
@@ -125,7 +136,7 @@ class Subtitles
         return $this;
     }
 
-    public function shiftTime($seconds, $from = 0, $till = null)
+    public function shiftTime(float $seconds, float $from = 0, ?float $till = null): self
     {
         foreach ($this->internal_format as &$block) {
             if (!Helpers::shouldBlockTimeBeShifted($from, $till, $block['start'], $block['end'])) {
@@ -142,7 +153,7 @@ class Subtitles
         return $this;
     }
 
-    public function shiftTimeGradually($seconds, $from = 0, $till = null)
+    public function shiftTimeGradually(float $seconds, float $from = 0, float $till = null): self
     {
         if ($till === null) {
             $till = $this->maxTime();
@@ -158,7 +169,8 @@ class Subtitles
         return $this;
     }
 
-    public function content($format, $options = [])
+    /** @param array{fps?: float} $options */
+    public function content(string $format, array $options = []): string
     {
         $converter = Helpers::getConverterByFormat($format);
         $content = $converter->internalFormatToFileContent($this->internal_format, $options);
@@ -166,7 +178,12 @@ class Subtitles
         return $content;
     }
 
-    public static function getFormat($string)
+    /**
+     * @return array{extension: string, format: string, name: string, class: class-string}
+     *
+     * @throws UserException
+     */
+    public static function getFormat(string $string): array
     {
         $modified_string = Helpers::convertToUtf8($string);
         $modified_string = Helpers::removeUtf8Bom($modified_string);
@@ -179,9 +196,11 @@ class Subtitles
                 return $format;
             }
         }
+
+        throw new \RuntimeException('No foramt: ' . $string);
     }
 
-    public static function registerConverter($class, $string_format, $extension, $name)
+    public static function registerConverter(string $class, string $string_format, string $extension, string $name): void
     {
         // unset class if the name of format is the same
         foreach (self::$formats as $k => $format) {
@@ -195,12 +214,14 @@ class Subtitles
         array_unshift(self::$formats, ['extension' => $extension, 'format' => $string_format, 'name' => $name, 'class' => $class]);
     }
 
-    public function getInternalFormat()
+    /** @return array<int, array{start: float, end: float, lines: array<string>}> */
+    public function getInternalFormat(): array
     {
         return $this->internal_format;
     }
 
-    public function setInternalFormat(array $internal_format)
+    /** @param array<int, array{start: float, end: float, lines: array<string>}> $internal_format */
+    public function setInternalFormat(array $internal_format): self
     {
         $this->internal_format = $internal_format;
 
@@ -209,14 +230,14 @@ class Subtitles
 
     // -------------------------------------- private ------------------------------------------------------------------
 
-    protected function sortInternalFormat()
+    protected function sortInternalFormat(): void
     {
         usort($this->internal_format, function ($item1, $item2) {
             return $item1['start'] <=> $item2['start'];
         });
     }
 
-    public function maxTime()
+    public function maxTime(): float
     {
         $max_time = 0;
         foreach ($this->internal_format as $block) {
@@ -228,23 +249,29 @@ class Subtitles
         return $max_time;
     }
 
-    protected function shouldBlockBeRemoved($block, $from, $till)
+    /** @param array{start: float, end: float, lines: array<string>} $block */
+    protected function shouldBlockBeRemoved(array $block, float $from, float $till): bool
     {
         return ($from < $block['start'] && $block['start'] < $till) || ($from < $block['end'] && $block['end'] < $till);
     }
 
-    public static function loadFromFile($path, $strict = true)
+    /** @throws UserException */
+    public static function loadFromFile(string $path, bool $strict = true): self
     {
         if (!file_exists($path)) {
-            throw new \Exception("file doesn't exist: " . $path);
+            throw new \RuntimeException("File doesn't exist");
         }
 
         $string = file_get_contents($path);
+        if ($string === false) {
+            throw new \RuntimeException("Problem opening file");
+        }
 
         return static::loadFromString($string, $strict);
     }
 
-    public static function loadFromString($string, $strict = true)
+    /** @throws UserException */
+    public static function loadFromString(string $string, bool $strict = true): self
     {
         $converter = new self;
         $modified_string = Helpers::convertToUtf8($string);
@@ -339,33 +366,33 @@ class Subtitles
         // exception if caption is showing for more than 5 minutes
         foreach ($internal_format as $row) {
             if ($row['end'] - $row['start'] > (60 * 5)) {
-                throw new UserException('Error: line duration is longer than 5 minutes: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                throw new DisableStrictSuggestionException('Error: line duration is longer than 5 minutes: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
             }
         }
 
         if ($internal_format[0]['start'] < 0) {
-            throw new UserException('Start time is a negative number ' . SrtConverter::internalTimeToSrt($internal_format[0]['start']) . ' -> ' . SrtConverter::internalTimeToSrt($internal_format[0]['end']) . ' ' . $internal_format[0]['lines'][0]);
+            throw new DisableStrictSuggestionException('Start time is a negative number ' . SrtConverter::internalTimeToSrt($internal_format[0]['start']) . ' -> ' . SrtConverter::internalTimeToSrt($internal_format[0]['end']) . ' ' . $internal_format[0]['lines'][0]);
         }
 
         // check if time is increasing
         $last_end_time = 0;
         foreach ($internal_format as $k => $row) {
             if ($row['start'] < $last_end_time) {
-                throw new UserException("Timestamps are overlapping over 60 seconds: \nxx:xx:xx,xxx --> " . SrtConverter::internalTimeToSrt($internal_format[$k - 1]['end']) . ' ' .  $internal_format[$k - 1]['lines'][0] . "\n" . SrtConverter::internalTimeToSrt($row['start']) . ' --> xx:xx:xx,xxx ' . $row['lines'][0]);
+                throw new DisableStrictSuggestionException("Timestamps are overlapping over 60 seconds: \nxx:xx:xx,xxx --> " . SrtConverter::internalTimeToSrt($internal_format[$k - 1]['end']) . ' ' .  $internal_format[$k - 1]['lines'][0] . "\n" . SrtConverter::internalTimeToSrt($row['start']) . ' --> xx:xx:xx,xxx ' . $row['lines'][0]);
             }
             $last_end_time = $row['end'];
             if ($row['start'] > $row['end']) {
-                throw new UserException('Timestamp start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                throw new DisableStrictSuggestionException('Timestamp start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
             }
             if ($row['start'] == $row['end']) {
-                throw new UserException('Timestamp start and end times are equal near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                throw new DisableStrictSuggestionException('Timestamp start and end times are equal near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
             }
         }
 
         // no subtitles with a lot of lines
         if (
             get_class($input_converter) === AssConverter::class
-            || (get_class($input_converter) === TxtConverter::class && !TxtConverter::doesFileUseTimestamps(mb_split("\n", $converter->input)))
+            || (get_class($input_converter) === TxtConverter::class && !TxtConverter::doesFileUseTimestamps(explode("\n", $converter->input)))
         ) {
             // do nothing
         } else {
@@ -373,7 +400,7 @@ class Subtitles
                 if (
                     count($row['lines']) > 10
                 ) {
-                    throw new UserException('Over 10 lines of text selected, something is wrong with timestamps below this text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                    throw new DisableStrictSuggestionException('Over 10 lines of text selected, something is wrong with timestamps below this text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
                 }
             }
         }

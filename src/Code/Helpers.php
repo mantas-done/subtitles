@@ -3,11 +3,12 @@
 namespace Done\Subtitles\Code;
 
 use Done\Subtitles\Code\Converters\ConverterContract;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Subtitles;
 
 class Helpers
 {
-    public static function shouldBlockTimeBeShifted($from, $till, $block_start, $block_end)
+    public static function shouldBlockTimeBeShifted(float $from, ?float $till, float $block_start, float $block_end): bool
     {
         if ($block_end < $from) {
             return false;
@@ -20,27 +21,18 @@ class Helpers
         return $till >= $block_start;
     }
 
-    public static function removeUtf8Bom($text)
+    public static function removeUtf8Bom(string $text): string
     {
         $bom = pack('H*', 'EFBBBF');
         $text = preg_replace("/^($bom)+/", '', $text); // some files have multiple BOM at the beginning
+        if ($text === null) {
+            throw new \RuntimeException("Couldn't remove BOM");
+        }
 
         return $text;
     }
 
-    public static function getConverterByExtension($extension)
-    {
-        foreach (Subtitles::$formats as $row) {
-            if ($row['extension'] === $extension) {
-                $full_class_name = $row['class'];
-                return new $full_class_name();
-            }
-        }
-
-        throw new \Exception('unknown format: ' . $extension);
-    }
-
-    public static function getConverterByFormat($format)
+    public static function getConverterByFormat(string $format): ConverterContract
     {
         foreach (Subtitles::$formats as $row) {
             if ($row['format'] === $format) {
@@ -51,10 +43,11 @@ class Helpers
             }
         }
 
-        throw new \Exception("Can't find suitable converter, for format: $format");
+        throw new \RuntimeException("Can't find suitable converter, for format: $format");
     }
 
-    public static function getConverterByFileContent($file_content, $original_file_content)
+    /** @throws UserException */
+    public static function getConverterByFileContent(string $file_content, string $original_file_content): ConverterContract
     {
         foreach (Subtitles::$formats as $row) {
             $class_name = $row['class'];
@@ -69,7 +62,7 @@ class Helpers
         throw new UserException("Can't find suitable converter for the file");
     }
 
-    public static function fileExtension($filename) {
+    public static function fileExtension(string $filename): string {
         $parts = explode('.', $filename);
         $extension = end($parts);
         $extension = strtolower($extension);
@@ -77,7 +70,7 @@ class Helpers
         return $extension;
     }
 
-    public static function normalizeNewLines($file_content)
+    public static function normalizeNewLines(string $file_content): string
     {
         $file_content = str_replace("\r\n", "\n", $file_content);
         $file_content = str_replace("\r", "\n", $file_content);
@@ -85,7 +78,8 @@ class Helpers
         return $file_content;
     }
 
-    public static function convertToUtf8($file_content)
+    /** @throws UserException */
+    public static function convertToUtf8(string $file_content): string
     {
         // first we need to make sure to detect encoding
         // as per comment: https://github.com/php/php-src/issues/7871#issuecomment-1461983924
@@ -107,7 +101,11 @@ class Helpers
         throw new UserException('Unknown file encoding (not utf8)');
     }
 
-    public static function shiftBlockTime($block, $seconds, $from, $till)
+    /**
+     * @param array{start: float, end: float, lines: array<string>} $block
+     * @return array{start: float, end: float, lines: array<string>}
+     */
+    public static function shiftBlockTime(array $block, float $seconds, float $from, float $till): array
     {
         if (!static::blockTimesWithinRange($block, $from, $till)) {
             return $block;
@@ -126,20 +124,14 @@ class Helpers
         return $block;
     }
 
-    public static function blockTimesWithinRange($block, $from, $till)
+    /** @param array{start: float, end: float, lines: array<string>} $block */
+    public static function blockTimesWithinRange(array $block, float $from, float $till): bool
     {
         return ($from <= $block['start'] && $block['start'] <= $till && $from <= $block['end'] && $block['end'] <= $till);
     }
 
-    public static function strContains($haystack, $needle) {
+    public static function strContains(string $haystack, string $needle): bool {
         return strpos($haystack, $needle) !== false;
-    }
-
-    public static function arrayKeyFirst($array) {
-        foreach ($array as $key => $value) {
-            return $key;
-        }
-        return null; // Return null if the array is empty
     }
 
     /**
@@ -168,7 +160,7 @@ class Helpers
      *   Returns the given <var>$string</var> wrapped at the specified
      *   <var>$width</var>.
      */
-    public static function mb_wordwrap($string, $width = 75, $break = "\n", $cut = false) {
+    public static function mb_wordwrap(string $string, int $width = 75, string $break = "\n", bool $cut = false): string {
         $string = (string) $string;
         if ($string === '') {
             return '';
@@ -239,7 +231,7 @@ class Helpers
         return $result;
     }
 
-    public static function strAfterLast($subject, $search)
+    public static function strAfterLast(string $subject, string $search): string
     {
         if ($search === '') {
             return $subject;
@@ -254,7 +246,7 @@ class Helpers
         return substr($subject, $position + strlen($search));
     }
 
-    public static function strBefore($subject, $search)
+    public static function strBefore(string $subject, string $search): string
     {
         if ($search === '') {
             return $subject;
@@ -265,7 +257,7 @@ class Helpers
         return $result === false ? $subject : $result;
     }
 
-    public static function removeOnlyHtmlTags($string)
+    public static function removeOnlyHtmlTags(string $string): string
     {
         $letters = preg_split('//u', $string, -1, PREG_SPLIT_NO_EMPTY);
         $parts = [];
@@ -300,7 +292,7 @@ class Helpers
         return $text;
     }
 
-    private static function isRealHtmlTag($tag)
+    private static function isRealHtmlTag(string $tag): bool
     {
         $starts = ['div', 'p', 'a', 'b', 'i', 'u', 'strong', 'img', 'ul', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'input', 'br', 'font'];
         $attributes = ['id', 'class', 'href', 'src', 'alt', 'title', 'style', 'target', 'rel', 'type', 'color', 'size'];

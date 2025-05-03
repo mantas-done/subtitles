@@ -2,8 +2,6 @@
 
 namespace Done\Subtitles\Code\Converters;
 
-use Done\Subtitles\Code\UserException;
-
 class EbuStlReader implements ConverterContract
 {
     public function canParseFileContent($file_content, $original_file_content)

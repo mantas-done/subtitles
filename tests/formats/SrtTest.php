@@ -3,11 +3,11 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\SrtConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class SrtTest extends TestCase {
 

@@ -4,10 +4,10 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\TtmlConverter;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class TtmlTest extends TestCase {
 
@@ -103,9 +103,7 @@ class TtmlTest extends TestCase {
         $this->assertStringContainsString('"8.456s"', $actual);
     }
 
-    /**
-     * @dataProvider timeFormatProvider
-     */
+    #[DataProvider('timeFormatProvider')]
     public function testDifferentTimeFormats($ttml_time, $seconds, $fps)
     {
         $internal_seconds = TtmlConverter::ttmlTimeToInternal($ttml_time, $fps);
