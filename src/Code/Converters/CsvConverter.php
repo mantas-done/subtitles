@@ -170,7 +170,7 @@ class CsvConverter implements ConverterContract
 
         $separator = self::detectSeparator($content);
         $csv = [];
-        while ( ($data = fgetcsv($fp, 0, $separator) ) !== false ) {
+        while ( ($data = fgetcsv($fp, 0, $separator, '"', '\\') ) !== false ) {
             $csv[] = $data;
         }
         fclose($fp);
