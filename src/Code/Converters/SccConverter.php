@@ -29,7 +29,7 @@ class SccConverter implements ConverterContract
         23.976,
     ];
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return preg_match('/Scenarist_SCC V1.0/', $file_content) === 1;
     }
@@ -40,7 +40,7 @@ class SccConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $fps = 29.97;
         if (!in_array($fps, self::$valid_fpses)) {
@@ -95,7 +95,7 @@ class SccConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format, array $output_settings)
+    public function internalFormatToFileContent(array $internal_format, array $output_settings): string
     {
         if (isset($output_settings['fps'])) {
             $fps = $output_settings['fps'];

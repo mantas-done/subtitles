@@ -3,7 +3,6 @@
 namespace Done\Subtitles;
 
 use Done\Subtitles\Code\Converters\AssConverter;
-use Done\Subtitles\Code\Converters\BinaryFinder;
 use Done\Subtitles\Code\Converters\ConverterContract;
 use Done\Subtitles\Code\Converters\CsvConverter;
 use Done\Subtitles\Code\Converters\DfxpConverter;
@@ -26,6 +25,9 @@ use Done\Subtitles\Code\Exceptions\DisableStrictSuggestionException;
 use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
 
+/**
+ * @phpstan-type Options array{strict?: bool, output_format?: string, fps?: float, ndf?: bool}
+ */
 class Subtitles
 {
     protected string $input;
@@ -61,7 +63,7 @@ class Subtitles
     ];
 
     /**
-     * @param array{strict?: bool, output_format?: string, fps?: float, ndf?: bool} $options
+     * @param Options $options
      *
      * @throws UserException
      */

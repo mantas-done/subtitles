@@ -7,7 +7,7 @@ use Done\Subtitles\Subtitles;
 
 class DocxReader implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         if (strpos($original_file_content, 'PK') === 0 && strpos($original_file_content, '[Content_Types].xml') !== false) {
             $tmp_file = tempnam(sys_get_temp_dir(), 'prefix_');
@@ -28,7 +28,7 @@ class DocxReader implements ConverterContract
         return false;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $text = DocxToText::text($original_file_content);
         return Subtitles::loadFromString($text)->getInternalFormat();

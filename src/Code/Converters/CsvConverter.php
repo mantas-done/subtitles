@@ -13,7 +13,7 @@ class CsvConverter implements ConverterContract
         return rtrim(TxtConverter::$time_regexp, '/') . '|(\d+)/';
     }
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         $csv = self::csvToArray(trim($file_content));
 
@@ -58,7 +58,7 @@ class CsvConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $data = self::csvToArray(trim($file_content));
 
@@ -140,7 +140,7 @@ class CsvConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $data = [['Start', 'End', 'Text']];
         foreach ($internal_format as $k => $block) {

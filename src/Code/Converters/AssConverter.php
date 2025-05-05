@@ -6,12 +6,12 @@ use Done\Subtitles\Code\Exceptions\UserException;
 
 class AssConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return preg_match('/\[Script Info\]\R/m', $file_content) === 1;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $internal_format = []; // array - where file content will be stored
         // get column numbers (every file can have a different number of columns that is encoded in this string)
@@ -54,7 +54,7 @@ class AssConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '[Script Info]
 ; This is an Advanced Sub Station Alpha v4+ script.

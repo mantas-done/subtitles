@@ -9,14 +9,14 @@ class VttConverter implements ConverterContract
 {
     protected static $time_regexp = '((?:\d{2}:){1,2}\d{2}\.\d{3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{3})';
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         $lines = explode("\n", $file_content);
 
         return preg_match('/WEBVTT/m', $lines[0]) === 1;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $content = self::removeComments($file_content);
 
@@ -98,7 +98,7 @@ class VttConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = "WEBVTT\r\n\r\n";
 

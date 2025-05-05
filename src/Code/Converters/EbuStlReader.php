@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class EbuStlReader implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return substr($file_content, 3, 3) === 'STL' && is_numeric(substr($file_content, 6, 2));
     }
@@ -15,7 +15,7 @@ class EbuStlReader implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $fps = substr($original_file_content, 6, 2);
         if (!is_numeric($fps)) {
@@ -57,7 +57,7 @@ class EbuStlReader implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         throw new \Exception('not implemented');
     }
