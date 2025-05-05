@@ -161,17 +161,14 @@ class Helpers
      *   <var>$width</var>.
      */
     public static function mb_wordwrap(string $string, int $width = 75, string $break = "\n", bool $cut = false): string {
-        $string = (string) $string;
         if ($string === '') {
             return '';
         }
 
-        $break = (string) $break;
         if ($break === '') {
             trigger_error('Break string cannot be empty', E_USER_ERROR);
         }
 
-        $width = (int) $width;
         if ($width === 0 && $cut) {
             trigger_error('Cannot force cut when width is zero', E_USER_ERROR);
         }
@@ -224,7 +221,9 @@ class Helpers
             }
         }
 
+        // @phpstan-ignore-next-line
         if ($lastStart !== $current) {
+            // @phpstan-ignore-next-line
             $result .= mb_substr($string, $lastStart, $current - $lastStart);
         }
 
@@ -237,7 +236,7 @@ class Helpers
             return $subject;
         }
 
-        $position = strrpos($subject, (string) $search);
+        $position = strrpos($subject, $search);
 
         if ($position === false) {
             return $subject;
@@ -252,7 +251,7 @@ class Helpers
             return $subject;
         }
 
-        $result = strstr($subject, (string) $search, true);
+        $result = strstr($subject, $search, true);
 
         return $result === false ? $subject : $result;
     }
@@ -260,6 +259,9 @@ class Helpers
     public static function removeOnlyHtmlTags(string $string): string
     {
         $letters = preg_split('//u', $string, -1, PREG_SPLIT_NO_EMPTY);
+        if ($letters === false) {
+            throw new \RuntimeException('some error splitting: ' . $string);
+        }
         $parts = [];
         $current_text = '';
         foreach ($letters as $letter) {
@@ -289,6 +291,9 @@ class Helpers
             }
         }
         $text = preg_replace('/\s+/', ' ', $text);
+        if ($text === null) {
+            throw new \RuntimeException('error: ' . $text);
+        }
         return $text;
     }
 
