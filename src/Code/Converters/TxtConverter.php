@@ -2,20 +2,20 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 
 class TxtConverter implements ConverterContract
 {
     public static $time_regexp = '/(?:\d{2}[:.])(?:\d{2}[:.])(?:\d{2}[:.])(?:\d{2,3})|(?:\d{2}[:;])(?:\d{1,2}[:;])(?:\d{1,2}[:;])\d{1,3}|(?:\d{1,2}[:;])?(?:\d{1,2}[:;])\d{1,3}(?:[.,]\d+)?(?!\d)|\d{1,5}[.,]\d{1,3}/';
     private static $any_letter_regex = '/\p{L}/u';
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return self::hasText($file_content) && !Helpers::strContains($file_content, "\x00"); // not a binary file
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         // just text lines
         // timestamps on the same line
@@ -74,6 +74,7 @@ class TxtConverter implements ConverterContract
                 continue;
             }
             if (preg_match('/^[0-9]+$/', $row['text'])) { // only number on the line
+                // @phpstan-ignore-next-line
                 if (isset($array[$i + 1]['start']) && $array[$i + 1]['start'] !== null) { // timestamp
                     continue; // probably a number from an srt file, because after the number goes the timestamp
                 }
@@ -273,7 +274,7 @@ class TxtConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '';
 
@@ -565,11 +566,6 @@ class TxtConverter implements ConverterContract
         return $internal_format;
     }
 
-
-    private static function hasTime($line)
-    {
-        return preg_match(self::$time_regexp, $line) === 1;
-    }
 
     public static function hasText($line)
     {

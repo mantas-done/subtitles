@@ -66,7 +66,7 @@ TEXT;
         $text = '00:02:43.04,00:02:45.83
 
 Mon dieu! Milord Wellesley.';
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(163.04, 165.83, 'Mon dieu! Milord Wellesley.')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }

@@ -1,0 +1,39 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - phpstan-baseline.neon
+parameters:
+    level: 8
+    paths:
+        - src
+    ignoreErrors:
+
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: true
+
+    exceptions:
+        check:
+            missingCheckedExceptionInThrows: true
+            tooWideThrowType: true
+        uncheckedExceptionClasses:
+            - 'RuntimeException'
+            - 'LogicException'
+
+    strictRules:
+        disallowedLooseComparison: false
+        booleansInConditions: false
+        uselessCast: true
+        requireParentConstructorCall: true
+        disallowedBacktick: true
+        disallowedEmpty: false
+        disallowedImplicitArrayCreation: false
+        disallowedShortTernary: false
+        overwriteVariablesWithLoop: true
+        closureUsesThis: true
+        matchingInheritedMethodNames: true
+        numericOperandsInArithmeticOperators: false
+        strictFunctionCalls: true
+        dynamicCallOnStaticMethod: false
+        switchConditionsMatchingType: true
+        noVariableVariables: true
+        strictArrayFilter: true
+        illegalConstructorMethodCall: true

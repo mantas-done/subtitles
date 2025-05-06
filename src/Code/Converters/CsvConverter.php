@@ -2,7 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
-use Done\Subtitles\Code\UserException;
+use Done\Subtitles\Code\Exceptions\UserException;
 
 class CsvConverter implements ConverterContract
 {
@@ -13,7 +13,7 @@ class CsvConverter implements ConverterContract
         return rtrim(TxtConverter::$time_regexp, '/') . '|(\d+)/';
     }
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         $csv = self::csvToArray(trim($file_content));
 
@@ -32,7 +32,6 @@ class CsvConverter implements ConverterContract
         }
 
         $has_timestamp = false;
-        $has_text = false;
         foreach ($last_row as $cell) {
             $is_time = (bool)preg_match(self::timeRegex(), $cell);
             $timestamp = preg_replace(self::timeRegex(), '', $cell);
@@ -50,7 +49,7 @@ class CsvConverter implements ConverterContract
                 return true;
             }
         }
-        return $has_timestamp && $has_text;
+        return false;
     }
 
     /**
@@ -59,7 +58,7 @@ class CsvConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $data = self::csvToArray(trim($file_content));
 
@@ -141,7 +140,7 @@ class CsvConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $data = [['Start', 'End', 'Text']];
         foreach ($internal_format as $k => $block) {

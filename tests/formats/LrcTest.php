@@ -3,8 +3,8 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\LrcConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
 use PHPUnit\Framework\TestCase;

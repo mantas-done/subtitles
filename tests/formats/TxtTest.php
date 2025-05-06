@@ -3,10 +3,10 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\TxtConverter;
-use Done\Subtitles\Code\UserException;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class TxtTest extends TestCase {
 
@@ -35,7 +35,7 @@ TEXT;
 Senator, we're making our final approach into Coruscant.
 Very good, Lieutenant.
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
@@ -46,7 +46,7 @@ TEXT;
 00:00:00 Senator, we're making our final approach into Coruscant.
 00:00:01 Very good, Lieutenant.
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
@@ -59,7 +59,7 @@ Senator, we're making our final approach into Coruscant.
 00:01 
 Very good, Lieutenant.
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
@@ -77,7 +77,7 @@ b
 c
 
 TEXT;
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, ['a', 'b'])->add(2, 3, 'c')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
@@ -102,7 +102,7 @@ b
 c
 
 TEXT;
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, ['a', 'b'])->add(3, 4, 'c')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
@@ -112,69 +112,69 @@ TEXT;
     {
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(83, 84, 'a')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 01:23
 a
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(5026, 5027.001, 'b')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 01:23:46
 b
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(5027.001, 5028.001, 'c')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 01:23:47,001
 c
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(5028.2, 5029.2, 'd')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 01:23:48.2
 d
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(5029.769, 5030.769, 'e')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 01:23:49:20
 e
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(5029.769, 5030.769, 'e')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 01;23;49;20
 e
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(0.984, 1.984, 'e')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 00:00:00:60
 e
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(5050.81, 5051.81, 'f')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 5050.81
 f
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(1103.474, 1152.99, ',Speaker 2,""So at any time"""')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 "00:18:23:46,00:19:12:96,Speaker 2,""So at any time"""
 ')->getInternalFormat());
 
         $this->assertInternalFormatsEqual(
             (new Subtitles())->add(3723.16, 3724.16, 'g')->getInternalFormat(),
-            Subtitles::loadFromString('
+            (new Subtitles())->loadFromString('
 01.02.03.04
 g
 ')->getInternalFormat());
@@ -193,7 +193,7 @@ One
 Two
 2 
 TEXT;
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(10, 11.9, ['One', '1'])
             ->add(12, 12.9, ['Two', '2'])
@@ -204,7 +204,7 @@ TEXT;
 
     public function testNotATimestampIfInTheMiddleOfTheText()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
             a
             b 00:00
         ')->getInternalFormat();
@@ -215,7 +215,7 @@ TEXT;
     // ignore all the content before the timestamp
     public function testNoException()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
             a
             00:03 b 
         ')->getInternalFormat();
@@ -225,7 +225,7 @@ TEXT;
 
     public function testNoExceptionFromClientFile()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
             a
             b
             00:00:00
@@ -238,7 +238,7 @@ TEXT;
 
     public function testIfFileWithoutTimestampsDoNotReturnTimestamp()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 a
 b
 c
@@ -259,7 +259,7 @@ e
 
     public function testCorrectlyParsesNumbers()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:00 50,000 a
 00:01 b
         ')->getInternalFormat();
@@ -272,7 +272,7 @@ e
 
     public function testLinesTogetherAreLeftConnected()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 a
 b
 
@@ -291,7 +291,7 @@ e
 
     public function testTextHasTimestampLikeNumber()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 23:19
 a
 23:25
@@ -309,7 +309,7 @@ c
 
     public function testFirstLineWithTimestampSecondAfter()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 01:01 a
 b
 c
@@ -328,7 +328,7 @@ f
 
     public function testNoException2()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:00:15:00 - 00:00:20:00
 a 40,50 b
         ')->getInternalFormat();
@@ -342,7 +342,7 @@ a 40,50 b
 
     public function testNoException3()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 01:00
 a
 
@@ -360,7 +360,7 @@ b
 
     public function testDoubleTimestamps()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:01
 00:02
 a
@@ -373,7 +373,7 @@ a
 
     public function testReordersTime()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:02
 b
 
@@ -386,7 +386,7 @@ a
 
     public function testRemovesHtml()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:01
 <b>a</b>
         ')->getInternalFormat();
@@ -396,7 +396,7 @@ a
 
     public function testRecognizesLongerTimestampAfterTheShorter()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:00
 a
 00:01
@@ -418,7 +418,7 @@ d
 
     public function testLongTimestampCountIsGreaterThanShort()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:00
 a
 00:01
@@ -455,7 +455,7 @@ e
     {
         $this->expectException(UserException::class);
 
-        Subtitles::loadFromString('
+        (new Subtitles())->loadFromString('
 00:00:00.00,00:00:01.00
 rz´2_ÿ¿®ŽÖÅâÖÉ
 <b>a</b>
@@ -464,21 +464,21 @@ rz´2_ÿ¿®ŽÖÅâÖÉ
 
     public function testNumberBeforeTimestamp()
     {
-        $actual = Subtitles::loadFromString('1 00:00:01:00 00:00:02:00 a')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString('1 00:00:01:00 00:00:02:00 a')->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, 'a')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     public function testDoesNotRemoveNotHtmlTag()
     {
-        $actual = Subtitles::loadFromString('text <a sentence> <div>')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString('text <a sentence> <div>')->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'text <a sentence>')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
     public function testRemoveRepeatingTextFromBeginningOfText()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:00:00:a
 00:00:01:b
 00:00:02:c
@@ -493,7 +493,7 @@ rz´2_ÿ¿®ŽÖÅâÖÉ
 
     public function testCorrectlyParsesCyrillic()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:00
 Да.
 00:01

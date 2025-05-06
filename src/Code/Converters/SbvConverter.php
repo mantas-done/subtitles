@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class SbvConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return preg_match('/^\d{1,2}:\d{2}:\d{2}\.\d{3},\d{1,2}:\d{2}:\d{2}\.\d{3}\R(.*)/m', $file_content) === 1;
     }
@@ -15,7 +15,7 @@ class SbvConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         return (new TxtConverter)->fileContentToInternalFormat($file_content, '');
     }
@@ -26,7 +26,7 @@ class SbvConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '';
 

@@ -2,21 +2,21 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 
 class VttConverter implements ConverterContract
 {
     protected static $time_regexp = '((?:\d{2}:){1,2}\d{2}\.\d{3})\s+-->\s+((?:\d{2}:){1,2}\d{2}\.\d{3})';
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         $lines = explode("\n", $file_content);
 
         return preg_match('/WEBVTT/m', $lines[0]) === 1;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $content = self::removeComments($file_content);
 
@@ -51,9 +51,11 @@ class VttConverter implements ConverterContract
                 // cue
                 if (!$last_line_was_empty && isset($internal_format[$i - 1])) {
                     $count = count($internal_format[$i - 1]['lines']);
+                    // @phpstan-ignore-next-line
                     if ($count === 1) {
                         $internal_format[$i - 1]['lines'][0] = '';
                     } else {
+                        // @phpstan-ignore-next-line
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
@@ -62,6 +64,7 @@ class VttConverter implements ConverterContract
                 // speaker
                 $speaker = null;
                 if (preg_match('/<v(?: (.*?))?>((?:.*?)<\/v>)/', $text_line, $matches)) {
+                    // @phpstan-ignore-next-line
                     $speaker = isset($matches[1]) ? $matches[1] : null;
                     $text_line = $matches[2];
                 }
@@ -95,7 +98,7 @@ class VttConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = "WEBVTT\r\n\r\n";
 
@@ -104,6 +107,7 @@ class VttConverter implements ConverterContract
             $end = static::internalTimeToVtt($block['end']);
             $new_lines = '';
             foreach ($block['lines'] as $line_nr => $line) {
+                // @phpstan-ignore-next-line
                 if (isset($block['vtt']['speakers'][$line_nr]) && $block['vtt']['speakers'][$line_nr] !== null) {
                     $speaker = $block['vtt']['speakers'][$line_nr];
                     $new_lines .= '<v ' . $speaker . '>' . $line . "</v>\r\n";
