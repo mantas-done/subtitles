@@ -154,7 +154,7 @@ class Subtitles
         return $this;
     }
 
-    public function shiftTimeGradually(float $seconds, float $from = 0, float $till = null): self
+    public function shiftTimeGradually(float $seconds, float $from = 0, ?float $till = null): self
     {
         if ($till === null) {
             $till = $this->maxTime();
