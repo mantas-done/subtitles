@@ -63,7 +63,7 @@ about WEBVTT';
             ]
         ]];
 
-        $actual_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromFile($vtt_path)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
@@ -88,7 +88,7 @@ c
 
 TEXT;
 
-        $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, ['b', 'b'])->add(2, 3, 'c')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
@@ -106,7 +106,7 @@ WEBVTT
 a
 TEXT;
 
-        Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
     }
 
     public function testExceptionWhenEmptyFile()
@@ -118,7 +118,7 @@ WEBVTT
 
 TEXT;
 
-        Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
     }
 
 
@@ -396,7 +396,7 @@ c
 
 TEXT;
 
-        $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->add(2, 3, 'c')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);

@@ -14,7 +14,7 @@ class EbuStlTest extends TestCase {
     public function testParsesEbuStl()
     {
         $stl_path = './tests/files/ebu_stl_iso6937.stl';
-        $actual = Subtitles::loadFromFile($stl_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($stl_path)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(3599.967, 3603.267, ['Les réalisateurs de ce film ont passé', 'plus de deux ans sur la route'])
             ->add(3603.367, 3605.633, 'avec Ozzy Osbourne.')

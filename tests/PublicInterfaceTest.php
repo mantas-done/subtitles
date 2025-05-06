@@ -20,7 +20,7 @@ class PublicInterfaceTest extends TestCase
         $temporary_srt_path = './tests/files/tmp/srt.srt';
         @unlink($temporary_srt_path);
 
-        Subtitles::convert($srt_path, $temporary_srt_path);
+        (new Subtitles())->convert($srt_path, $temporary_srt_path);
 
         $this->assertFileExists($temporary_srt_path);
         unlink($temporary_srt_path);
@@ -32,7 +32,7 @@ class PublicInterfaceTest extends TestCase
         $temporary_srt_path = './tests/files/tmp/file.no_extension';
         @unlink($temporary_srt_path);
 
-        Subtitles::convert($srt_path, $temporary_srt_path, ['output_format' => 'vtt']);
+        (new Subtitles())->convert($srt_path, $temporary_srt_path, ['output_format' => 'vtt']);
         $converter = Helpers::getConverterByFileContent(file_get_contents($temporary_srt_path), file_get_contents($temporary_srt_path));
         unlink($temporary_srt_path);
 
@@ -43,7 +43,7 @@ class PublicInterfaceTest extends TestCase
     {
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
 
-        $subtitles = Subtitles::loadFromFile($srt_path);
+        $subtitles = (new Subtitles())->loadFromFile($srt_path);
 
         $this->assertTrue(!empty($subtitles->getInternalFormat()));
     }
@@ -56,7 +56,7 @@ class PublicInterfaceTest extends TestCase
 Senator, we're making
 our final approach into Coruscant.
     ";
-        $subtitles = Subtitles::loadFromString($string);
+        $subtitles = (new Subtitles())->loadFromString($string);
 
         $this->assertTrue(!empty($subtitles->getInternalFormat()));
     }
@@ -65,21 +65,21 @@ our final approach into Coruscant.
     {
         $this->expectException(\RuntimeException::class);
 
-        Subtitles::loadFromFile("normal file\nnormal file");
+        (new Subtitles())->loadFromFile("normal file\nnormal file");
     }
 
     public function testLoadFileThatDoesNotExist()
     {
         $this->expectException(\RuntimeException::class);
 
-        Subtitles::loadFromFile("some_random_name.srt");
+        (new Subtitles())->loadFromFile("some_random_name.srt");
     }
 
     public function testLoadFileWithNotSupportedExtension()
     {
         $this->expectException(\RuntimeException::class);
 
-        Subtitles::loadFromFile("subtitles.exe");
+        (new Subtitles())->loadFromFile("subtitles.exe");
     }
 
     public function saveFile()
@@ -88,7 +88,7 @@ our final approach into Coruscant.
         $temporary_srt_path = './tests/files/tmp/srt.srt';
         @unlink($temporary_srt_path);
 
-        Subtitles::loadFromFile($srt_path)->save($temporary_srt_path);
+        (new Subtitles())->loadFromFile($srt_path)->save($temporary_srt_path);
 
         $this->assertFileExists($temporary_srt_path);
 
@@ -99,7 +99,7 @@ our final approach into Coruscant.
     {
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
 
-        $content = Subtitles::loadFromFile($srt_path)->content('srt');
+        $content = (new Subtitles())->loadFromFile($srt_path)->content('srt');
 
         $this->assertTrue(strlen($content) > 10); // 10 - just random number
     }
@@ -109,7 +109,7 @@ our final approach into Coruscant.
         $this->expectException(\Exception::class);
 
         $srt_path = './tests/files/srt_for_public_interface_test.srt';
-        Subtitles::loadFromFile($srt_path)->content('exe');
+        (new Subtitles())->loadFromFile($srt_path)->content('exe');
     }
 
     public function testAdd()
@@ -350,7 +350,7 @@ text
     public function testGetsFormat()
     {
         $srt_path = './tests/files/srt.srt';
-        $format = Subtitles::getFormat(file_get_contents($srt_path));
+        $format = (new Subtitles())->getFormat(file_get_contents($srt_path));
         $this->assertEquals('srt', $format['extension']);
     }
 
@@ -359,25 +359,25 @@ text
         $this->expectException(UserException::class);
 
         $srt_path = './tests/files/slick.bin';
-        Subtitles::getFormat(file_get_contents($srt_path));
+        (new Subtitles())->getFormat(file_get_contents($srt_path));
     }
 
     public function testRegisterConverter()
     {
         // add new converter
         $initial_format_count = count(Subtitles::$formats);
-        Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx2', 'Fake docx converter');
+        (new Subtitles())->registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx2', 'Fake docx converter');
         $after_addition_count = count(Subtitles::$formats);
         $this->assertEquals($initial_format_count + 1, $after_addition_count);
 
         // replacing existing converter
         $initial_format_count = count(Subtitles::$formats);
-        Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx2', 'Fake docx converter');
+        (new Subtitles())->registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx2', 'Fake docx converter');
         $after_replacement_count = count(Subtitles::$formats);
         $this->assertEquals($initial_format_count, $after_replacement_count); // adds new
 
         // from format
-        $actual_internal_format = Subtitles::loadFromString('fake_docx')->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString('fake_docx')->getInternalFormat();
         $expected_internal_format = [['start' => 22, 'end' => 33, 'lines' => ['fake']]];
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
 

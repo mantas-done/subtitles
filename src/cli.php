@@ -15,7 +15,7 @@ try {
         echo 'File not found';
         die(1);
     }
-    \Done\Subtitles\Subtitles::convert($path, $argv[2]);
+    (new \Done\Subtitles\Subtitles())->convert($path, $argv[2]);
 } catch (\Done\Subtitles\Code\Exceptions\UserException $e) {
     echo 'Error: ' . $e->getMessage();
     die(2);

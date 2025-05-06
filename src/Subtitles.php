@@ -36,7 +36,6 @@ class Subtitles
     protected array $internal_format; // data in internal format (when file is converted)
 
     protected ConverterContract $converter;
-//    protected $output;
 
     /** @var array<int, array{extension: string, format: string, name: string, class: class-string}> */
     public static array $formats = [
@@ -67,7 +66,7 @@ class Subtitles
      *
      * @throws UserException
      */
-    public static function convert(string $from_file_path, string $to_file_path, array $options = []): void
+    public function convert(string $from_file_path, string $to_file_path, array $options = []): void
     {
         $output_format = null;
         if (isset($options['output_format'])) {
@@ -84,7 +83,7 @@ class Subtitles
             $strict = $options['strict'];
             unset($options['strict']);
         }
-        static::loadFromFile($from_file_path, $strict)->save($to_file_path, $options);
+        $this->loadFromFile($from_file_path, $strict)->save($to_file_path, $options);
     }
 
     /** @param array{output_format?: string} $options */
@@ -185,7 +184,7 @@ class Subtitles
      *
      * @throws UserException
      */
-    public static function getFormat(string $string): array
+    public function getFormat(string $string): array
     {
         $modified_string = Helpers::convertToUtf8($string);
         $modified_string = Helpers::removeUtf8Bom($modified_string);
@@ -202,7 +201,7 @@ class Subtitles
         throw new \RuntimeException('No foramt: ' . $string);
     }
 
-    public static function registerConverter(string $class, string $string_format, string $extension, string $name): void
+    public function registerConverter(string $class, string $string_format, string $extension, string $name): void
     {
         // unset class if the name of format is the same
         foreach (self::$formats as $k => $format) {
@@ -258,7 +257,7 @@ class Subtitles
     }
 
     /** @throws UserException */
-    public static function loadFromFile(string $path, bool $strict = true): self
+    public function loadFromFile(string $path, bool $strict = true): self
     {
         if (!file_exists($path)) {
             throw new \RuntimeException("File doesn't exist");
@@ -269,11 +268,11 @@ class Subtitles
             throw new \RuntimeException("Problem opening file");
         }
 
-        return static::loadFromString($string, $strict);
+        return $this->loadFromString($string, $strict);
     }
 
     /** @throws UserException */
-    public static function loadFromString(string $string, bool $strict = true): self
+    public function loadFromString(string $string, bool $strict = true): self
     {
         $converter = new self;
         $modified_string = Helpers::convertToUtf8($string);

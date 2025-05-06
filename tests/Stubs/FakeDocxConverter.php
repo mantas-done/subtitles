@@ -21,7 +21,7 @@ class FakeDocxConverter implements ConverterContract
         ]];
     }
 
-    public function internalFormatToFileContent(array $internal_format, array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         return 'fake docx text';
     }

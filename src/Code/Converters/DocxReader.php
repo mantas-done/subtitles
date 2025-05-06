@@ -31,10 +31,10 @@ class DocxReader implements ConverterContract
     public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $text = DocxToText::text($original_file_content);
-        return Subtitles::loadFromString($text)->getInternalFormat();
+        return (new Subtitles())->loadFromString($text)->getInternalFormat();
     }
 
-    public function internalFormatToFileContent(array $internal_format, array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         throw new \Exception('not implemented');
     }

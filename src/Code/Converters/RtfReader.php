@@ -26,10 +26,10 @@ class RtfReader implements ConverterContract
         unset($line);
         $text = implode("\n", $lines);
 
-        return Subtitles::loadFromString($text)->getInternalFormat();
+        return (new Subtitles())->loadFromString($text)->getInternalFormat();
     }
 
-    public function internalFormatToFileContent(array $internal_format, array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         throw new \Exception('not implemented');
     }

@@ -15,7 +15,7 @@ class OtherTest extends TestCase
     {
         $this->expectException(UserException::class);
 
-        Subtitles::loadFromString('
+        (new Subtitles())->loadFromString('
 1
 00:00:02,000 --> 00:00:01,000
 a
@@ -26,7 +26,7 @@ a
     {
         $this->expectException(UserException::class);
 
-        Subtitles::loadFromString('
+        (new Subtitles())->loadFromString('
 1
 00:00:01,000 --> 00:01:40,000
 a
@@ -39,7 +39,7 @@ b
 
     public function testFixesUpTo10SecondsTimeOverlap()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 1
 00:00:01,000 --> 00:00:02,000
 a
@@ -54,7 +54,7 @@ b
 
     public function testMergeIfStartEquals()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 3
 00:00:03,000 --> 00:00:04,000
 c
@@ -75,7 +75,7 @@ a
     {
         $this->expectException(UserException::class);
 
-        Subtitles::loadFromString('
+        (new Subtitles())->loadFromString('
 1
 00:00:00,000 --> 00:05:01,000
 a
@@ -84,7 +84,7 @@ a
 
     public function testRemovesEmptySubtitles()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 [Script Info]
 
 [Events]
@@ -98,7 +98,7 @@ Dialogue: 0,0:21:41.41,0:21:44.20,사랑에 애태우며,,0,0,0,,test
 
     public function testRemoveEmptyLines()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 [Script Info]
 
 [Events]
@@ -116,7 +116,7 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
             $this->markTestSkipped('Skipping test on PHP versions earlier than 8.0');
         }
 
-        $actual = Subtitles::loadFromFile('./tests/files/utf16.srt')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile('./tests/files/utf16.srt')->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'ترجمه و تنظيم زيرنويس')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -124,12 +124,12 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
     public function testStrictModeEnabled()
     {
         $this->expectException(UserException::class);
-        Subtitles::loadFromString('00:00:00 01:00:00 help')->getInternalFormat();
+        (new Subtitles())->loadFromString('00:00:00 01:00:00 help')->getInternalFormat();
     }
 
     public function testStrictModeDisabled()
     {
-        $actual = Subtitles::loadFromString('00:00:00 01:00:00 help', false)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString('00:00:00 01:00:00 help', false)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 3600, 'help')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
 

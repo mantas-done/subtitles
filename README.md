@@ -48,14 +48,14 @@ Convert .srt file to .vtt:
 // add namespace
 use \Done\Subtitles\Subtitles;
 
-Subtitles::convert('subtitles.srt', 'subtitles.vtt');
+(new Subtitles())->convert('subtitles.srt', 'subtitles.vtt');
 ```
 
 ```php
 // if no input format is specified, library will determine file format by its content
 // if third parameter is specified, library will convert the file to specified format.
 // list of formats are in Subtitle::$formats, they are: ass, dfxp, sbv, srt, stl, sub, ttml, txt_quicktime, vtt 
-Subtitles::convert('subtitles1', 'subtitles2', ['output_format' => 'vtt']); 
+(new Subtitles())->convert('subtitles1', 'subtitles2', ['output_format' => 'vtt']); 
 ```
 
 Manually create file
@@ -67,7 +67,7 @@ $subtitles->save('subtitles.vtt');
 
 Load subtitles from existing file
 ```php
-$subtitles = Subtitles::loadFromFile('subtitles.srt');
+$subtitles = (new Subtitles())->loadFromFile('subtitles.srt');
 ```
 
 Load subtitles from string
@@ -78,7 +78,7 @@ $string = "
 Senator, we're making our final approach
 ";  
 
-$subtitles = Subtitles::loadFromString($string);
+$subtitles = (new Subtitles())->loadFromString($string);
 ```
 
 Save subtitles to file
@@ -150,9 +150,9 @@ try {
 By default, library tries to detect different file errors that can be shown to the user, so he would be able to fix them. 
 If you want to relax the rules and allow the library to convert even somewhat invalid files, use ['strict' => false]
 ```php
-Subtitles::convert($input, $output, ['strict' => false]);
-Subtitles::loadFromString($string, ['strict' => false]);
-Subtitles::loadFromFile($input, ['strict' => false]);
+(new Subtitles())->convert($input, $output, ['strict' => false]);
+(new Subtitles())->loadFromString($string, ['strict' => false]);
+(new Subtitles())->loadFromFile($input, ['strict' => false]);
 ```
 
 ## How to add new subtitle format?
@@ -174,7 +174,7 @@ And this is example of [.srt file](https://github.com/mantas783/subtitle-convert
 ## Registering your converter
 
 ```php
-Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx', 'Fake docx converter');
+(new Subtitles())->registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx', 'Fake docx converter');
 ```
 
 You can add a new converter or replace the existing one if the format name is the same (the second parameter).

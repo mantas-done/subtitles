@@ -86,7 +86,7 @@ class AssTest extends TestCase {
 
     public function testParsesFileWithExtraNewlines()
     {
-        $actual = Subtitles::loadFromString('[Script Info]
+        $actual = (new Subtitles())->loadFromString('[Script Info]
 
 [Events]
 
@@ -102,7 +102,7 @@ Dialogue: Marked=0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a
     {
         $this->expectException(UserException::class);
 
-        Subtitles::loadFromString('[Script Info]
+        (new Subtitles())->loadFromString('[Script Info]
 
 [Events]
 Format: Layer, Sxxxx, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -114,7 +114,7 @@ Dialogue: Marked=0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a
     public function testMissingEvents()
     {
         $this->expectException(UserException::class);
-        $actual = Subtitles::loadFromString('[Script Info]
+        $actual = (new Subtitles())->loadFromString('[Script Info]
 
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 ')->getInternalFormat();

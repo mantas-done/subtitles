@@ -12,7 +12,7 @@ class RtfTest extends TestCase
     public function testParsesRtfFile()
     {
         $content = file_get_contents('./tests/files/rtf.rtf');
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, 'word')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -20,7 +20,7 @@ class RtfTest extends TestCase
     public function testClientFileWithBackslashes()
     {
         $content = file_get_contents('./tests/files/rtf2.rtf');
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(223, 229, 'Reflecting back on the nineteen forties, fifties and sixties')
             ->add(230, 240, 'During those times the elders back home were grieving,')

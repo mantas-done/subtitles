@@ -36,7 +36,7 @@ class CsvTest extends TestCase {
         $csv = 'Start,End,Text
 137.44,140.375,"Senator, we\'re making our final approach into Coruscant."
 3740.476,3742.501,"Very good, Lieutenant."';
-        $actual_internal_format = Subtitles::loadFromString($csv)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($csv)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
         ->add(137.44, 140.375, ['Senator, we\'re making our final approach into Coruscant.'])
         ->add(3740.476, 3742.501, ['Very good, Lieutenant.'])->getInternalFormat();
@@ -60,7 +60,7 @@ class CsvTest extends TestCase {
 
     public function testClientAnsiFile()
     {
-        $actual = Subtitles::loadFromFile('./tests/files/csv_ansi.csv')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile('./tests/files/csv_ansi.csv')->getInternalFormat();
         $expected = (new Subtitles())
             ->add(1, 2, 'Oh! Can I believe my eyes!')
             ->add(2, 3, ['If Heaven and earth,', 'if mortals and angels'])
@@ -71,7 +71,7 @@ class CsvTest extends TestCase {
     #[DataProvider('differentContentSeparatorProvider')]
     public function testDifferentContentSeparators($string)
     {
-        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(1, 2, ['Oh! Can I believe my eyes!'])
             ->add(2, 3, ['If Heaven and earth.'])->getInternalFormat();
@@ -99,7 +99,7 @@ class CsvTest extends TestCase {
 00:00:01    One
 00:00:02    Two
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(1, 2, ['One'])
             ->add(2, 3, ['Two'])->getInternalFormat();
@@ -114,7 +114,7 @@ TEXT;
 ,
 00:00:02,Two
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(1, 2, ['One'])
             ->add(2, 3, ['Two'])->getInternalFormat();
@@ -129,7 +129,7 @@ Start Time,End Time,Text,Layer ID
 00:00:08:00,00:00:13:00,"abc",1
 00:00:20:00,00:00:24:00,def,1
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(8, 13, ['abc'])
             ->add(20, 24, ['def'])->getInternalFormat();
@@ -145,7 +145,7 @@ TEXT;
 0\t681.9946
 0.02\t308.0328
 ";
-        Subtitles::loadFromString($string)->getInternalFormat();
+        (new Subtitles())->loadFromString($string)->getInternalFormat();
     }
 
     public function testNoDecimal()
@@ -154,7 +154,7 @@ TEXT;
 0,1,text
 1,2,text
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(0, 1, 'text')
             ->add(1, 2, 'text')->getInternalFormat();
@@ -171,7 +171,7 @@ TEXT;
 1004.51,1.010.366,"So basically what you're seeing here, everything, all of these screenshots were made with default Twenty Twenty-Four."
 1.010.368,1.018.458,"and just editing through the site editor. You can see you can make portfolios, you can make business sites."
 TEXT;
-        Subtitles::loadFromString($string)->getInternalFormat();
+        (new Subtitles())->loadFromString($string)->getInternalFormat();
 
     }
 
@@ -183,7 +183,7 @@ TEXT;
 ,0:06,"Hello, my name is Cindy Takehara."
 ,0:08,I was the project lead for this sound workshop.
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(6, 8, 'Hello, my name is Cindy Takehara.')
             ->add(8, 9, 'I was the project lead for this sound workshop.')->getInternalFormat();
@@ -200,7 +200,7 @@ TEXT;
 "Unknown","00:00:00:00","00:00:01:00","a"
 
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($string)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
         $expected_internal_format = (new Subtitles())
             ->add(0, 1, 'a')
             ->getInternalFormat();
