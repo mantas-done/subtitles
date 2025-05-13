@@ -37,7 +37,7 @@ php subtitles.phar input.srt output.vtt
 ```
 subtitles.phar file can be found here - https://github.com/mantas-done/subtitles/releases
 
-## Installation (supports PHP 7.4...8.4)
+## Installation (supports PHP 8.3...8.4)
 ```
 composer require mantas-done/subtitles
 ```

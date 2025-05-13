@@ -365,34 +365,51 @@ class Subtitles
         }
         unset($row);
 
-        if (!$strict) {
-            $converter->internal_format = $internal_format;
-            return $converter;
-        }
-
         // exception if caption is showing for more than 5 minutes
-        foreach ($internal_format as $row) {
+        foreach ($internal_format as $k => $row) {
             if ($row['end'] - $row['start'] > (60 * 5)) {
-                throw new DisableStrictSuggestionException('Error: line duration is longer than 5 minutes: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                if ($strict) {
+                    throw new DisableStrictSuggestionException('Error: line duration is longer than 5 minutes: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                } else {
+                    unset($internal_format[$k]);
+                }
             }
         }
 
+        $internal_format = array_values($internal_format);
+
         if ($internal_format[0]['start'] < 0) {
-            throw new DisableStrictSuggestionException('Start time is a negative number ' . SrtConverter::internalTimeToSrt($internal_format[0]['start']) . ' -> ' . SrtConverter::internalTimeToSrt($internal_format[0]['end']) . ' ' . $internal_format[0]['lines'][0]);
+            if ($strict) {
+                throw new DisableStrictSuggestionException('Start time is a negative number ' . SrtConverter::internalTimeToSrt($internal_format[0]['start']) . ' -> ' . SrtConverter::internalTimeToSrt($internal_format[0]['end']) . ' ' . $internal_format[0]['lines'][0]);
+            } else {
+                unset($internal_format[0]);
+            }
         }
 
         // check if time is increasing
         $last_end_time = 0;
         foreach ($internal_format as $k => $row) {
             if ($row['start'] < $last_end_time) {
-                throw new DisableStrictSuggestionException("Timestamps are overlapping over 60 seconds: \nxx:xx:xx,xxx --> " . SrtConverter::internalTimeToSrt($internal_format[$k - 1]['end']) . ' ' .  $internal_format[$k - 1]['lines'][0] . "\n" . SrtConverter::internalTimeToSrt($row['start']) . ' --> xx:xx:xx,xxx ' . $row['lines'][0]);
+                if ($strict) {
+                    throw new DisableStrictSuggestionException("Timestamps are overlapping over 60 seconds: \nxx:xx:xx,xxx --> " . SrtConverter::internalTimeToSrt($internal_format[$k - 1]['end']) . ' ' .  $internal_format[$k - 1]['lines'][0] . "\n" . SrtConverter::internalTimeToSrt($row['start']) . ' --> xx:xx:xx,xxx ' . $row['lines'][0]);
+                } else {
+                    unset($internal_format[$k]);
+                }
             }
             $last_end_time = $row['end'];
             if ($row['start'] > $row['end']) {
-                throw new DisableStrictSuggestionException('Timestamp start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                if ($strict) {
+                    throw new DisableStrictSuggestionException('Timestamp start time is bigger than the end time near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                } else {
+                    unset($internal_format[$k]);
+                }
             }
             if ($row['start'] == $row['end']) {
-                throw new DisableStrictSuggestionException('Timestamp start and end times are equal near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                if ($strict) {
+                    throw new DisableStrictSuggestionException('Timestamp start and end times are equal near text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                } else {
+                    unset($internal_format[$k]);
+                }
             }
         }
 
@@ -403,16 +420,20 @@ class Subtitles
         ) {
             // do nothing
         } else {
-            foreach ($internal_format as $row) {
+            foreach ($internal_format as $k => $row) {
                 if (
                     count($row['lines']) > 10
                 ) {
-                    throw new DisableStrictSuggestionException('Over 10 lines of text selected, something is wrong with timestamps below this text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                    if ($strict) {
+                        throw new DisableStrictSuggestionException('Over 10 lines of text selected, something is wrong with timestamps below this text: ' . SrtConverter::internalTimeToSrt($row['start']) . ' -> ' . SrtConverter::internalTimeToSrt($row['end']) . ' ' . $row['lines'][0]);
+                    } else {
+                        unset($internal_format[$k]);
+                    }
                 }
             }
         }
 
-        $converter->internal_format = $internal_format;
+        $converter->internal_format = array_values($internal_format);
         return $converter;
     }
 }

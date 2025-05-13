@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Done\Subtitles\Code\Exceptions\DisableStrictSuggestionException;
 use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
@@ -123,14 +124,17 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
 
     public function testStrictModeEnabled()
     {
-        $this->expectException(UserException::class);
+        $this->expectException(DisableStrictSuggestionException::class);
         (new Subtitles())->loadFromString('00:00:00 01:00:00 help')->getInternalFormat();
     }
 
     public function testStrictModeDisabled()
     {
-        $actual = (new Subtitles())->loadFromString('00:00:00 01:00:00 help', false)->getInternalFormat();
-        $expected = (new Subtitles())->add(0, 3600, 'help')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString('
+00:00:01 00:00:02 test
+00:00:00 01:00:00 help
+', false)->getInternalFormat();
+        $expected = (new Subtitles())->add(1, 2, 'test')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
 
     }
