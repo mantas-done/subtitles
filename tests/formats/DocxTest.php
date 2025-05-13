@@ -26,6 +26,6 @@ class DocxTest extends TestCase
         $this->expectExceptionMessage("Can't find suitable converter for the file");
 
         $content = file_get_contents('./tests/files/corrupted.zip');
-        Helpers::getConverterByFileContent($content, $content);
+        Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
     }
 }

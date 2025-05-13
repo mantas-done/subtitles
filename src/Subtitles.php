@@ -38,7 +38,7 @@ class Subtitles
     protected ConverterContract $converter;
 
     /** @var array<int, array{extension: string, format: string, name: string, class: class-string}> */
-    public static array $formats = [
+    private array $formats = [
         ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
         ['extension' => 'ssa',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
         ['extension' => 'dfxp', 'format' => 'dfxp',             'name' => 'Netflix Timed Text',         'class' => DfxpConverter::class],
@@ -173,7 +173,7 @@ class Subtitles
     /** @param array{fps?: float} $options */
     public function content(string $format, array $options = []): string
     {
-        $converter = Helpers::getConverterByFormat($format);
+        $converter = Helpers::getConverterByFormat($this->formats, $format);
         $content = $converter->internalFormatToFileContent($this->internal_format, $options);
 
         return $content;
@@ -190,9 +190,9 @@ class Subtitles
         $modified_string = Helpers::removeUtf8Bom($modified_string);
         $modified_string = Helpers::normalizeNewLines($modified_string);
 
-        $input_converter = Helpers::getConverterByFileContent($modified_string, $string);
+        $input_converter = Helpers::getConverterByFileContent($this->formats, $modified_string, $string);
 
-        foreach (self::$formats as $format) {
+        foreach ($this->formats as $format) {
             if ($format['class'] === get_class($input_converter)) {
                 return $format;
             }
@@ -201,18 +201,24 @@ class Subtitles
         throw new \RuntimeException('No foramt: ' . $string);
     }
 
+    /** @return array<int, array{extension: string, format: string, name: string, class: class-string}> */
+    public function getFormats(): array
+    {
+        return $this->formats;
+    }
+
     public function registerConverter(string $class, string $string_format, string $extension, string $name): void
     {
         // unset class if the name of format is the same
-        foreach (self::$formats as $k => $format) {
+        foreach ($this->formats as $k => $format) {
             if ($format['format'] === $string_format) {
-                unset(self::$formats[$k]);
+                unset($this->formats[$k]);
             }
         }
         unset($format);
 
         // add at the beginning
-        array_unshift(self::$formats, ['extension' => $extension, 'format' => $string_format, 'name' => $name, 'class' => $class]);
+        array_unshift($this->formats, ['extension' => $extension, 'format' => $string_format, 'name' => $name, 'class' => $class]);
     }
 
     /** @return array<int, array{start: float, end: float, lines: array<string>}> */
@@ -280,7 +286,7 @@ class Subtitles
         $modified_string = Helpers::normalizeNewLines($modified_string);
         $converter->input = $modified_string;
 
-        $input_converter = Helpers::getConverterByFileContent($converter->input, $string);
+        $input_converter = Helpers::getConverterByFileContent($this->formats, $converter->input, $string);
         $internal_format = $input_converter->fileContentToInternalFormat($converter->input, $string);
 
         // remove empty lines

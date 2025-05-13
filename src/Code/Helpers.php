@@ -32,9 +32,10 @@ class Helpers
         return $text;
     }
 
-    public static function getConverterByFormat(string $format): ConverterContract
+    /** @param array<int, array{extension: string, format: string, name: string, class: class-string}> $formats */
+    public static function getConverterByFormat(array $formats,string $format): ConverterContract
     {
-        foreach (Subtitles::$formats as $row) {
+        foreach ($formats as $row) {
             if ($row['format'] === $format) {
                 $full_class_name = $row['class'];
                 /** @var ConverterContract $converter */
@@ -46,10 +47,13 @@ class Helpers
         throw new \RuntimeException("Can't find suitable converter, for format: $format");
     }
 
-    /** @throws UserException */
-    public static function getConverterByFileContent(string $file_content, string $original_file_content): ConverterContract
+    /**
+     * @param array<int, array{extension: string, format: string, name: string, class: class-string}> $formats
+     * @throws UserException
+     */
+    public static function getConverterByFileContent(array $formats, string $file_content, string $original_file_content): ConverterContract
     {
-        foreach (Subtitles::$formats as $row) {
+        foreach ($formats as $row) {
             $class_name = $row['class'];
             $full_class_name = $class_name;
             /** @var ConverterContract $converter */
