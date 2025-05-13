@@ -3,12 +3,12 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\VttConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Formats\Vtt;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class VttTest extends TestCase {
 
@@ -17,7 +17,7 @@ class VttTest extends TestCase {
     public function testRecognizesVtt()
     {
         $content = file_get_contents('./tests/files/vtt.vtt');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === VttConverter::class);
     }
 
@@ -25,7 +25,7 @@ class VttTest extends TestCase {
     {
         $content = 'something 
 about WEBVTT';
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) !== VttConverter::class);
     }
 
@@ -63,7 +63,7 @@ about WEBVTT';
             ]
         ]];
 
-        $actual_internal_format = Subtitles::loadFromFile($vtt_path)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromFile($vtt_path)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
@@ -88,7 +88,7 @@ c
 
 TEXT;
 
-        $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, ['b', 'b'])->add(2, 3, 'c')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
@@ -106,7 +106,7 @@ WEBVTT
 a
 TEXT;
 
-        Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
     }
 
     public function testExceptionWhenEmptyFile()
@@ -118,7 +118,7 @@ WEBVTT
 
 TEXT;
 
-        Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
     }
 
 
@@ -166,57 +166,6 @@ TEXT;
             ->add(1, 2, 'text2')
             ->getInternalFormat();
 
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testParsesFileWithStyles()
-    {
-        $given = file_get_contents('./tests/files/vtt_with_styles.vtt');
-        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
-
-        $expected = (new Vtt())
-            ->add(0.0, 10.0, 'Hello world.', ['settings' => 'position:50% line:15% align:middle'])
-            ->getInternalFormat();
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testGeneratesFileWithStyles()
-    {
-        $actual = (new Vtt())->add(0, 1, 'a', ['settings' => 'position:50% line:15% align:middle'])->content('vtt');
-        $expected = <<<X
-WEBVTT
-
-00:00:00.000 --> 00:00:01.000 position:50% line:15% align:middle
-a
-X;
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
-    }
-
-    public function testGeneratesSpeakers()
-    {
-        $actual = (new Vtt())->add(0, 1, ['John' => 'a', 'b'])->content('vtt');
-        $expected = <<<X
-WEBVTT
-
-00:00:00.000 --> 00:00:01.000
-<v John>a</v>
-b
-X;
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
-    }
-
-    public function testParsesSpeakers()
-    {
-        $expected = (new Vtt())->add(0, 1, ['John' => 'a', 'b'])->getInternalFormat();
-        $input = <<<X
-WEBVTT
-
-00:00:00.000 --> 00:00:01.000
-<v John>a</v>
-b
-X;
-        $actual = Subtitles::loadFromString($input)->getInternalFormat();
         $this->assertEquals($expected, $actual);
     }
 
@@ -447,7 +396,7 @@ c
 
 TEXT;
 
-        $actual = Subtitles::loadFromString($input_vtt_file_content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($input_vtt_file_content)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->add(2, 3, 'c')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);

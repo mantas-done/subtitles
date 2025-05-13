@@ -19,8 +19,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 
 class SccConverter implements ConverterContract
 {
@@ -29,7 +29,7 @@ class SccConverter implements ConverterContract
         23.976,
     ];
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return preg_match('/Scenarist_SCC V1.0/', $file_content) === 1;
     }
@@ -40,7 +40,7 @@ class SccConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $fps = 29.97;
         if (!in_array($fps, self::$valid_fpses)) {
@@ -95,7 +95,7 @@ class SccConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format, array $output_settings)
+    public function internalFormatToFileContent(array $internal_format, array $output_settings): string
     {
         if (isset($output_settings['fps'])) {
             $fps = $output_settings['fps'];
@@ -186,7 +186,7 @@ class SccConverter implements ConverterContract
     {
         $tmp = str_replace(';', ':', $scc_time);
         $parts = explode(':', $tmp);
-        $time = $parts[0] * 3600 + $parts[1] * 60 + $parts[2] + $parts[3] / $fps;
+        $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2] + (int)$parts[3] / $fps;
         $time += ($text_bytes / 2) / $fps;
 
         if (strstr($scc_time, ';') !== false) {
@@ -340,22 +340,6 @@ class SccConverter implements ConverterContract
             }
         }
         return null;
-    }
-
-    public static function shortenLineTextIfTooLong($output, $start, $end, $additional_bytes)
-    {
-        $blocks = explode(' ', $output);
-        $start_frame = (int)ceil($start * self::$fps);
-        $end_frame = (int)floor($end * self::$fps);
-        $frame_count = $end_frame - $start_frame - $additional_bytes; // 1 byte is transmitted during 1 frame
-        if ($frame_count < 0) {
-            throw new UserException("There is to little time between $start and $end timestamps to show text", 123);
-        }
-        $frame_count = $frame_count - ($frame_count % 2); // nearest event number down
-        $block_count = $frame_count / 2;
-        $new_blocks = array_slice($blocks, 0, $block_count);
-
-        return implode(' ', $new_blocks);
     }
 
     protected static function addSpaceAfter4Characters($string) {

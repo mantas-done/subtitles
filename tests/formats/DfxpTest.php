@@ -15,7 +15,7 @@ class DfxpTest extends TestCase {
     public function testRecognizesDfxp()
     {
         $content = file_get_contents('./tests/files/dfxp.dfxp');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === DfxpConverter::class);
     }
 
@@ -28,7 +28,7 @@ class DfxpTest extends TestCase {
         @unlink($temporary_dfxp_path);
 
         // srt to stl
-        Subtitles::convert($srt_path, $temporary_dfxp_path);
+        (new Subtitles())->convert($srt_path, $temporary_dfxp_path);
         $this->assertFileEqualsIgnoringLineEndings($dfxp_path, $temporary_dfxp_path);
 
         unlink($temporary_dfxp_path);
@@ -39,7 +39,7 @@ class DfxpTest extends TestCase {
         $expected = (new Subtitles())->add(0, 1, '&\'"< >')->getInternalFormat();
 
         $ttml = (new Subtitles())->add(0, 1, '&\'"< >')->content('dfxp');
-        $actual = Subtitles::loadFromString($ttml)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($ttml)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -49,10 +49,10 @@ class DfxpTest extends TestCase {
         $srt_path = './tests/files/srt.srt';
         $dfxp_path = './tests/files/dfxp.dfxp';
 
-        $dfxp_object = Subtitles::loadFromFile($dfxp_path);
+        $dfxp_object = (new Subtitles())->loadFromFile($dfxp_path);
         $actual = $dfxp_object->getInternalFormat();
 
-        $srt_object = Subtitles::loadFromFile($srt_path);
+        $srt_object = (new Subtitles())->loadFromFile($srt_path);
         $expected = $srt_object->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
@@ -60,7 +60,7 @@ class DfxpTest extends TestCase {
 
     public function testParsesDifferentBr()
     {
-        $dfxp_object = Subtitles::loadFromFile('./tests/files/dfxp_with_different_br.dfxp');
+        $dfxp_object = (new Subtitles())->loadFromFile('./tests/files/dfxp_with_different_br.dfxp');
         $actual = $dfxp_object->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, ['one', 'two', 'three'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);

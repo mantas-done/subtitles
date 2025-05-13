@@ -3,11 +3,11 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\SmiConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class SmiTest extends TestCase {
 
@@ -16,13 +16,13 @@ class SmiTest extends TestCase {
     public function testRecognizesSmi()
     {
         $content = file_get_contents('./tests/files/smi.smi');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === SmiConverter::class);
     }
 
     public function testFileToInternalFormat()
     {
-        $actual = Subtitles::loadFromFile('./tests/files/smi.smi', 'smi')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile('./tests/files/smi.smi', 'smi')->getInternalFormat();
         $expected = self::generatedSubtitles()->getInternalFormat();
             $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -35,7 +35,7 @@ class SmiTest extends TestCase {
 
     public function testFormatted()
     {
-        $actual = Subtitles::loadFromFile('./tests/files/smi_formatted.smi')->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile('./tests/files/smi_formatted.smi')->getInternalFormat();
         $expected = (new Subtitles())
             ->add(9.209, 12.312, '( clock ticking )')
             ->add(14.848, 17.35, [
@@ -57,7 +57,7 @@ class SmiTest extends TestCase {
 
     public function testNegativeTime()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 <SAMI>
 <BODY>
 <SYNC Start=-100><P Class=ENUSCC>a</P></SYNC>
@@ -76,7 +76,7 @@ class SmiTest extends TestCase {
 
     public function testMsNearTimestamp()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 <SAMI>
 <BODY>
 <SYNC Start="1000ms"><P Class=ENUSCC>a</P></SYNC>
@@ -91,7 +91,7 @@ class SmiTest extends TestCase {
 
     public function testNoP()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 <SAMI>
 <BODY>
 <SYNC Start=0>a</SYNC>
@@ -107,7 +107,7 @@ class SmiTest extends TestCase {
 
     public function testClientFile1()
     {
-        $actual = Subtitles::loadFromString("
+        $actual = (new Subtitles())->loadFromString("
 <SAMI>
 	<BODY>
 		<SYNC START=\"9560\">
@@ -127,7 +127,7 @@ class SmiTest extends TestCase {
 
     public function testClientFile2()
     {
-        $actual = Subtitles::loadFromString('<SAMI>
+        $actual = (new Subtitles())->loadFromString('<SAMI>
   <HEAD>
     <STYLE TYPE="text/css">
       <!--
@@ -159,7 +159,7 @@ class SmiTest extends TestCase {
 
     public function testClientFile3()
     {
-        $actual = Subtitles::loadFromString('<SAMI>
+        $actual = (new Subtitles())->loadFromString('<SAMI>
 <HEAD>
 <TITLE>금토드라마(열혈사제)-35회(19년04월13일(토))</TITLE>
 <HEAD>
@@ -179,7 +179,7 @@ class SmiTest extends TestCase {
 
     public function testNonEnglishWords()
     {
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 <SAMI>
 <BODY>
 <SYNC Start=0><P Class=ENUSCC>늘</P></SYNC>
@@ -197,7 +197,7 @@ class SmiTest extends TestCase {
     {
         $this->expectException(UserException::class);
 
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 <SAMI>
 <HEAD>
 <STYLE TYPE="text/css">

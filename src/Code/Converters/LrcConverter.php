@@ -2,14 +2,14 @@
 
 namespace Done\Subtitles\Code\Converters;
 
-use Done\Subtitles\Code\UserException;
+use Done\Subtitles\Code\Exceptions\UserException;
 
 class LrcConverter implements ConverterContract
 {
     protected static $regexp = '/\[\s*(\d{2}:\d{2}(?:[:.]\d{1,3})?)\s*]/';
     protected static $time_offset_regexp = '/\[offset:\s*\+?(-?\d+)\s*]/s';
 
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         // only select when there is text after the timestamp
         // do not select files that have timestamp and text somewhere on the other line
@@ -17,7 +17,7 @@ class LrcConverter implements ConverterContract
         return preg_match($regex, $file_content) === 1;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $timestamp_offset = self::timestampsOffset($file_content);
         $lines = explode("\n", $file_content);
@@ -56,7 +56,7 @@ class LrcConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '';
         foreach ($internal_format as $i => $block) {

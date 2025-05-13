@@ -2,12 +2,12 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 
 class SrtConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return preg_match('/^0*\d?\R(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3}\s*-->\s*\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})\R(.+)$/m', $file_content) === 1;
     }
@@ -18,7 +18,7 @@ class SrtConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $lines = mb_split("\n", $file_content);
         $internal_format = [];
@@ -41,9 +41,11 @@ class SrtConverter implements ConverterContract
                 // remove number before timestamp
                 if (isset($internal_format[$i - 1])) {
                     $count = count($internal_format[$i - 1]['lines']);
+                    // @phpstan-ignore-next-line
                     if ($count === 1) {
                         $internal_format[$i - 1]['lines'][0] = '';
                     } else {
+                        // @phpstan-ignore-next-line
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
@@ -70,7 +72,7 @@ class SrtConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '';
 
@@ -105,15 +107,18 @@ class SrtConverter implements ConverterContract
     {
         $pattern = '/(?:(?<hours>\d{1,2}):)?(?<minutes>\d{1,2}):(?<seconds>\d{1,2})([:.,](?<milliseconds>\d{1,3}))?/m';
         if (preg_match($pattern, $srt_time, $matches)) {
+            // @phpstan-ignore-next-line
             $hours = (isset($matches['hours']) && $matches['hours']) ? $matches['hours'] : 0 ;
+            // @phpstan-ignore-next-line
             $minutes = isset($matches['minutes']) ? $matches['minutes'] : 0;
+            // @phpstan-ignore-next-line
             $seconds = isset($matches['seconds']) ? $matches['seconds'] : 0;
             $milliseconds = (isset($matches['milliseconds']) && $matches['milliseconds']) ? $matches['milliseconds'] : "000";
         } else {
             throw new UserException("Can't parse timestamp: \"$srt_time\", near: $lines");
         }
 
-        return $hours * 3600 + $minutes * 60 + $seconds + str_pad($milliseconds, 3, "0", STR_PAD_RIGHT) / 1000;
+        return $hours * 3600 + $minutes * 60 + $seconds + (float)str_pad($milliseconds, 3, "0", STR_PAD_RIGHT) / 1000;
     }
 
     /**

@@ -2,12 +2,12 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 
 class TtmlConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         $first_line = explode("\n", $file_content)[0];
 
@@ -17,7 +17,7 @@ class TtmlConverter implements ConverterContract
         ;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
@@ -107,7 +107,7 @@ class TtmlConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '<?xml version="1.0" encoding="utf-8"?>
 <tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" ttp:timeBase="media" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en" xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
@@ -162,9 +162,9 @@ class TtmlConverter implements ConverterContract
         }
 
         if (substr($ttml_time, -1) === 't') { // 340400000t
-            return substr($ttml_time, 0, -1) / 10000000;
+            return (int)substr($ttml_time, 0, -1) / 10000000;
         } elseif (substr($ttml_time, -2) === 'ms') { // 1500ms
-            return rtrim($ttml_time, 'ms') / 1000;
+            return (int)rtrim($ttml_time, 'ms') / 1000;
         } elseif (substr($ttml_time, -1) === 's') { // 1234s
             return rtrim($ttml_time, 's');
         } elseif (substr($ttml_time, -1) === 'f' && $frame_rate) { // 24f
@@ -261,7 +261,7 @@ class TtmlConverter implements ConverterContract
         $frameRate = null;
         preg_match('/ttp:frameRate="(\d+)"/', $file_content, $matches);
         if (isset($matches[1])) {
-            $frameRate = $matches[1];
+            $frameRate = (float)$matches[1];
         }
 
         preg_match('/ttp:frameRateMultiplier="(\d+) (\d+)"/', $file_content, $matches);
@@ -363,6 +363,7 @@ class TtmlConverter implements ConverterContract
             $i++;
         }
         if ($i !== 0 && $internal_format[$i - 1]['end'] === null) {
+            // @phpstan-ignore-next-line
             $internal_format[$i - 1]['end'] = (float)$attributes['start'] + 1;
         }
 

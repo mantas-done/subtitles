@@ -19,9 +19,8 @@ class SbvTest extends TestCase {
 Don’t think that you can just ignore them
 because they’re not your children or relatives.
 TEXT;
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === SbvConverter::class);
-        $this->assertTrue(true);
     }
 
     public function testFileToInternalFormat()
@@ -35,7 +34,7 @@ because they’re not your children or relatives.
 Because every child in our society is
 a part of that society
 TEXT;
-        $actual_internal_format = Subtitles::loadFromString($actual_file_content)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($actual_file_content)->getInternalFormat();
         $expected_internal_format = [[
             'start' => 340,
             'end' => 346,
@@ -95,7 +94,7 @@ Yes, yes. On my way.
 Lisa...Mona Lisa.
 TEXT;
 
-        $actual_internal_format = Subtitles::loadFromString($actual_file_content)->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString($actual_file_content)->getInternalFormat();
         $expected_internal_format = [[
             'start' => 64.927,
             'end' => 66.927,
@@ -132,7 +131,7 @@ d";
             ->getInternalFormat();
         $this->assertInternalFormatsEqual(
             $expected,
-            Subtitles::loadFromString($string)->getInternalFormat()
+            (new Subtitles())->loadFromString($string)->getInternalFormat()
         );
     }
 

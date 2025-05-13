@@ -37,7 +37,7 @@ php subtitles.phar input.srt output.vtt
 ```
 subtitles.phar file can be found here - https://github.com/mantas-done/subtitles/releases
 
-## Installation (supports PHP 7.4...8.4)
+## Installation (supports PHP 8.3...8.4)
 ```
 composer require mantas-done/subtitles
 ```
@@ -48,14 +48,14 @@ Convert .srt file to .vtt:
 // add namespace
 use \Done\Subtitles\Subtitles;
 
-Subtitles::convert('subtitles.srt', 'subtitles.vtt');
+(new Subtitles())->convert('subtitles.srt', 'subtitles.vtt');
 ```
 
 ```php
 // if no input format is specified, library will determine file format by its content
 // if third parameter is specified, library will convert the file to specified format.
 // list of formats are in Subtitle::$formats, they are: ass, dfxp, sbv, srt, stl, sub, ttml, txt_quicktime, vtt 
-Subtitles::convert('subtitles1', 'subtitles2', ['output_format' => 'vtt']); 
+(new Subtitles())->convert('subtitles1', 'subtitles2', ['output_format' => 'vtt']); 
 ```
 
 Manually create file
@@ -67,7 +67,7 @@ $subtitles->save('subtitles.vtt');
 
 Load subtitles from existing file
 ```php
-$subtitles = Subtitles::loadFromFile('subtitles.srt');
+$subtitles = (new Subtitles())->loadFromFile('subtitles.srt');
 ```
 
 Load subtitles from string
@@ -78,7 +78,7 @@ $string = "
 Senator, we're making our final approach
 ";  
 
-$subtitles = Subtitles::loadFromString($string);
+$subtitles = (new Subtitles())->loadFromString($string);
 ```
 
 Save subtitles to file
@@ -139,19 +139,20 @@ $subtitles->shiftTimeGradually(2, 0, 3600);
 ## Exceptions ##
 
 Library will throw UserException, it's message can be shown to the user.
+
 ```php
 try {
     (new \Done\Subtitles\Subtitles())->add(0, 1, 'very long text... aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')->content('scc');
-} catch (\Done\Subtitles\Code\UserException $e) {
+} catch (\Done\Subtitles\Code\Exceptions\UserException $e) {
     echo $e->getMessage(); // SCC file can't have more than 4 lines of text each 32 characters long. This text is too long: <text from user file that triggered this error>
 }
 ```
 By default, library tries to detect different file errors that can be shown to the user, so he would be able to fix them. 
 If you want to relax the rules and allow the library to convert even somewhat invalid files, use ['strict' => false]
 ```php
-Subtitles::convert($input, $output, ['strict' => false]);
-Subtitles::loadFromString($string, ['strict' => false]);
-Subtitles::loadFromFile($input, ['strict' => false]);
+(new Subtitles())->convert($input, $output, ['strict' => false]);
+(new Subtitles())->loadFromString($string, ['strict' => false]);
+(new Subtitles())->loadFromFile($input, ['strict' => false]);
 ```
 
 ## How to add new subtitle format?
@@ -173,7 +174,7 @@ And this is example of [.srt file](https://github.com/mantas783/subtitle-convert
 ## Registering your converter
 
 ```php
-Subtitles::registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx', 'Fake docx converter');
+(new Subtitles())->registerConverter(FakeDocxConverter::class, 'docx_fake', 'docx', 'Fake docx converter');
 ```
 
 You can add a new converter or replace the existing one if the format name is the same (the second parameter).
@@ -216,6 +217,7 @@ Array
 
 ```
 php vendor/bin/phpunit
+php vendor/bin/phpstan analyse --memory-limit 4G
 ```
 
 ## Contribution

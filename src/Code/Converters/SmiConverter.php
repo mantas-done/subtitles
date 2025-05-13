@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class SmiConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return preg_match('/<SAMI>/m', $file_content) === 1;
     }
@@ -15,7 +15,7 @@ class SmiConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $internal_format = []; // array - where file content will be stored
 
@@ -44,6 +44,8 @@ class SmiConverter implements ConverterContract
                 continue;
             }
 
+            $lines = [];
+            $line = '';
             foreach ($syncElement->childNodes as $childNode) {
                 $lines = [];
                 $line = '';
@@ -106,7 +108,7 @@ class SmiConverter implements ConverterContract
      * @param array $internal_format    Internal format
      * @return string                   Converted file content
      */
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '<SAMI>
 <HEAD>
@@ -184,7 +186,7 @@ class SmiConverter implements ConverterContract
      */
     protected static function internalTimeToFormat($internal_time)
     {
-       return round($internal_time * 1000);
+       return (string)round($internal_time * 1000);
     }
 
     protected static function escape($value) {

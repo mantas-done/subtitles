@@ -4,10 +4,10 @@ namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\TtmlConverter;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class TtmlTest extends TestCase {
 
@@ -16,7 +16,7 @@ class TtmlTest extends TestCase {
     public function testRecognizesTtml()
     {
         $content = file_get_contents('./tests/files/ttml.ttml');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertEquals(TtmlConverter::class, get_class($converter));
     }
 
@@ -29,7 +29,7 @@ class TtmlTest extends TestCase {
         @unlink($temporary_ttml_path);
 
         // srt to stl
-        Subtitles::convert($srt_path, $temporary_ttml_path);
+        (new Subtitles())->convert($srt_path, $temporary_ttml_path);
         $this->assertFileEqualsIgnoringLineEndings($ttml_path, $temporary_ttml_path);
 
         unlink($temporary_ttml_path);
@@ -40,7 +40,7 @@ class TtmlTest extends TestCase {
         $expected = (new Subtitles())->add(0, 1, '&\'"< >')->getInternalFormat();
 
         $ttml = (new Subtitles())->add(0, 1, '&\'"< >')->content('ttml');
-        $actual = Subtitles::loadFromString($ttml)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($ttml)->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -51,10 +51,10 @@ class TtmlTest extends TestCase {
         $ttml_path = './tests/files/ttml.ttml';
 
         // stl to srt
-        $ttml_object = Subtitles::loadFromFile($ttml_path);
+        $ttml_object = (new Subtitles())->loadFromFile($ttml_path);
         $actual = $ttml_object->getInternalFormat();
 
-        $srt_object = Subtitles::loadFromFile($srt_path);
+        $srt_object = (new Subtitles())->loadFromFile($srt_path);
         $expected = $srt_object->getInternalFormat();
 
         $this->assertInternalFormatsEqual($actual, $expected);
@@ -63,7 +63,7 @@ class TtmlTest extends TestCase {
     public function testParses2()
     {
         $ttml_path = './tests/files/ttml2.ttml';
-        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(0, 2, 'Hello I am your first line.')
             ->add(2, 4, ['I am your second captions', 'but with two lines.'])
@@ -77,7 +77,7 @@ class TtmlTest extends TestCase {
     public function testDuplicatedElementIdsParse()
     {
         $ttml_path = './tests/files/ttml_with_duplicated_element_ids.ttml';
-        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(0, 1, 'First line.')
             ->add(1, 2, ['Second line.'])
@@ -89,7 +89,7 @@ class TtmlTest extends TestCase {
     public function testTimeParseWithFpsAndMultiplierGiven()
     {
         $ttml_path = './tests/files/ttml_with_fps_and_multiplier_given.ttml';
-        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(15.015, 17.684, 'First line.')
             ->getInternalFormat();
@@ -103,9 +103,7 @@ class TtmlTest extends TestCase {
         $this->assertStringContainsString('"8.456s"', $actual);
     }
 
-    /**
-     * @dataProvider timeFormatProvider
-     */
+    #[DataProvider('timeFormatProvider')]
     public function testDifferentTimeFormats($ttml_time, $seconds, $fps)
     {
         $internal_seconds = TtmlConverter::ttmlTimeToInternal($ttml_time, $fps);
@@ -129,7 +127,7 @@ class TtmlTest extends TestCase {
     public function testParseWithMultipleDivs()
     {
         $ttml_path = './tests/files/ttml_with_multiple_divs.ttml';
-        $actual = Subtitles::loadFromFile($ttml_path)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromFile($ttml_path)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(1.464, 2.423, ["Senator, we're making", 'our final approach into Coruscant.'])
             ->add(2.423, 5.432, ['Very good, Lieutenant.'])
@@ -155,7 +153,7 @@ class TtmlTest extends TestCase {
     <Text>c</Text>
   </Paragraph>
 </Subtitle>';
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, ['a', 'b'])->add(1, 2, 'c')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -171,7 +169,7 @@ class TtmlTest extends TestCase {
     <Text>a</Text>
   </Paragraph>
 </Subtitle>';
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -187,7 +185,7 @@ class TtmlTest extends TestCase {
     <Text>a</Text>
   </Paragraph>
 </Subtitle>';
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -206,7 +204,7 @@ class TtmlTest extends TestCase {
 </body>
 </tt>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, ['a', 'b'])->add(2.123, 3.321, 'c')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -227,7 +225,7 @@ X;
 </tt>
 
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 2, 'test1')->add(5.38, 11.38, 'test2')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -248,7 +246,7 @@ X;
 </tt>
 
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 5.38, 'test1')->add(5.38, 6.38, 'test2')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -280,7 +278,7 @@ X;
    </Font>
 </DCSubtitle>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(51, 52, 'Here.')->add(90.02, 91.031, 'No, not now.')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -310,7 +308,7 @@ X;
   </Subtitle>
 </DCSubtitle>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(51, 52, 'Here.')->add(90.02, 91.031, 'No, not now.')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -363,7 +361,7 @@ X;
 	</tt:body>
 </tt:tt>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 2.08, 'Badewetter an der Ostsee.')->add(2.2, 5.4, ['Jetzt im Sommer', 'hat das Meer um die 19°C.'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -394,7 +392,7 @@ X;
   </SubtitleList>
 </SubtitleReel>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(13, 15, '*Lied: "Feeling Good" von Nina Simone*')->add(15, 17, '*leises Windrauschen*')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -423,7 +421,7 @@ X;
   </dcst:SubtitleList>
 </dcst:SubtitleReel>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(30.154, 33.808, "L'extérieur est différent de l'intérieur.")->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -435,7 +433,7 @@ X;
 is now easier than ever.</text><text start="3.88" dur="3.177">With a minimum investment of time and
 money,</text></transcript>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0.22, 3.88, ['Creating an online shop', 'is now easier than ever.'])
             ->add(3.88, 7.057, ['With a minimum investment of time and', 'money,'])
             ->getInternalFormat();
@@ -449,7 +447,7 @@ X;
 is now easier than ever.</text><text start="3.88">With a minimum investment of time and
 money,</text></transcript>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0.22, 3.88, ['Creating an online shop', 'is now easier than ever.'])
             ->add(3.88, 4.88, ['With a minimum investment of time and', 'money,'])
             ->getInternalFormat();
@@ -477,7 +475,7 @@ X;
   </body>
 </tt>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(12.066, 13.2, 'Hello everyone')
             ->add(13.2, 15.133, 'welcome to my channel')
@@ -494,7 +492,7 @@ X;
 ​</s><s p="4">​ ​쟌 쟌​ ​</s><s p="2">​</s></p>
 </body>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())
             ->add(9.159, 9.927, ['チャン チャン', '쟌 쟌'])
             ->getInternalFormat();
@@ -520,7 +518,7 @@ X;
   </Font>
 </DCSubtitle>
 X;
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, ['The worst thing for a man', 'who spends a lot of time alone'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }

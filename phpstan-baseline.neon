@@ -1,0 +1,1825 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\AssConverter\:\:assTimeToInternal\(\) has parameter \$srt_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\AssConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\AssConverter\:\:fileContentToInternalFormat\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 2
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\AssConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\AssConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\AssConverter\:\:removeHtmlLikeTags\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\AssConverter\:\:removeHtmlLikeTags\(\) has parameter \$string with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Parameter \#1 \$num of function floor expects float\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function gmdate expects int\|null, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/AssConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\ConverterContract\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/ConverterContract.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\ConverterContract\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/ConverterContract.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\ConverterContract\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/ConverterContract.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:csvToArray\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:csvToArray\(\) has parameter \$content with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:detectSeparator\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:detectSeparator\(\) has parameter \$file_content with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:fileContentToInternalFormat\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:internalFormatToFileContent\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:timeRegex\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$num of function number_format expects float, float\|int\|string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fgetcsv expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fputcsv expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fputs expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function rewind expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\CsvConverter\:\:\$allowedSeparators has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/CsvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DfxpConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/DfxpConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DfxpConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/DfxpConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DfxpConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/DfxpConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DfxpConverter\:\:internalTimeToDfxp\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/DfxpConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DfxpConverter\:\:internalTimeToDfxp\(\) has parameter \$internal_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/DfxpConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DocxReader\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/DocxReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DocxReader\:\:fileContentToInternalFormat\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/DocxReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DocxReader\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/DocxReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DocxReader\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/DocxReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\DocxReader\:\:internalFormatToFileContent\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/DocxReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:fileContentToInternalFormat\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:internalFormatToFileContent\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:iso6937ToUtf8\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:iso6937ToUtf8\(\) has parameter \$iso6937Text with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:replace\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:replace\(\) has parameter \$text with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:replace\(\) has parameter \$x with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:replace\(\) has parameter \$y with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:replace\(\) has parameter \$z with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:timestampToSeconds\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:timestampToSeconds\(\) has parameter \$format_timestamp with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:timestampToSeconds\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\EbuStlReader\:\:timestampToSeconds\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Parameter \#1 \$search of function str_replace expects array\<string\>\|string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Code/Converters/EbuStlReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:internalTimeToLrc\(\) has parameter \$internal_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:lrcTimeToInternal\(\) has parameter \$lrc_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:lrcTimeToInternal\(\) has parameter \$timestamp_offset with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:lrcTimeToInternal\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:timestampsOffset\(\) has parameter \$content with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Parameter \#1 \$num of function floor expects float\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function gmdate expects int\|null, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:\$regexp has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\LrcConverter\:\:\$time_offset_regexp has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/LrcConverter.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\RtfReader\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\RtfReader\:\:fileContentToInternalFormat\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\RtfReader\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\RtfReader\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\RtfReader\:\:internalFormatToFileContent\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array\|null, list\<string\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Parameter \#2 \$string of function mb_split expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/RtfReader.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SbvConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SbvConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SbvConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SbvConverter\:\:srtTimeToInternal\(\) has parameter \$srt_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$num of function floor expects float\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function gmdate expects int\|null, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SbvConverter.php
+
+		-
+			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
+			identifier: function.strict
+			count: 2
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:addSpaceAfter4Characters\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:addSpaceAfter4Characters\(\) has parameter \$string with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:clearDisplayAt\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:clearDisplayAt\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:clearDisplayAt\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:clearDisplayAt\(\) has parameter \$time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:clearDisplayAt\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:codesToBytes\(\) should return int but returns float\|int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:fileContentToInternalFormat\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:getExtendedByCharacter\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:getExtendedByCharacter\(\) has parameter \$character with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:getExtendedByCode\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:getExtendedByCode\(\) has parameter \$code with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalFormatToFileContent\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalFormatToFileContent\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalFormatToFileContent\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalTimeToScc\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalTimeToScc\(\) has parameter \$is_ndf with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalTimeToScc\(\) has parameter \$text_bytes with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:internalTimeToScc\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:lineToCodes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:lineToCodes\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:removeEmptyLinesFromArray\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:removeEmptyLinesFromArray\(\) has parameter \$array with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:replaceNotSupportedCharactersByScc\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:replaceNotSupportedCharactersByScc\(\) has parameter \$string with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:sccTimeToInternal\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:sccTimeToInternal\(\) has parameter \$scc_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:sccTimeToInternal\(\) has parameter \$text_bytes with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:sccTimeToInternal\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 2
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:sccToLines\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:sccToLines\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:splitLongLines\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:splitLongLines\(\) has parameter \$lines with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:splitLongLines\(\) has parameter \$output_settings with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:splitLongLines\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 2
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:textToSccText\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SccConverter\:\:textToSccText\(\) has parameter \$lines with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function gmdate expects int\|null, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Parameter \#3 \$length of function array_slice expects int\|null, float\|int\<2, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\SccConverter\:\:\$characters has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\SccConverter\:\:\$commands has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\SccConverter\:\:\$extended_chars2 has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\SccConverter\:\:\$special_chars has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\SccConverter\:\:\$valid_fpses has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/SccConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SmiConverter\:\:escape\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SmiConverter\:\:escape\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SmiConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SmiConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SmiConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SmiConverter\:\:timeToInternal\(\) has parameter \$format_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SmiConverter\:\:timeToInternal\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Parameter \#1 \$source of method DOMDocument\:\:loadHTML\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/SmiConverter.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Code/Converters/SrtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SrtConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SrtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SrtConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SrtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SrtConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SrtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SrtConverter\:\:srtTimeToInternal\(\) has parameter \$srt_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SrtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SrtConverter\:\:srtTimeToInternal\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SrtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:doesLineHaveTimestamp\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:doesLineHaveTimestamp\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:framesPerSecond\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:framesPerSecond\(\) has parameter \$lines with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:getEndLine\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:getEndLine\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:getLines\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:getLines\(\) has parameter \$original_line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:getStartLine\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:getStartLine\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:maxFrames\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:maxFrames\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:maxFrames\(\) has parameter \$max_frames with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:returnFramesFromTime\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:returnFramesFromTime\(\) has parameter \$srt_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:toStlLines\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:toStlLines\(\) has parameter \$lines with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:toStlTime\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:toStlTime\(\) has parameter \$internal_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\StlConverter\:\:toStlTime\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/StlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:canParseFileContent\(\) should return bool but returns int\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:timeToInternal\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:timeToInternal\(\) has parameter \$sub_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:timeToInternal\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:\$fps has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\SubMicroDvdConverter\:\:\$pattern has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/SubMicroDvdConverter.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Code/Converters/SubViewerConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubViewerConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SubViewerConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubViewerConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SubViewerConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubViewerConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/SubViewerConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubViewerConverter\:\:removeStyles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/SubViewerConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubViewerConverter\:\:removeStyles\(\) has parameter \$content with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SubViewerConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\SubViewerConverter\:\:timeToInternal\(\) has parameter \$sub_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/SubViewerConverter.php
+
+		-
+			message: '#^Argument of an invalid type array\<SimpleXMLElement\>\|false\|null supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot access offset ''TimeIn'' on SimpleXMLElement\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot access offset ''TimeOut'' on SimpleXMLElement\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot access property \$Paragraph on SimpleXMLElement\|false\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot access property \$Text on SimpleXMLElement\|false\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot access property \$text on SimpleXMLElement\|false\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot call method getNamespaces\(\) on SimpleXMLElement\|false\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot call method registerXPathNamespace\(\) on SimpleXMLElement\|false\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Cannot call method xpath\(\) on SimpleXMLElement\|false\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:DCSubtitles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:DCSubtitles\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:framesPerSecond\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:getLinesFromTextWithBr\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:internalTimeToTtml\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:internalTimeToTtml\(\) has parameter \$internal_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:subtitleXml\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:subtitleXml\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:subtitleXml2\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:ttmlTimeToInternal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:ttmlTimeToInternal\(\) has parameter \$frame_rate with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:ttmlTimeToInternal\(\) has parameter \$ttml_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:ttmlTimeToInternal\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 2
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:ttmlTimeToInternal\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function strpos expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Parameter \#1 \$text of static method Done\\Subtitles\\Code\\Converters\\TtmlConverter\:\:getLinesFromTextWithBr\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TtmlConverter.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 3
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Binary operation "\+" between 25\|string and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:areEmptyLinesUsedAsSeparators\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:countLinesWithEmptyLines\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:countLinesWithEmptyLines\(\) has parameter \$file_content with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:detectMostlyUsedTimestampType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:detectMostlyUsedTimestampType\(\) has parameter \$lines with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:detectMostlyUsedTimestampType\(\) throws checked exception Exception but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:doesFileUseTimestamps\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:doesFileUseTimestamps\(\) has parameter \$lines with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:fileContentToInternalFormat\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:fillStartAndEndTimes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:fillStartAndEndTimes\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:fillStartAndEndTimes\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:getLineParts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:getLineParts\(\) has parameter \$colon_count with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:getLineParts\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:getLineParts\(\) has parameter \$timestamp_count with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:hasDigit\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:hasDigit\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:hasText\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:hasText\(\) has parameter \$line with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:isDifferenceLessThan10Percent\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:isDifferenceLessThan10Percent\(\) has parameter \$number1 with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:isDifferenceLessThan10Percent\(\) has parameter \$number2 with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:maxFps\(\) has parameter \$lines with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:removeRepeatingTextStarts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:removeRepeatingTextStarts\(\) has parameter \$internal_format with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:strBefore\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:strBefore\(\) has parameter \$search with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:strBefore\(\) has parameter \$subject with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:timeToInternal\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:timestampCount\(\) has parameter \$lines with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:timestampsFromLine\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:twoLinesSeparatedByEmptyLine\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:withoutTimestampsInternalFormat\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:withoutTimestampsInternalFormat\(\) has parameter \$lines with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, list\<string\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Parameter \#2 \$fps of static method Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:timeToInternal\(\) expects int\|null, float\|int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Parameter \#2 \$string of function mb_split expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Parameter \#3 \$length of function substr expects int\|null, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:\$any_letter_regex has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\TxtConverter\:\:\$time_regexp has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Variable \$k might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Variable \$row might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Code/Converters/TxtConverter.php
+
+		-
+			message: '#^Binary operation "/" between 0\|string and 100 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:fromInternalTime\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:fromInternalTime\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:fromInternalTime\(\) has parameter \$internal_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:timeToInternal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:timeToInternal\(\) has parameter \$fps with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:timeToInternal\(\) has parameter \$srt_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:timeToInternal\(\) throws checked exception DivisionByZeroError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Parameter \#1 \$num of function floor expects float\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function gmdate expects int\|null, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\TxtQuickTimeConverter\:\:\$fps has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/TxtQuickTimeConverter.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:fileContentToInternalFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:internalFormatToFileContent\(\) has parameter \$internal_format with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:internalFormatToFileContent\(\) has parameter \$output_settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:internalTimeToVtt\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:internalTimeToVtt\(\) has parameter \$internal_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:removeComments\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:removeComments\(\) has parameter \$content with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:vttTimeToInternal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:vttTimeToInternal\(\) has parameter \$vtt_time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Method Done\\Subtitles\\Code\\Converters\\VttConverter\:\:vttTimeToInternal\(\) throws checked exception Done\\Subtitles\\Code\\Exceptions\\UserException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Offset ''vtt'' might not exist on array\{start\?\: mixed, end\?\: mixed, lines\: list\<string\>, vtt\?\: array\{settings\?\: non\-falsy\-string, speakers\?\: non\-empty\-list\<string\|null\>\}\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Parameter \#1 \$num of function floor expects float\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, list\<string\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function gmdate expects int\|null, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Code/Converters/VttConverter.php
+
+		-
+			message: '#^Property Done\\Subtitles\\Code\\Converters\\VttConverter\:\:\$time_regexp has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Code/Converters/VttConverter.php

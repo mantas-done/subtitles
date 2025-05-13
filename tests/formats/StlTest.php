@@ -15,7 +15,7 @@ class StlTest extends TestCase {
     public function testRecognizesStl()
     {
         $content = file_get_contents('./tests/files/stl.stl');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === StlConverter::class);
     }
 
@@ -28,7 +28,7 @@ class StlTest extends TestCase {
         @unlink($temporary_stl_path);
 
         // srt to stl
-        Subtitles::convert($srt_path, $temporary_stl_path);
+        (new Subtitles())->convert($srt_path, $temporary_stl_path);
         $this->assertFileEqualsIgnoringLineEndings($stl_path, $temporary_stl_path);
 
         unlink($temporary_stl_path);
@@ -41,10 +41,10 @@ class StlTest extends TestCase {
         $stl_path = './tests/files/stl.stl';
 
         // stl to srt
-        $stl_object = Subtitles::loadFromFile($stl_path);
+        $stl_object = (new Subtitles())->loadFromFile($stl_path);
         $stl_internal_format = $stl_object->getInternalFormat();
 
-        $srt_object = Subtitles::loadFromFile($srt_path);
+        $srt_object = (new Subtitles())->loadFromFile($srt_path);
         $srt_internal_format = $srt_object->getInternalFormat();
 
         // compare both internal formats
@@ -64,9 +64,10 @@ class StlTest extends TestCase {
     public function testParsesFilesWithComments()
     {
         // checking if no exceptions are thrown
-        Subtitles::loadFromFile('./tests/files/stl_with_comments.stl')->content('stl');
+        (new Subtitles())->loadFromFile('./tests/files/stl_with_comments.stl')->content('stl');
 
         // phpunit complains if no assertions are made
+        // @phpstan-ignore-next-line
         $this->assertTrue(true);
     }
 
@@ -76,7 +77,7 @@ class StlTest extends TestCase {
 99:00:00:00 , 99:00:01:00 , a
 TEXT;
 
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(99 * 3600, 99 * 3600 + 1, 'a')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
 
@@ -104,7 +105,7 @@ $HorzAlign	=	Center
 00:00:01:00\t,\t00:00:02:00\t,\tb
 ";
 
-        $actual = Subtitles::loadFromString($text)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }

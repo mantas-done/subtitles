@@ -3,11 +3,11 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\SrtConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class SrtTest extends TestCase {
 
@@ -16,7 +16,7 @@ class SrtTest extends TestCase {
     public function testRecognizesSrt()
     {
         $content = file_get_contents('./tests/files/srt.srt');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === SrtConverter::class);
     }
 
@@ -27,7 +27,7 @@ class SrtTest extends TestCase {
 00:00:00.000 --> 00:00:01.000
 a
 TEXT;
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
 
         $this->assertEquals(SrtConverter::class, get_class($converter));
     }
@@ -39,7 +39,7 @@ TEXT;
 
         @unlink($temporary_srt_path);
 
-        Subtitles::convert($srt_path, $temporary_srt_path);
+        (new Subtitles())->convert($srt_path, $temporary_srt_path);
         $this->assertFileEqualsIgnoringLineEndings($srt_path, $temporary_srt_path);
 
         unlink($temporary_srt_path);
@@ -47,7 +47,7 @@ TEXT;
 
     public function testFileToInternalFormat()
     {
-        $actual_internal_format = Subtitles::loadFromString(self::fileContent())->getInternalFormat();
+        $actual_internal_format = (new Subtitles())->loadFromString(self::fileContent())->getInternalFormat();
 
         $this->assertInternalFormatsEqual(self::generatedSubtitles()->getInternalFormat(), $actual_internal_format);
     }
@@ -71,7 +71,7 @@ TEXT;
 Very good, Lieutenant.
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(3, 4, ['Very good, Lieutenant.'])
             ->getInternalFormat();
@@ -90,7 +90,7 @@ a
 b
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, 'a')
             ->add(3, 4, 'b')
@@ -107,7 +107,7 @@ TEXT;
 
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, ['1'])
             ->getInternalFormat();
@@ -126,7 +126,7 @@ a
 
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, 'a')
             ->getInternalFormat();
@@ -190,7 +190,7 @@ six
 1:2:3,4 --> 1:2:3,5
 seven
 TEXT;
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1.1, 2.2, ['one'])
             ->add(2.2, 3.3, ['two'])
@@ -214,7 +214,7 @@ TEXT;
 00:00:02.000-->00:00:03.000
 <i>two</i>
 TEXT;
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, ['one'])
             ->add(2, 3, ['two'])
@@ -233,7 +233,7 @@ one
 00:00:02.000-->00:00:03.000
 two
 TEXT;
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, ['one'])
             ->add(2, 3, ['two'])
@@ -243,9 +243,9 @@ TEXT;
 
     public function testWriteUnderstandableMessage()
     {
-        $this->expectException(UserException::class, "Something is wrong with timestamps on this line: --> 00:09:06,100");
+        $this->expectException(UserException::class);
 
-        $actual = Subtitles::loadFromString('
+        $actual = (new Subtitles())->loadFromString('
 00:09:01,866
 
 --> 00:09:06,100
@@ -257,7 +257,7 @@ THEN, WHEN I LISTENED, HE WAS SAYING ENGLISH
     {
         $this->expectException(UserException::class);
 
-        Subtitles::loadFromString('
+        (new Subtitles())->loadFromString('
 00:02:36:13 - 00:02:38:07
 Alright, Bogi.
 
@@ -269,7 +269,7 @@ filed for divorce.
 */
     public function testParsesWhiteSpaceOnBlankLine()
     {
-        $actual = Subtitles::loadFromString('1
+        $actual = (new Subtitles())->loadFromString('1
 00:00:00,283 --> 00:00:01,133
 嗨各位好
 ' . ' ' . '
@@ -291,7 +291,7 @@ a
 b
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(0, 1, 'a')
             ->add(1, 2, 'b')
@@ -326,7 +326,7 @@ Just go away.3
 Did it come out?4
 TEXT;
 
-        Subtitles::loadFromString($content);
+        (new Subtitles())->loadFromString($content);
     }
 */
     public function testParses0()
@@ -337,7 +337,7 @@ TEXT;
 0
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, '0')
             ->getInternalFormat();
@@ -356,7 +356,7 @@ srt
 text
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, 'srt')
             ->add(417.53, 423.92, 'text')
@@ -378,7 +378,7 @@ such as three o'clock,
 
 TEXT;
 
-        $actual_format = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual_format = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected_format = (new Subtitles())
             ->add(1, 2, 'srt')
             ->add(50.36, 53.959, ["such as three o'clock,", '3:30, or maybe 4:00 at the very latest.'])

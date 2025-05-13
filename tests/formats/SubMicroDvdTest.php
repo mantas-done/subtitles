@@ -15,7 +15,7 @@ class SubMicroDvdTest extends TestCase {
     public function testRecognizesSub()
     {
         $content = file_get_contents('./tests/files/sub_microdvd.sub');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === SubMicroDvdConverter::class);
     }
 
@@ -49,7 +49,7 @@ class SubMicroDvdTest extends TestCase {
 {0}{100}Subtitle line 1
 {150}{300}Subtitle line 2
 TEXT;
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 4.17, 'Subtitle line 1')->add(6.26, 12.51, 'Subtitle line 2')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -60,7 +60,7 @@ TEXT;
 {1}{1}25
 {25}{50}Subtitle line 2
 TEXT;
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, 'Subtitle line 2')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
@@ -70,7 +70,7 @@ TEXT;
         $content = <<<TEXT
 [0][100]{y:i}text
 TEXT;
-        $actual = Subtitles::loadFromString($content)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
         $expected = (new Subtitles())->add(0, 4.17, 'text')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }

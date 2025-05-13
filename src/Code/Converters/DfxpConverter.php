@@ -4,7 +4,7 @@ namespace Done\Subtitles\Code\Converters;
 
 class DfxpConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return
             (preg_match('/xmlns="http:\/\/www\.w3\.org\/ns\/ttml"/m', $file_content) === 1 && preg_match('/xml:id="d1"/m', $file_content) === 1) // old netflix format;
@@ -12,12 +12,12 @@ class DfxpConverter implements ConverterContract
         ;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         return (new TtmlConverter())->fileContentToInternalFormat($file_content, '');
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $file_content = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <tt xmlns:tt="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:tts="http://www.w3.org/ns/ttml#styling" ttp:tickRate="10000000" ttp:timeBase="media" xmlns="http://www.w3.org/ns/ttml">

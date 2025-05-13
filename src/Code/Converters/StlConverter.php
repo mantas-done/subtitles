@@ -4,12 +4,12 @@ namespace Done\Subtitles\Code\Converters;
 
 class StlConverter implements ConverterContract
 {
-    public function canParseFileContent($file_content, $original_file_content)
+    public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
         return preg_match('/^\d{2}:\d{2}:\d{2}:\d{2}\s,\s\d{2}:\d{2}:\d{2}:\d{2}\s,.+/m', $file_content) === 1;
     }
 
-    public function fileContentToInternalFormat($file_content, $original_file_content)
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
     {
         $not_trimmed_lines = explode("\n", $file_content);
         $lines = array_map('trim', $not_trimmed_lines);
@@ -32,7 +32,7 @@ class StlConverter implements ConverterContract
         return $internal_format;
     }
 
-    public function internalFormatToFileContent(array $internal_format , array $options)
+    public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
         $stl = '';
         foreach ($internal_format as $row) {

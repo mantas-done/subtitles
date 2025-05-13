@@ -3,11 +3,11 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\AssConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class AssTest extends TestCase {
 
@@ -16,14 +16,14 @@ class AssTest extends TestCase {
     public function testAss()
     {
         $content = file_get_contents('./tests/files/ass.ass');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === AssConverter::class);
     }
 
     public function testThisIsNotAssFormat()
     {
         $content = '[Script Info]';
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) !== AssConverter::class);
     }
 
@@ -86,7 +86,7 @@ class AssTest extends TestCase {
 
     public function testParsesFileWithExtraNewlines()
     {
-        $actual = Subtitles::loadFromString('[Script Info]
+        $actual = (new Subtitles())->loadFromString('[Script Info]
 
 [Events]
 
@@ -102,7 +102,7 @@ Dialogue: Marked=0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a
     {
         $this->expectException(UserException::class);
 
-        Subtitles::loadFromString('[Script Info]
+        (new Subtitles())->loadFromString('[Script Info]
 
 [Events]
 Format: Layer, Sxxxx, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -114,7 +114,7 @@ Dialogue: Marked=0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a
     public function testMissingEvents()
     {
         $this->expectException(UserException::class);
-        $actual = Subtitles::loadFromString('[Script Info]
+        $actual = (new Subtitles())->loadFromString('[Script Info]
 
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 ')->getInternalFormat();

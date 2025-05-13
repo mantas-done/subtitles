@@ -10,8 +10,13 @@ if (!isset($argv[2])) {
 }
 
 try {
-    \Done\Subtitles\Subtitles::convert(realpath($argv[1]), $argv[2]);
-} catch (\Done\Subtitles\Code\UserException $e) {
+    $path = realpath($argv[1]);
+    if ($path === false) {
+        echo 'File not found';
+        die(1);
+    }
+    (new \Done\Subtitles\Subtitles())->convert($path, $argv[2]);
+} catch (\Done\Subtitles\Code\Exceptions\UserException $e) {
     echo 'Error: ' . $e->getMessage();
     die(2);
 } catch (Exception $e) {

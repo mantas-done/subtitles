@@ -3,11 +3,11 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\SccConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
-use Done\Subtitles\Code\UserException;
 use Done\Subtitles\Subtitles;
-use PHPUnit\Framework\TestCase;
 use Helpers\AdditionalAssertionsTrait;
+use PHPUnit\Framework\TestCase;
 
 class SccTest extends TestCase {
 
@@ -16,7 +16,7 @@ class SccTest extends TestCase {
     public function testRecognizesScc()
     {
         $content = file_get_contents('./tests/files/scc.scc');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === SccConverter::class);
     }
 
@@ -152,7 +152,7 @@ class SccTest extends TestCase {
 00:00:00;21	94ae 94ae 9420 9420 9470  9470 6180 942f 942f
 
 00:00:01;26	942c 942c";
-        $actual = Subtitles::loadFromString($scc)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($scc)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, 'a')->getInternalFormat();
 
         $this->assertInternalFormatsEqual($expected, $actual, 0.1);
@@ -163,7 +163,7 @@ class SccTest extends TestCase {
         $scc = (new Subtitles())
             ->add(1, 2, ['cœurs défoncés'])
             ->content('scc');
-        $internal = Subtitles::loadFromString($scc)->getInternalFormat();
+        $internal = (new Subtitles())->loadFromString($scc)->getInternalFormat();
         $this->assertEquals('coeurs défoncés', $internal[0]['lines'][0]);
     }
 
@@ -214,7 +214,7 @@ class SccTest extends TestCase {
     public function testNoTimeToSendFullTextInNonStrictMode()
     {
         $scc = (new Subtitles())->add(1, 2, 'A')->add(2, 3, '123456789 123456789 123456789 123456789 123456789 123456789 ')->content('scc');
-        $actual = Subtitles::loadFromString($scc)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($scc)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, 'A')->add(2, 3, ['123456789 123456789 123456789', '123456789 1234..'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual, 0.04);
     }
@@ -229,7 +229,7 @@ class SccTest extends TestCase {
     public function testSplitsLineOver32Characters()
     {
         $scc = (new Subtitles())->add(2, 3, '123456789 123456789 123456789 123456789 123456789 123456789 ')->content('scc');
-        $actual = Subtitles::loadFromString($scc)->getInternalFormat();
+        $actual = (new Subtitles())->loadFromString($scc)->getInternalFormat();
         $expected = (new Subtitles())->add(2, 3, ['123456789 123456789 123456789', '123456789 123456789 123456789'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual, 0.05);
     }

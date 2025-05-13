@@ -30,13 +30,6 @@ trait AdditionalAssertionsTrait
         $this->assertEquals($expected_file_string, $tmp_dfxp_string);
     }
 
-    public function assertStringEqualsStringIgnoringLineEndings($expected, $actual)
-    {
-        $expected_string = str_replace("\r", "", $expected);
-        $actual_string = str_replace("\r", "", $actual);
-        $this->assertEquals($expected_string, $actual_string);
-    }
-
     public function defaultSubtitles()
     {
         return (new Subtitles())
