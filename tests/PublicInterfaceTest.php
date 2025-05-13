@@ -380,11 +380,11 @@ text
 
         // from format
         $actual_internal_format = $subtitles->loadFromString('fake_docx')->getInternalFormat();
-        $expected_internal_format = [['start' => 22, 'end' => 33, 'lines' => ['fake']]];
+        $expected_internal_format = [['start' => 22, 'end' => 33, 'lines' => ['fake_docx']]];
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
 
         // to format
         $actual = $subtitles->add(1, 2, 'a')->content('docx_fake');
-        $this->assertEquals('fake docx text', $actual);
+        $this->assertEquals('a', $actual);
     }
 }

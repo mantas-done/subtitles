@@ -17,12 +17,12 @@ class FakeDocxConverter implements ConverterContract
         return [[
             'start' => 22,
             'end' => 33,
-            'lines' => ['fake'],
+            'lines' => [$original_file_content],
         ]];
     }
 
     public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
-        return 'fake docx text';
+        return $internal_format[0]['lines'][0];
     }
 }

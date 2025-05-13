@@ -280,14 +280,13 @@ class Subtitles
     /** @throws UserException */
     public function loadFromString(string $string, bool $strict = true): self
     {
-        $converter = new self;
         $modified_string = Helpers::convertToUtf8($string);
         $modified_string = Helpers::removeUtf8Bom($modified_string);
         $modified_string = Helpers::normalizeNewLines($modified_string);
-        $converter->input = $modified_string;
+        $this->input = $modified_string;
 
-        $input_converter = Helpers::getConverterByFileContent($this->formats, $converter->input, $string);
-        $internal_format = $input_converter->fileContentToInternalFormat($converter->input, $string);
+        $input_converter = Helpers::getConverterByFileContent($this->formats, $this->input, $string);
+        $internal_format = $input_converter->fileContentToInternalFormat($this->input, $string);
 
         // remove empty lines
         foreach ($internal_format as $k => $row) {
@@ -416,7 +415,7 @@ class Subtitles
         // no subtitles with a lot of lines
         if (
             get_class($input_converter) === AssConverter::class
-            || (get_class($input_converter) === TxtConverter::class && !TxtConverter::doesFileUseTimestamps(explode("\n", $converter->input)))
+            || (get_class($input_converter) === TxtConverter::class && !TxtConverter::doesFileUseTimestamps(explode("\n", $this->input)))
         ) {
             // do nothing
         } else {
@@ -433,7 +432,7 @@ class Subtitles
             }
         }
 
-        $converter->internal_format = array_values($internal_format);
-        return $converter;
+        $this->internal_format = array_values($internal_format);
+        return $this;
     }
 }
