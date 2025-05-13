@@ -16,7 +16,7 @@ class LrcTest extends TestCase
     public function testRecognizeLrc()
     {
         $content = file_get_contents('./tests/files/lrc.lrc');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === LrcConverter::class);
     }
 
@@ -33,7 +33,7 @@ Tere Vaaste Falak Se
 Main Chaand Launga
 Solah Satrah Sitaare
 Sang Baandh Launga';
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) !== LrcConverter::class);
     }
 

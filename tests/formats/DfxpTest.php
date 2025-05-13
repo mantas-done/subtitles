@@ -15,7 +15,7 @@ class DfxpTest extends TestCase {
     public function testRecognizesDfxp()
     {
         $content = file_get_contents('./tests/files/dfxp.dfxp');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === DfxpConverter::class);
     }
 

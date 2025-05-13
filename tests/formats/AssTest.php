@@ -16,14 +16,14 @@ class AssTest extends TestCase {
     public function testAss()
     {
         $content = file_get_contents('./tests/files/ass.ass');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === AssConverter::class);
     }
 
     public function testThisIsNotAssFormat()
     {
         $content = '[Script Info]';
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) !== AssConverter::class);
     }
 

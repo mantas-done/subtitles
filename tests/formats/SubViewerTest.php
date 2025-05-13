@@ -15,7 +15,7 @@ class SubViewerTest extends TestCase {
     public function testRecognizesSub()
     {
         $content = file_get_contents('./tests/files/sub_viewer.sub');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === SubViewerConverter::class);
     }
 

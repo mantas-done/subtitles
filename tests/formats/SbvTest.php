@@ -19,7 +19,7 @@ class SbvTest extends TestCase {
 Don’t think that you can just ignore them
 because they’re not your children or relatives.
 TEXT;
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === SbvConverter::class);
     }
 

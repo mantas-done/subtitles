@@ -19,7 +19,7 @@ class CsvTest extends TestCase {
         $csv = 'Start,End,Text
 137.44,140.375,"Senator, we\'re making our final approach into Coruscant."
 3740.476,3742.501,"Very good, Lieutenant."';
-        $converter = Helpers::getConverterByFileContent($csv, $csv);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $csv, $csv);
         $this->assertTrue(get_class($converter) === CsvConverter::class, get_class($converter));
     }
 
@@ -27,7 +27,7 @@ class CsvTest extends TestCase {
     {
         $csv = '0:00:15.1,0:00:17.4 Herkese merhaba.
 0:00:17.4,0:00:20.7 Bu videoda Microsoft office ürünlerinin';
-        $converter = Helpers::getConverterByFileContent($csv, $csv);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $csv, $csv);
         $this->assertTrue(get_class($converter) !== CsvConverter::class, get_class($converter));
     }
 
@@ -213,7 +213,7 @@ TEXT;
         $csv = 'Start,End,Text
 hi
 3740.476,3742.501,"Very good, Lieutenant."';
-        $converter = Helpers::getConverterByFileContent($csv, $csv);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $csv, $csv);
         $this->assertTrue(get_class($converter) !== CsvConverter::class, get_class($converter));
     }
     public function testShouldntThrowException()
@@ -221,7 +221,7 @@ hi
         $csv = '1,a
 ' . ' ' . '
 2,b';
-        $converter = Helpers::getConverterByFileContent($csv, $csv);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $csv, $csv);
         $this->assertTrue(get_class($converter) !== CsvConverter::class, get_class($converter));
     }
 }

@@ -15,7 +15,7 @@ class StlTest extends TestCase {
     public function testRecognizesStl()
     {
         $content = file_get_contents('./tests/files/stl.stl');
-        $converter = Helpers::getConverterByFileContent($content, $content);
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
         $this->assertTrue(get_class($converter) === StlConverter::class);
     }
 
