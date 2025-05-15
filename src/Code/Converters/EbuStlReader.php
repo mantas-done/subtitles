@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
+
 class EbuStlReader implements ConverterContract
 {
     public function canParseFileContent(string $file_content, string $original_file_content): bool
@@ -51,15 +53,10 @@ class EbuStlReader implements ConverterContract
         return $internal_format;
     }
 
-    /**
-     * Convert library's "internal format" (array) to file's content
-     *
-     * @param array $internal_format    Internal format
-     * @return string                   Converted file content
-     */
+    /** @throws UserException */
     public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
-        throw new \Exception('not implemented');
+        throw new UserException('EBU STL writer is not implemented yet');
     }
 
     // ------------------------------ private --------------------------------------------------------------------------

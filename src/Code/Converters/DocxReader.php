@@ -2,6 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Other\DocxToText;
 use Done\Subtitles\Subtitles;
 
@@ -34,9 +35,10 @@ class DocxReader implements ConverterContract
         return (new Subtitles())->loadFromString($text)->getInternalFormat();
     }
 
+    /** @throws UserException */
     public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
-        throw new \Exception('not implemented');
+        throw new UserException('DOCX writer is not implemented yet');
     }
 
 

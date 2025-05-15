@@ -2,6 +2,7 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Subtitles;
 use Jstewmc\Rtf\Document;
 
@@ -29,9 +30,10 @@ class RtfReader implements ConverterContract
         return (new Subtitles())->loadFromString($text)->getInternalFormat();
     }
 
+    /** @throws UserException */
     public function internalFormatToFileContent(array $internal_format , array $output_settings): string
     {
-        throw new \Exception('not implemented');
+        throw new UserException('RTF writer is not implemented yet');
     }
 
 
