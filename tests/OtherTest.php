@@ -136,6 +136,11 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
 ', false)->getInternalFormat();
         $expected = (new Subtitles())->add(1, 2, 'test')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
+    }
 
+    public function testNotStrictModeRemovesAllBlocks()
+    {
+        $actual = (new Subtitles())->loadFromString('00:00:00 01:00:00 help', false)->getInternalFormat();
+        $this->assertInternalFormatsEqual([], $actual);
     }
 }

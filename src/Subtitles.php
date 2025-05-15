@@ -364,6 +364,14 @@ class Subtitles
         }
         unset($row);
 
+        if ($internal_format[0]['start'] < 0) {
+            if ($strict) {
+                throw new DisableStrictSuggestionException('Start time is a negative number ' . SrtConverter::internalTimeToSrt($internal_format[0]['start']) . ' -> ' . SrtConverter::internalTimeToSrt($internal_format[0]['end']) . ' ' . $internal_format[0]['lines'][0]);
+            } else {
+                unset($internal_format[0]);
+            }
+        }
+
         // exception if caption is showing for more than 5 minutes
         foreach ($internal_format as $k => $row) {
             if ($row['end'] - $row['start'] > (60 * 5)) {
@@ -372,16 +380,6 @@ class Subtitles
                 } else {
                     unset($internal_format[$k]);
                 }
-            }
-        }
-
-        $internal_format = array_values($internal_format);
-
-        if ($internal_format[0]['start'] < 0) {
-            if ($strict) {
-                throw new DisableStrictSuggestionException('Start time is a negative number ' . SrtConverter::internalTimeToSrt($internal_format[0]['start']) . ' -> ' . SrtConverter::internalTimeToSrt($internal_format[0]['end']) . ' ' . $internal_format[0]['lines'][0]);
-            } else {
-                unset($internal_format[0]);
             }
         }
 
