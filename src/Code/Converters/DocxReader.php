@@ -9,16 +9,23 @@ class DocxReader implements ConverterContract
 {
     public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        if ($finfo === false) {
-            return false;
+        if (strpos($original_file_content, 'PK') === 0 && strpos($original_file_content, '[Content_Types].xml') !== false) {
+            $tmp_file = tempnam(sys_get_temp_dir(), 'prefix_');
+            file_put_contents($tmp_file, $original_file_content);
+
+            $zip = new \ZipArchive();
+            $opened = $zip->open($tmp_file, \ZipArchive::RDONLY); // zip archive can only open real file
+            if ($opened === true) {
+                $zip->close();
+            }
+            unlink($tmp_file);
+
+            if ($opened === true) {
+                return true;
+            }
         }
-        $mime_type = finfo_buffer($finfo, $original_file_content);
-        if ($mime_type === false) {
-            return false;
-        }
-        finfo_close($finfo);
-        return $mime_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+        return false;
     }
 
     public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
