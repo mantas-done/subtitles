@@ -12,7 +12,7 @@ class FakeDocxConverter implements ConverterContract
         return Helpers::strContains($file_content, 'fake_docx');
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         return [[
             'start' => 22,

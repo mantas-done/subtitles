@@ -15,7 +15,7 @@ class SubMicroDvdConverter implements ConverterContract
         return preg_match(self::$pattern, $file_content, $matches);
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         $fps = self::$fps;
 

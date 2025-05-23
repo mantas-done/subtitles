@@ -13,7 +13,7 @@ class RtfReader implements ConverterContract
         return strpos($file_content, '{\rtf1') === 0;
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         // https://stackoverflow.com/a/63029792/4126621
         $text = preg_replace("/(\{.*\})|}|(\\\\(?!')\S+)/m", '', $original_file_content);

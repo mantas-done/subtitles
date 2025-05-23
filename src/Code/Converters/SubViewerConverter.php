@@ -15,12 +15,12 @@ class SubViewerConverter implements ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         $file_content = self::removeStyles($file_content);
         $file_content = str_replace('[br]', "\n", $file_content);
 
-        return (new TxtConverter())->fileContentToInternalFormat($file_content, '');
+        return (new TxtConverter())->fileContentToInternalFormat($file_content, '', $strict);
     }
 
     /**

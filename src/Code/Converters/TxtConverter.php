@@ -15,7 +15,7 @@ class TxtConverter implements ConverterContract
         return self::hasText($file_content) && !Helpers::strContains($file_content, "\x00"); // not a binary file
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         // just text lines
         // timestamps on the same line

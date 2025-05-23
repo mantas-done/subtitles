@@ -17,7 +17,7 @@ class LrcConverter implements ConverterContract
         return preg_match($regex, $file_content) === 1;
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         $timestamp_offset = self::timestampsOffset($file_content);
         $lines = explode("\n", $file_content);

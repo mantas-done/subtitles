@@ -18,7 +18,7 @@ interface ConverterContract
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
      */
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array;
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array;
 
     /**
      * Convert library's "internal format" to file's content

@@ -286,7 +286,7 @@ class Subtitles
         $this->input = $modified_string;
 
         $input_converter = Helpers::getConverterByFileContent($this->formats, $this->input, $string);
-        $internal_format = $input_converter->fileContentToInternalFormat($this->input, $string);
+        $internal_format = $input_converter->fileContentToInternalFormat($this->input, $string, $strict);
 
         // remove empty lines
         foreach ($internal_format as $k => $row) {

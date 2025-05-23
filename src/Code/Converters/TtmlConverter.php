@@ -17,7 +17,7 @@ class TtmlConverter implements ConverterContract
         ;
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
@@ -31,7 +31,7 @@ class TtmlConverter implements ConverterContract
                 $new_file_content = str_replace('encoding="UTF-16"', 'encoding="UTF-8"', $new_file_content);
                 $new_file_content = str_replace("encoding='utf-16'", "encoding='utf-8'", $new_file_content);
                 $new_file_content = str_replace("encoding='UTF-16'", "encoding='UTF-8'", $new_file_content);
-                return (new TtmlConverter())->fileContentToInternalFormat($new_file_content, '');
+                return (new TtmlConverter())->fileContentToInternalFormat($new_file_content, '', $strict);
             }
             // throw new UserException('Invalid XML: ' . trim($errors[0]->message));
         }

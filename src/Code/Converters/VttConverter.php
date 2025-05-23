@@ -16,7 +16,7 @@ class VttConverter implements ConverterContract
         return preg_match('/WEBVTT/m', $lines[0]) === 1;
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         $content = self::removeComments($file_content);
 

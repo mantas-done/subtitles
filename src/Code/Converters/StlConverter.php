@@ -9,7 +9,7 @@ class StlConverter implements ConverterContract
         return preg_match('/^\d{2}:\d{2}:\d{2}:\d{2}\s,\s\d{2}:\d{2}:\d{2}:\d{2}\s,.+/m', $file_content) === 1;
     }
 
-    public function fileContentToInternalFormat(string $file_content, string $original_file_content): array
+    public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         $not_trimmed_lines = explode("\n", $file_content);
         $lines = array_map('trim', $not_trimmed_lines);
