@@ -68,18 +68,7 @@ class CsvTest extends TestCase {
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
-    #[DataProvider('differentContentSeparatorProvider')]
-    public function testDifferentContentSeparators($string)
-    {
-        $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
-        $expected_internal_format = (new Subtitles())
-            ->add(1, 2, ['Oh! Can I believe my eyes!'])
-            ->add(2, 3, ['If Heaven and earth.'])->getInternalFormat();
-
-        $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
-    }
-
-    public static function differentContentSeparatorProvider()
+    public function testDifferentContentSeparators()
     {
         $original_string = 'Start,End,Text
 00:00:1,00:00:2,Oh! Can I believe my eyes!
@@ -90,7 +79,14 @@ class CsvTest extends TestCase {
             $strings[] = str_replace(',', $separator, $original_string);
         }
 
-        return [$strings];
+        foreach ($strings as $string) {
+            $actual_internal_format = (new Subtitles())->loadFromString($string)->getInternalFormat();
+            $expected_internal_format = (new Subtitles())
+                ->add(1, 2, ['Oh! Can I believe my eyes!'])
+                ->add(2, 3, ['If Heaven and earth.'])->getInternalFormat();
+
+            $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
+        }
     }
 
     public function testParseFileWithSingleTimestamp()
