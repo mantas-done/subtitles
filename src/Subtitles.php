@@ -137,6 +137,7 @@ class Subtitles
         return $this;
     }
 
+    /** @throws UserException */
     public function shiftTime(float $seconds, float $from = 0, ?float $till = null): self
     {
         foreach ($this->internal_format as &$block) {
@@ -146,6 +147,10 @@ class Subtitles
 
             $block['start'] += $seconds;
             $block['end'] += $seconds;
+
+            if ($block['start'] < 0) {
+                throw new UserException('Negative start time after shifting on line: ' . SrtConverter::internalTimeToSrt($block['start']) . ' -> ' . SrtConverter::internalTimeToSrt($block['end']) . ' ' . $block['lines'][0]);
+            }
         }
         unset($block);
 

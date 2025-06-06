@@ -237,6 +237,15 @@ text
         $this->assertInternalFormatsEqual($expected_internal_format, $actual_internal_format);
     }
 
+    public function testSubstractIntoNegativeTime()
+    {
+        $this->expectExceptionMessage('Negative start time after shifting on line: -00:00:01,000 -> 00:00:01,000 Hello World');
+
+        (new Subtitles())
+            ->add(1, 3, 'Hello World')
+            ->shiftTime(-2);
+    }
+
     public function testFromTillTime()
     {
         $actual_internal_format = (new Subtitles())
