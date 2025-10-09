@@ -60,14 +60,10 @@ class LrcConverter implements ConverterContract
     {
         $file_content = '';
         foreach ($internal_format as $i => $block) {
-            if ($i !== 0) {
-                $timestamp = static::internalTimeToLrc($internal_format[$i - 1]['end']);
-            } else {
-                $timestamp = static::internalTimeToLrc($block['start']);
-            }
+            $timestamp = static::internalTimeToLrc($block['start']);
 
             $text = implode(' ', $block['lines']);
-            $file_content .= '[' . $timestamp . '] ' . $text . "\n";
+            $file_content .= '[' . $timestamp . '] ' . $text . "\r\n";
         }
 
         return $file_content;
@@ -97,7 +93,7 @@ class LrcConverter implements ConverterContract
         $whole = $parts[0]; // 1
         $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
 
-        $lrc_time = gmdate("i:s", floor($whole)) . '.' . str_pad($decimal, 3, '0', STR_PAD_RIGHT);
+        $lrc_time = gmdate("i:s", floor($whole)) . '.' . str_pad($decimal, 2, '0', STR_PAD_RIGHT);
 
         return $lrc_time;
     }

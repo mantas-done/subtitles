@@ -3,7 +3,7 @@
     "description": "Subtitle converter and generator for PHP",
     "type": "library",
     "license": "MIT",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "Done\\Subtitles\\": "src/"

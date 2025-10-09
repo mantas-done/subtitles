@@ -154,7 +154,7 @@ class CsvConverter implements ConverterContract
         ob_start();
         $fp = fopen('php://output', 'w');
         foreach ($data as $fields) {
-            fputcsv($fp, $fields);
+            fputcsv($fp, $fields, escape: "\\");
         }
         $file_content = ob_get_clean();
         fclose($fp);

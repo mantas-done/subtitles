@@ -128,4 +128,20 @@ TEXT;
 TEXT;
         (new Subtitles())->loadFromString($given)->getInternalFormat();
     }
+
+    public function testExport()
+    {
+        $expected = <<< TEXT
+[00:01.00] one
+[00:03.00] two
+TEXT;
+
+        $actual = (new Subtitles())
+            ->add(1, 2, 'one')
+            ->add(3, 4, 'two')
+            ->getInternalFormat();
+
+        $actual = (new Subtitles())->setInternalFormat($actual)->content('lrc');
+        $this->assertStringEqualsStringIgnoringLineEndings(trim($expected), trim($actual));
+    }
 }
