@@ -522,4 +522,44 @@ X;
         $expected = (new Subtitles())->add(1, 2, ['The worst thing for a man', 'who spends a lot of time alone'])->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testConvertFromXml10()
+    {
+        $text = <<<X
+<?xml version="1.0" encoding="UTF-8"?>
+<tt ittp:activeArea="12% 32.391% 76% 62.609%" ttp:cellResolution="40 24" ttp:timeBase="media" xml:lang="en-GB" xml:space="default"
+	xmlns="http://www.w3.org/ns/ttml"
+	xmlns:ebuttm="urn:ebu:tt:metadata"
+	xmlns:ebutts="urn:ebu:tt:style"
+	xmlns:ittp="http://www.w3.org/ns/ttml/profile/imsc1#parameter"
+	xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+	xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+	xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+	xmlns:tts="http://www.w3.org/ns/ttml#styling"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace">
+	<body ttm:role="caption">
+		<div style="autogenFontStyle_n_150_120 S1 StyleFillLineGapTrue fontFamilyStyle">
+			<p begin="00:00:31.160" end="00:00:39.160" region="agr_0_20_30_4_after" style="S2 agtas_right" xml:id="C5_1">
+				<span style="S3">UNACCOMPANIED TENOR SOLO:</span>
+				<br/>
+				<span style="S3"># Veni Sancte Spiritus</span>
+			</p>
+			<p region="R8" style="S2" xml:id="C7">
+				<span begin="00:00:40.280" end="00:00:42.800" style="S3">TENORS: # Et emitte caelitus</span>
+				<br/>
+				<span begin="00:00:43.800" end="00:00:44.800" style="S2S3">BASSES:</span>
+				<span begin="00:00:45.800" end="00:00:46.800" style="S2S5"> Et emitte caelitus</span>
+			</p>
+		</div>
+	</body>
+</tt>
+X;
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())
+            ->add(40.280, 42.800, 'TENORS: # Et emitte caelitus')
+            ->add(43.8, 44.800, 'BASSES:')
+            ->add(45.8, 46.8, 'Et emitte caelitus')
+            ->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

@@ -36,69 +36,174 @@ class TtmlConverter implements ConverterContract
             // throw new UserException('Invalid XML: ' . trim($errors[0]->message));
         }
 
+        $xpath = new \DOMXPath($dom);
+
         $fps = self::framesPerSecond($file_content);
         if (preg_match('/DCSubtitle/', $file_content) === 1) {
             return self::DCSubtitles($file_content, $fps);
         }
-        $divElements = $dom->getElementsByTagName('div');
-        if (!$divElements->count() && $dom->getElementsByTagName('Subtitle')->count()) {
+
+        $div_nodes = $xpath->query("//*[local-name()='div']");
+        $subtitle_nodes = $xpath->query("//*[local-name()='Subtitle']");
+        $transcript_nodes = $xpath->query("//*[local-name()='transcript']");
+
+        if (($div_nodes === false || $div_nodes->length === 0) && $subtitle_nodes !== false && $subtitle_nodes->length > 0) {
             return self::subtitleXml($file_content, $fps);
         }
-        if (!$divElements->count() && $dom->getElementsByTagName('transcript')->count()) {
+        if (($div_nodes === false || $div_nodes->length === 0) && $transcript_nodes !== false && $transcript_nodes->length > 0) {
             return self::subtitleXml2($file_content);
         }
-        if ($divElements->count() < 1) {
-            $divElements = $dom->getElementsByTagName('body');
+        if ($div_nodes === false || $div_nodes->length === 0) {
+            $div_nodes = $xpath->query("//*[local-name()='body']");
         }
-        if ($divElements->count() < 1) {
+        if ($div_nodes === false || $div_nodes->length === 0) {
             return [];
         }
 
+        $timed_span_nodes = $xpath->query("//*[local-name()='span' and (@begin or @end or @dur or @d)]");
+        $has_timed_spans_globally = $timed_span_nodes !== false && $timed_span_nodes->length > 0;
+
         $internal_format = [];
-        foreach ($divElements as $element) {
-            $div_begin = $element->getAttribute('begin');
-            $div_end = $element->getAttribute('end');
-            foreach ($element->getElementsByTagName('p') as $pElement) {
-                $begin = null;
+
+        /** @var \DOMElement $element */
+        foreach ($div_nodes as $element) {
+            $div_begin = $element->hasAttribute('begin') ? $element->getAttribute('begin') : '';
+            $div_end = $element->hasAttribute('end') ? $element->getAttribute('end') : '';
+
+            $p_nodes = $xpath->query(".//*[local-name()='p']", $element);
+            if ($p_nodes === false) {
+                continue;
+            }
+
+            /** @var \DOMElement $pElement */
+            foreach ($p_nodes as $pElement) {
+                $begin_raw = null;
                 if ($pElement->hasAttribute('begin')) {
-                    $begin = $pElement->getAttribute('begin');
-                } elseif ($pElement->getAttribute('t')) {
-                    $begin = $pElement->getAttribute('t');
-                } elseif ($div_begin) {
-                    $begin = $div_begin;
+                    $begin_raw = $pElement->getAttribute('begin');
+                } elseif ($pElement->hasAttribute('t') && $pElement->getAttribute('t') !== '') {
+                    $begin_raw = $pElement->getAttribute('t');
+                } elseif ($div_begin !== '') {
+                    $begin_raw = $div_begin;
                 }
-                $begin = static::ttmlTimeToInternal($begin, $fps);
+                $begin = ($begin_raw !== null && $begin_raw !== '') ? static::ttmlTimeToInternal($begin_raw, $fps) : null;
 
-                $end = null;
+                $end_raw = null;
                 if ($pElement->hasAttribute('end')) {
-                    $end = $pElement->getAttribute('end');
-                } elseif ($div_end) {
-                    $end = $div_end;
+                    $end_raw = $pElement->getAttribute('end');
+                } elseif ($div_end !== '') {
+                    $end_raw = $div_end;
                 }
-                if ($end) {
-                    $end = static::ttmlTimeToInternal($end, $fps);
-                } elseif ($pElement->hasAttribute('dur') && $pElement->getAttribute('dur')) {
-                    $end = $begin + static::ttmlTimeToInternal($pElement->getAttribute('dur'), $fps);
-                } elseif ($pElement->hasAttribute('d') && $pElement->getAttribute('d')) {
-                    $end = $begin + static::ttmlTimeToInternal($pElement->getAttribute('d'), $fps);
+                if ($end_raw !== null && $end_raw !== '') {
+                    $end = static::ttmlTimeToInternal($end_raw, $fps);
+                } elseif ($pElement->hasAttribute('dur') && $pElement->getAttribute('dur') !== '') {
+                    $end = ($begin ?? 0) + static::ttmlTimeToInternal($pElement->getAttribute('dur'), $fps);
+                } elseif ($pElement->hasAttribute('d') && $pElement->getAttribute('d') !== '') {
+                    $end = ($begin ?? 0) + static::ttmlTimeToInternal($pElement->getAttribute('d'), $fps);
+                } else {
+                    $end = null;
                 }
-                $lines = '';
 
-                foreach ($pElement->childNodes as $node) {
-                    if ($node->nodeType === XML_TEXT_NODE) {
-                        $lines .= $node->nodeValue;
-                    } else {
-                        $lines .= $dom->saveXML($node); // Preserve HTML tags
+                // timed span segments within this <p>
+                $span_segments = [];
+                $span_nodes = $xpath->query(".//*[local-name()='span']", $pElement);
+                if ($span_nodes !== false) {
+                    /** @var \DOMElement $span */
+                    foreach ($span_nodes as $span) {
+                        $is_timed = $span->hasAttribute('begin') || $span->hasAttribute('end') || $span->hasAttribute('dur') || $span->hasAttribute('d');
+                        if (!$is_timed) {
+                            continue;
+                        }
+
+                        $seg_begin = $span->hasAttribute('begin')
+                            ? static::ttmlTimeToInternal($span->getAttribute('begin'), $fps)
+                            : $begin;
+
+                        $seg_end = null;
+                        if ($span->hasAttribute('end')) {
+                            $seg_end = static::ttmlTimeToInternal($span->getAttribute('end'), $fps);
+                        } elseif ($span->hasAttribute('dur')) {
+                            $seg_end = ($seg_begin ?? 0) + static::ttmlTimeToInternal($span->getAttribute('dur'), $fps);
+                        } elseif ($span->hasAttribute('d')) {
+                            $seg_end = ($seg_begin ?? 0) + static::ttmlTimeToInternal($span->getAttribute('d'), $fps);
+                        }
+
+                        $span_xml = $dom->saveXML($span) ?: '';
+                        $lines = array_map('trim', self::getLinesFromTextWithBr($span_xml));
+                        $lines = array_values(array_filter($lines, fn($l) => $l !== ''));
+
+                        if ($seg_begin !== null && !empty($lines)) {
+                            $span_segments[] = [
+                                'start' => $seg_begin,
+                                'end' => $seg_end,
+                                'lines' => $lines,
+                            ];
+                        }
                     }
                 }
 
-                $lines = self::getLinesFromTextWithBr($lines);
+                if (!empty($span_segments)) {
+                    // collect non-span content to emit once at <p> timing (if any)
+                    $nonspan_xml = '';
+                    foreach ($pElement->childNodes as $node) {
+                        if (strtolower($node->nodeName) !== 'span') {
+                            if ($node->nodeType === XML_TEXT_NODE) {
+                                $nonspan_xml .= $node->nodeValue;
+                            } else {
+                                $nonspan_xml .= ($dom->saveXML($node) ?: '');
+                            }
+                        }
+                    }
+                    $nonspan_lines = array_map('trim', self::getLinesFromTextWithBr($nonspan_xml));
+                    $nonspan_lines = array_values(array_filter($nonspan_lines, fn($l) => $l !== ''));
 
-                $internal_format[] = array(
+                    foreach ($span_segments as $seg) {
+                        $internal_format[] = $seg;
+                    }
+
+                    if (!empty($nonspan_lines) && $begin !== null) {
+                        $internal_format[] = [
+                            'start' => $begin,
+                            'end' => $end,
+                            'lines' => $nonspan_lines,
+                        ];
+                    }
+
+                    continue;
+                }
+
+                // no timed spans in this <p>; decide whether to keep or skip
+                $has_span_children = ($span_nodes !== false && $span_nodes->length > 0);
+
+                $has_direct_text = false;
+                foreach ($pElement->childNodes as $node) {
+                    if ($node->nodeType === XML_TEXT_NODE && trim((string)$node->nodeValue) !== '') {
+                        $has_direct_text = true;
+                        break;
+                    }
+                }
+
+                // Skip only if: this <p> has ONLY untimed spans, there is no direct text,
+                // AND the document elsewhere uses timed spans (Xml10 behavior).
+                if ($has_span_children && !$has_direct_text && $has_timed_spans_globally) {
+                    continue;
+                }
+
+                $lines_xml = '';
+                foreach ($pElement->childNodes as $node) {
+                    if ($node->nodeType === XML_TEXT_NODE) {
+                        $lines_xml .= $node->nodeValue;
+                    } else {
+                        $lines_xml .= ($dom->saveXML($node) ?: '');
+                    }
+                }
+
+                $lines = self::getLinesFromTextWithBr($lines_xml);
+
+                $internal_format[] = [
                     'start' => $begin,
                     'end' => $end ? $end : null,
                     'lines' => $lines,
-                );
+                ];
             }
         }
 
@@ -157,7 +262,7 @@ class TtmlConverter implements ConverterContract
 
     public static function ttmlTimeToInternal($ttml_time, $frame_rate)
     {
-        if (trim($ttml_time) === '') {
+        if (trim((string)$ttml_time) === '') {
             throw new UserException("Timestamps were not found in this file (TtmlConverter)");
         }
 
@@ -175,26 +280,22 @@ class TtmlConverter implements ConverterContract
             $minutes = intval($matches[2]);
             $seconds = intval($matches[3]);
             $milliseconds = intval($matches[4]);
-
             $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + ($milliseconds / 1000);
-
             return $totalSeconds;
         } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{2})/', $ttml_time, $matches)) { // 00:00:00:00
             $hours = intval($matches[1]);
             $minutes = intval($matches[2]);
             $seconds = intval($matches[3]);
             $frames = intval($matches[4]);
-
             $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds + $frames / $frame_rate;
-
             return $totalSeconds;
         } elseif (is_numeric($ttml_time)) { // 12345
             return $ttml_time / 1000;
         } else {
             $time_parts = explode('.', $ttml_time);
-            $milliseconds = 0;
+            $milliseconds = 0.0;
             if (isset($time_parts[1])) {
-                $milliseconds = (float) ('0.' . $time_parts[1]);
+                $milliseconds = (float)('0.' . $time_parts[1]);
             }
 
             $values = array_map('intval', explode(':', $time_parts[0]));
@@ -202,7 +303,7 @@ class TtmlConverter implements ConverterContract
             $minutes = 0;
 
             $count = count($values);
-            $seconds = $values[$count - 1];
+            $seconds = $values[$count - 1] ?? 0;
 
             if (isset($values[$count - 2])) {
                 $minutes = $values[$count - 2];
@@ -221,19 +322,24 @@ class TtmlConverter implements ConverterContract
 
         $internal_format = [];
         $subtitles = $xml->xpath('//Subtitle');
+
         foreach ($subtitles as $subtitle) {
             $lines = [];
             foreach ($subtitle->Text as $line) {
                 $tmp_lines = self::getLinesFromTextWithBr((string)$line->asXML());
                 foreach ($tmp_lines as $tmp_line) {
-                    $lines[] = $tmp_line;
+                    $tmp_line = trim($tmp_line);
+                    if ($tmp_line !== '') {
+                        $lines[] = $tmp_line;
+                    }
                 }
             }
-            $internal_format[] = array(
+
+            $internal_format[] = [
                 'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
-                'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),
+                'end'   => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),
                 'lines' => $lines,
-            );
+            ];
         }
 
         return $internal_format;
@@ -243,10 +349,10 @@ class TtmlConverter implements ConverterContract
 
     protected static function internalTimeToTtml($internal_time)
     {
-        $formatted_output =  round($internal_time, 3);
+        $formatted_output = round($internal_time, 3);
 
-        if (strpos($formatted_output, '.') === false) {
-            $formatted_output .= ".0";  // Add at least one digit after decimal if there are no digits
+        if (strpos((string)$formatted_output, '.') === false) {
+            $formatted_output .= '.0';
         }
 
         return $formatted_output;
@@ -266,13 +372,13 @@ class TtmlConverter implements ConverterContract
 
         preg_match('/ttp:frameRateMultiplier="(\d+) (\d+)"/', $file_content, $matches);
         if (isset($matches[1]) && isset($matches[2])) {
-            $numerator = $matches[1];
-            $denominator = $matches[2];
+            $numerator = (float)$matches[1];
+            $denominator = (float)$matches[2];
         }
 
         if ($frameRate && isset($numerator) && isset($denominator)) {
             return $frameRate / $denominator * $numerator;
-        } else if ($frameRate) {
+        } elseif ($frameRate) {
             return $frameRate;
         }
 
@@ -282,7 +388,7 @@ class TtmlConverter implements ConverterContract
         if (count($matches[1])) {
             foreach ($matches[1] as $tmp_fps) {
                 if ($tmp_fps > $max_fps) {
-                    $max_fps = $tmp_fps;
+                    $max_fps = (int)$tmp_fps;
                 }
             }
             return $max_fps + 1;
@@ -306,7 +412,7 @@ class TtmlConverter implements ConverterContract
                     $lines[] = $tmp_line;
                 }
             }
-             $subtitle = [
+            $subtitle = [
                 'start' => (int)$paragraph->StartMilliseconds / 1000,
                 'end' => (int)$paragraph->EndMilliseconds / 1000,
                 'lines' => $lines,
@@ -328,6 +434,7 @@ class TtmlConverter implements ConverterContract
                 if ($text === false) {
                     $text = $subtitle->children('dcst', true)->Text->asXML();
                 }
+                $text = $text ?: '';
                 $internal_format[] = [
                     'start' => self::ttmlTimeToInternal((string)$subtitle['TimeIn'], $fps),
                     'end' => self::ttmlTimeToInternal((string)$subtitle['TimeOut'], $fps),
@@ -349,13 +456,14 @@ class TtmlConverter implements ConverterContract
         foreach ($xml->text as $text) {
             $attributes = $text->attributes();
             $end = null;
-            if ($attributes['dur'] !== null) {
-                $end = (float) $attributes['start'] + (float) $attributes['dur'];
+            if (isset($attributes['dur']) && (string)$attributes['dur'] !== '') {
+                $end = (float)$attributes['start'] + (float)$attributes['dur'];
             }
+            $xml_text = $text->asXML() ?: '';
             $internal_format[] = array(
                 'start' => (string)$attributes['start'],
                 'end' => $end,
-                'lines' => self::getLinesFromTextWithBr(str_replace("\n", "<br>", $text->asXML()))
+                'lines' => self::getLinesFromTextWithBr(str_replace("\n", "<br>", $xml_text))
             );
             if ($i !== 0 && ($internal_format[$i - 1]['end']) === null) {
                 $internal_format[$i - 1]['end'] = (float)$attributes['start'];
@@ -372,11 +480,10 @@ class TtmlConverter implements ConverterContract
 
     private static function getLinesFromTextWithBr(string $text)
     {
-
-        $text = preg_replace('/<br\s*\/?>/', '<br>', $text); // normalize <br>*/
-        $lines = preg_replace('/<tt:br*\/?>/', '<br>', $text); // normalize <br>*/
+        $text = preg_replace('/<br\s*\/?>/i', '<br>', $text); // normalize <br>
+        $lines = preg_replace('/<tt:br\s*\/?>/i', '<br>', $text); // normalize prefixed <tt:br>
         $lines = str_replace('<br>', "\n", $lines);
-        $lines = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $lines); // remove zero width space characters
+        $lines = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $lines); // remove zero width chars
         $lines = explode("\n", $lines);
         $lines = array_map('strip_tags', $lines);
         $lines = array_map('trim', $lines);
