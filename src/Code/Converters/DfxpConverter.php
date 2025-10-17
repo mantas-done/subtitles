@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
+
 class DfxpConverter implements ConverterContract
 {
     public function canParseFileContent(string $file_content, string $original_file_content): bool
@@ -12,6 +14,7 @@ class DfxpConverter implements ConverterContract
         ;
     }
 
+    /** @throws UserException */
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         return (new TtmlConverter())->fileContentToInternalFormat($file_content, '', $strict);

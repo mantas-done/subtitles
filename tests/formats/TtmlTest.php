@@ -3,6 +3,7 @@
 namespace Tests\Formats;
 
 use Done\Subtitles\Code\Converters\TtmlConverter;
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
@@ -122,6 +123,13 @@ class TtmlTest extends TestCase {
             ['03:45.702', 225.702, null],
             ['1500ms', 1.5, null],
         ];
+    }
+
+    public function testInvalidTimeFormat()
+    {
+        $this->expectException(UserException::class);
+
+        TtmlConverter::ttmlTimeToInternal('4.34.0s', 24);
     }
 
     public function testParseWithMultipleDivs()

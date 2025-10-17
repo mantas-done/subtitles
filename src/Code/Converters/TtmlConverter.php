@@ -17,6 +17,7 @@ class TtmlConverter implements ConverterContract
         ;
     }
 
+    /** @throws UserException */
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         libxml_use_internal_errors(true);
@@ -260,22 +261,23 @@ class TtmlConverter implements ConverterContract
         return $file_content;
     }
 
+    /** @throws UserException */
     public static function ttmlTimeToInternal($ttml_time, $frame_rate)
     {
         if (trim((string)$ttml_time) === '') {
             throw new UserException("Timestamps were not found in this file (TtmlConverter)");
         }
 
-        if (substr($ttml_time, -1) === 't') { // 340400000t
+        if (preg_match('/^\d+t$/', $ttml_time)) { // 340400000t
             return (int)substr($ttml_time, 0, -1) / 10000000;
-        } elseif (substr($ttml_time, -2) === 'ms') { // 1500ms
+        } elseif (preg_match('/^\d+ms$/', $ttml_time)) { // 1500ms
             return (int)rtrim($ttml_time, 'ms') / 1000;
-        } elseif (substr($ttml_time, -1) === 's') { // 1234s
-            return rtrim($ttml_time, 's');
-        } elseif (substr($ttml_time, -1) === 'f' && $frame_rate) { // 24f
+        } elseif (preg_match('/^\d+(?:\.\d+)?s$/', $ttml_time)) { // 1234s, 137.4s
+            return (float)rtrim($ttml_time, 's');
+        } elseif (preg_match('/^\d+f$/', $ttml_time) && $frame_rate) { // 24f
             $seconds = rtrim($ttml_time, 'f');
             return $seconds / $frame_rate;
-        } elseif (preg_match('/(\d{2}):(\d{2}):(\d{2}):(\d{3})/', $ttml_time, $matches)) { // 00:00:00:000
+        } elseif (preg_match('/^(\d{2}):(\d{2}):(\d{2})[:,](\d{3})$/', $ttml_time, $matches)) { // 00:00:00,000 or 00:00:00:000
             $hours = intval($matches[1]);
             $minutes = intval($matches[2]);
             $seconds = intval($matches[3]);
@@ -291,31 +293,21 @@ class TtmlConverter implements ConverterContract
             return $totalSeconds;
         } elseif (is_numeric($ttml_time)) { // 12345
             return $ttml_time / 1000;
-        } else {
+        } elseif (preg_match('/^(\d+:)?(\d+:)?\d+(?:\.\d+)?$/', $ttml_time)) { // 1, 1.5, 1:23, 01:02:03.789
             $time_parts = explode('.', $ttml_time);
-            $milliseconds = 0.0;
-            if (isset($time_parts[1])) {
-                $milliseconds = (float)('0.' . $time_parts[1]);
-            }
-
+            $milliseconds = isset($time_parts[1]) ? (float)('0.' . $time_parts[1]) : 0.0;
             $values = array_map('intval', explode(':', $time_parts[0]));
-            $hours = 0;
-            $minutes = 0;
-
             $count = count($values);
             $seconds = $values[$count - 1] ?? 0;
-
-            if (isset($values[$count - 2])) {
-                $minutes = $values[$count - 2];
-            }
-            if (isset($values[$count - 3])) {
-                $hours = $values[$count - 3];
-            }
-
+            $minutes = $values[$count - 2] ?? 0;
+            $hours = $values[$count - 3] ?? 0;
             return ($hours * 3600) + ($minutes * 60) + $seconds + $milliseconds;
+        } else {
+            throw new UserException("Bad time format: $ttml_time");
         }
     }
 
+    /** @throws UserException */
     private static function DCSubtitles(string $file_content, $fps)
     {
         $xml = simplexml_load_string($file_content);
@@ -398,6 +390,7 @@ class TtmlConverter implements ConverterContract
         return null;
     }
 
+    /** @throws UserException */
     private static function subtitleXml(string $file_content, $fps)
     {
         $xml = simplexml_load_string($file_content);
