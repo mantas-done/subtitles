@@ -21,6 +21,12 @@ class DocxTest extends TestCase
         $this->assertInternalFormatsEqual($expected, $actual);
     }
 
+    public function testDocxError1()
+    {
+        $actual = (new Subtitles())->loadFromFile('./tests/files/docx_document2.docx')->content('txt');
+        $this->assertStringContainsString('That crooked branch', $actual);
+    }
+
     public function testCorruptedZip()
     {
         $this->expectExceptionMessage("Can't find suitable converter for the file");

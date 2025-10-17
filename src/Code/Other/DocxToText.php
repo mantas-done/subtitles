@@ -2,60 +2,42 @@
 
 namespace Done\Subtitles\Code\Other;
 
+use Done\Subtitles\Code\Exceptions\UserException;
+
 class DocxToText
 {
-    private string $tmp_path;
-
-    // text might not be correctly ordered
-    public static function text(string $path): string
+    /** @throws UserException */
+    public static function text(string $original_file_content): string
     {
-        $that = new self($path);
+        $tmp_path = tempnam(sys_get_temp_dir(), 'prefix_');
+        file_put_contents($tmp_path, $original_file_content);
+
+        $zip = new \ZipArchive();
+        $opened = $zip->open($tmp_path, \ZipArchive::RDONLY); // zip archive can only open real file
+        if ($opened !== true) {
+            unlink($tmp_path);
+            throw new \RuntimeException("Can't open zip");
+        }
 
         $content = '';
-        $content .= $that->getFileContent('word/document.xml');
+        $content .= $zip->getFromName('word/document.xml') ?: '';
+        $content .= $zip->getFromName('word/document2.xml') ?: '';
 
-
-//        $content = str_replace('</w:r></w:p></w:tc><w:tc>', " ", $content); // original code poster had this
         $content = str_replace('<w:tab/>', "    ", $content); // tab
         $content = str_replace('<w:pStyle w:val="ListParagraph"/>', '1. ', $content); // numbering but not correct, jus for word count
-        $content = preg_replace('/<w:drawing>.*<\/w:drawing>/Um', '', $content) or throw new \RuntimeException();
-        $content = preg_replace('/<w:instrText.*<\/w:instrText>/Um', '', $content) or throw new \RuntimeException();
+        $content = preg_replace('/<w:drawing>.*<\/w:drawing>/Um', '', $content) ?? throw new \RuntimeException();
+        $content = preg_replace('/<w:instrText.*<\/w:instrText>/Um', '', $content) ?? throw new \RuntimeException();
         $content = str_replace('</w:r></w:p>', "\r\n", $content);
         $striped_content = strip_tags($content);
         $striped_content = html_entity_decode($striped_content, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1, 'UTF-8');
 
+        $zip->close();
+        unlink($tmp_path);
+
+        if (trim($striped_content) === '') {
+            throw new UserException('No text found in .docx file');
+        }
+
         return $striped_content;
-    }
-
-    private \ZipArchive $zip;
-
-    private function __construct(string $file_content)
-    {
-        $tmp_file = tempnam(sys_get_temp_dir(), 'prefix_');
-        file_put_contents($tmp_file, $file_content);
-
-        $zip = new \ZipArchive();
-        $opened = $zip->open($tmp_file, \ZipArchive::RDONLY); // zip archive can only open real file
-        if ($opened !== true) {
-            unlink($tmp_file);
-            throw new \RuntimeException("Can't open zip");
-        }
-        $this->zip = $zip;
-        $this->tmp_path = $tmp_file;
-    }
-
-    public function __destruct()
-    {
-        $this->zip->close();
-        unlink($this->tmp_path);
-    }
-
-    private function getFileContent(string $internal_path): string
-    {
-        $content = $this->zip->getFromName($internal_path);
-        if ($content === false) {
-            throw new \RuntimeException();
-        }
-        return $content;
     }
 }

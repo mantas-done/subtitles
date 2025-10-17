@@ -29,6 +29,7 @@ class DocxReader implements ConverterContract
         return false;
     }
 
+    /** @throws UserException */
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         $text = DocxToText::text($original_file_content);
