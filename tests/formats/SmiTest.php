@@ -215,6 +215,19 @@ class SmiTest extends TestCase {
         ')->getInternalFormat();
     }
 
+    public function testNoTime()
+    {
+        $this->expectExceptionMessage('No time in element: <sync st.art="1695163"><p class="ENCC">b</p></sync>');
+
+        (new Subtitles())->loadFromString('
+<SAMI>
+<BODY>
+<sync st.art=1695163><p Class=ENCC>b</p></sync>
+</BODY>
+</SAMI>
+        ')->getInternalFormat();
+    }
+
     // ---------------------------------- private ----------------------------------------------------------------------
 
     private static function fileContent()

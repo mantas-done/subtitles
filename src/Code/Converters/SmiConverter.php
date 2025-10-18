@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
+
 class SmiConverter implements ConverterContract
 {
     public function canParseFileContent(string $file_content, string $original_file_content): bool
@@ -14,6 +16,8 @@ class SmiConverter implements ConverterContract
      *
      * @param string $file_content      Content of file that will be converted
      * @return array                    Internal format
+     *
+     * @throws UserException
      */
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
@@ -39,6 +43,13 @@ class SmiConverter implements ConverterContract
         $data = [];
         foreach ($syncElements as $syncElement) {
             $time = $syncElement->getAttribute('start');
+            if ($time === '') {
+                $sync_html = $doc->saveHTML($syncElement); // full <sync>...</sync> block
+                if ($sync_html === false) {
+                    $sync_html = "couldn't get the element";
+                }
+                throw new UserException('No time in element: ' . trim($sync_html));
+            }
 
             if(!$syncElement->childNodes->length) {
                 continue;
@@ -167,6 +178,7 @@ class SmiConverter implements ConverterContract
     {
         $format_time = str_replace('ms', '', $format_time);
         if (!is_numeric($format_time)) {
+            var_dump($format_time);
             throw new \Exception('Not numeric: ' . $format_time);
         }
         $time = $format_time / 1000;
