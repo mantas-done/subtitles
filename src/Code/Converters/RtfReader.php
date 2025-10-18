@@ -13,6 +13,7 @@ class RtfReader implements ConverterContract
         return strpos($file_content, '{\rtf1') === 0;
     }
 
+    /** @throws UserException */
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         // https://stackoverflow.com/a/63029792/4126621
@@ -20,6 +21,9 @@ class RtfReader implements ConverterContract
 
         // remove backslashes
         $lines = mb_split("\n", $text);
+        if ($lines === false) {
+            throw new UserException("RtfReader: File content is not valid");
+        }
         foreach ($lines as &$line) {
             $line = trim($line);
             $line = rtrim($line, '\\');
@@ -35,6 +39,4 @@ class RtfReader implements ConverterContract
     {
         throw new UserException('RTF writer is not implemented yet');
     }
-
-
 }
