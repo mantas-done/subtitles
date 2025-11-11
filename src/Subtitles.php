@@ -435,6 +435,14 @@ class Subtitles
             }
         }
 
+        foreach ($internal_format as $row) {
+            foreach ($row['lines'] as $line) {
+                if (strlen($line) > 2000) {
+                    throw new UserException('One text line has over 2000 symbols');
+                }
+            }
+        }
+
         $this->internal_format = array_values($internal_format);
         return $this;
     }

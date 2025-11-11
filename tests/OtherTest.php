@@ -143,4 +143,12 @@ Dialogue: 0,0:00:03.00,0:00:04.00,Default,,0,0,0,,test
         $actual = (new Subtitles())->loadFromString('00:00:00 01:00:00 help', false)->getInternalFormat();
         $this->assertInternalFormatsEqual([], $actual);
     }
+
+    public function testDoesntAllowLongText()
+    {
+        $this->expectExceptionMessage('One text line has over 2000 symbols');
+
+        $long_text = str_repeat('a', 2001);
+        (new Subtitles())->loadFromString($long_text)->content('srt');
+    }
 }
