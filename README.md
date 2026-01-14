@@ -217,7 +217,7 @@ Array
 
 ```
 php vendor/bin/phpunit
-php vendor/bin/phpstan analyse --memory-limit 4G
+php vendor/bin/phpstan analyse
 ```
 
 ## Contribution

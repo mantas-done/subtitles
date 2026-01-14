@@ -109,4 +109,16 @@ $HorzAlign	=	Center
         $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->getInternalFormat();
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testClientFile2()
+    {
+        $this->expectExceptionMessage('This line is not valid:');
+
+        $text = '00:02:00:01	,	00:02:04:01	,	and
+00:02:11:15	.	00:02:21:00	,	from'; // has dot instead of comma
+
+        $actual = (new Subtitles())->loadFromString($text)->getInternalFormat();
+        $expected = (new Subtitles())->add(0, 1, 'a')->add(1, 2, 'b')->getInternalFormat();
+        $this->assertInternalFormatsEqual($expected, $actual);
+    }
 }

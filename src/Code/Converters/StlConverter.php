@@ -2,6 +2,8 @@
 
 namespace Done\Subtitles\Code\Converters;
 
+use Done\Subtitles\Code\Exceptions\UserException;
+
 class StlConverter implements ConverterContract
 {
     public function canParseFileContent(string $file_content, string $original_file_content): bool
@@ -9,10 +11,31 @@ class StlConverter implements ConverterContract
         return preg_match('/^\d{2}:\d{2}:\d{2}:\d{2}\s,\s\d{2}:\d{2}:\d{2}:\d{2}\s,.+/m', $file_content) === 1;
     }
 
+    /** @throws UserException */
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
     {
         $not_trimmed_lines = explode("\n", $file_content);
         $lines = array_map('trim', $not_trimmed_lines);
+
+        foreach ($lines as $k => $line) {
+            if (!ctype_digit(mb_substr($line, 0, 1))) {
+                unset($lines[$k]);
+                continue;
+            }
+
+            $pattern = '/^\s*' .
+                '(\d{2}):(\d{2}):(\d{2}):(\d{2})' .   // start time
+                '\s*,\s*' .
+                '(\d{2}):(\d{2}):(\d{2}):(\d{2})' .   // end time
+                '\s*,\s*' .
+                '(.+?)' .                             // text
+                '\s*$/';
+
+            if (!preg_match($pattern, $line, $m)) {
+                throw new UserException("This line is not valid: $line");
+            }
+
+        }
 
         $frames_per_seconds = static::framesPerSecond($lines);
 
@@ -120,7 +143,8 @@ class StlConverter implements ConverterContract
         return implode(' | ', $lines);
     }
 
-    protected static function framesPerSecond($lines)
+    /** @param array<string> $lines */
+    protected static function framesPerSecond(array $lines): int
     {
         $max_frames = 0;
         foreach ($lines as $line) {
@@ -137,7 +161,7 @@ class StlConverter implements ConverterContract
         return 25;
     }
 
-    private static function maxFrames($line, $max_frames)
+    private static function maxFrames(string $line, int $max_frames): int
     {
         if (!static::doesLineHaveTimestamp($line)) {
             return $max_frames;
