@@ -27,7 +27,7 @@ class TtmlConverter implements ConverterContract
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if (!empty($errors)) {
-            if (Helpers::strContains($errors[0]->message, 'Document labelled UTF-16 but has UTF-8 content')) {
+            if (preg_match('/encoding=["\']utf-16["\']/i', $file_content)) {
                 $new_file_content = str_replace('encoding="utf-16"', 'encoding="utf-8"', $file_content);
                 $new_file_content = str_replace('encoding="UTF-16"', 'encoding="UTF-8"', $new_file_content);
                 $new_file_content = str_replace("encoding='utf-16'", "encoding='utf-8'", $new_file_content);

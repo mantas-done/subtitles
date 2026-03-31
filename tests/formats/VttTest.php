@@ -401,4 +401,25 @@ TEXT;
 
         $this->assertInternalFormatsEqual($expected, $actual);
     }
+
+    public function testBlocksWithoutBlankLineSeparators()
+    {
+        $given = <<< TEXT
+WEBVTT
+00:00:05.750 --> 00:00:06.690
+a
+00:00:07.810 --> 00:00:15.190
+b
+00:00:15.190 --> 00:00:17.450
+c
+00:00:21.190 --> 00:00:24.010
+d
+TEXT;
+        $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
+
+        $this->assertEquals('a', $actual[0]['lines'][0]);
+        $this->assertEquals('b', $actual[1]['lines'][0]);
+        $this->assertEquals('c', $actual[2]['lines'][0]);
+        $this->assertEquals('d', $actual[3]['lines'][0]);
+    }
 }

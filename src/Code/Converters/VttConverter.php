@@ -26,6 +26,7 @@ class VttConverter implements ConverterContract
         $i = -1;
         $seen_first_timestamp = false;
         $last_line_was_empty = true;
+        $saw_empty_after_text = false;
 
         foreach ($lines as $line) {
             $parts = TxtConverter::getLineParts($line, $colon_count, 2);
@@ -49,7 +50,7 @@ class VttConverter implements ConverterContract
                 }
 
                 // cue
-                if (!$last_line_was_empty && isset($internal_format[$i - 1])) {
+                if (!$last_line_was_empty && $saw_empty_after_text && isset($internal_format[$i - 1])) {
                     $count = count($internal_format[$i - 1]['lines']);
                     // @phpstan-ignore-next-line
                     if ($count === 1) {
@@ -59,6 +60,7 @@ class VttConverter implements ConverterContract
                         unset($internal_format[$i - 1]['lines'][$count - 1]);
                     }
                 }
+                $saw_empty_after_text = false;
             } elseif (trim($line) !== '') {
                 $text_line = $line;
                 // speaker
@@ -92,6 +94,9 @@ class VttConverter implements ConverterContract
                 }
             }
 
+            if ($i >= 0 && trim($line) === '') {
+                $saw_empty_after_text = true;
+            }
             $last_line_was_empty = trim($line) === '';
         }
 
