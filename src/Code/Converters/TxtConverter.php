@@ -12,7 +12,26 @@ class TxtConverter implements ConverterContract
 
     public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
-        return self::hasText($file_content) && !Helpers::strContains($file_content, "\x00"); // not a binary file
+        if (trim($original_file_content) === '') {
+            return false;
+        }
+
+        // must be valid UTF-8 after the library's encoding normalization
+        if (!mb_check_encoding($file_content, 'UTF-8')) {
+            return false;
+        }
+
+        // reject binary: null bytes never appear in real text files
+        if (str_contains($file_content, "\x00")) {
+            return false;
+        }
+
+        // must contain at least one letter; pure numeric/symbolic blobs aren't subtitles
+        if (!self::hasText($file_content)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array
