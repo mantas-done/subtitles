@@ -54,7 +54,7 @@ Sang Baandh Launga';
     {
         $given = <<< TEXT
 [01:01.10] First
-[01:02:10] Second
+[01:02.10] Second
 [02:01] Third
 TEXT;
         $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
@@ -63,6 +63,17 @@ TEXT;
             ->add(62.1, 121, 'Second')
             ->add(121, 122, 'Third')
             ->getInternalFormat();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testParsesHoursTimeFormat()
+    {
+        $given = '[01:02:15.42]Some lyrics';
+        $actual = (new LrcConverter())->fileContentToInternalFormat($given, $given, true);
+        $expected = [
+            ['start' => 3735.42, 'end' => 3736.42, 'lines' => ['Some lyrics']],
+        ];
 
         $this->assertEquals($expected, $actual);
     }
@@ -104,7 +115,7 @@ TEXT;
         $given = <<< TEXT
 [00:01.10] First
 [00:02.20][00:05.00] [grouped]
-[00:03:25] Third
+[00:03.25] Third
 TEXT;
         $actual = (new Subtitles())->loadFromString($given)->getInternalFormat();
 
@@ -143,5 +154,16 @@ TEXT;
 
         $actual = (new Subtitles())->setInternalFormat($actual)->content('lrc');
         $this->assertStringEqualsStringIgnoringLineEndings(trim($expected), trim($actual));
+    }
+
+    public function testExportUsesHoursForLongerTimestamps()
+    {
+        $actual = (new Subtitles())
+            ->add(3661.2, 3662.2, 'one')
+            ->getInternalFormat();
+
+        $actual = (new Subtitles())->setInternalFormat($actual)->content('lrc');
+
+        $this->assertStringContainsString('[61:01.20] one', $actual);
     }
 }

@@ -6,7 +6,7 @@ use Done\Subtitles\Code\Exceptions\UserException;
 
 class LrcConverter implements ConverterContract
 {
-    protected static $regexp = '/\[\s*(\d{2}:\d{2}(?:[:.]\d{1,3})?)\s*]/';
+    protected static $regexp = '/\[\s*(\d{2}:\d{2}(?::\d{2})?(?:\.\d{1,3})?)\s*]/';
     protected static $time_offset_regexp = '/\[offset:\s*\+?(-?\d+)\s*]/s';
 
     public function canParseFileContent(string $file_content, string $original_file_content): bool
@@ -71,29 +71,35 @@ class LrcConverter implements ConverterContract
 
     protected static function lrcTimeToInternal($lrc_time, $timestamp_offset) : float
     {
+        // In .lrc, ':' separates time fields (h:m:s) and '.' is the only fractional-seconds separator
         $parts = explode(':', $lrc_time);
         if (count($parts) === 3) {
-            $minutes = (int) $parts[0];
-            $seconds = (float) $parts[1];
-            $milliseconds = str_pad($parts[2], 3, '0', STR_PAD_RIGHT);
+            // hh:mm:ss(.xx)
+            $hours = (int) $parts[0];
+            $minutes = (int) $parts[1];
+            $seconds = (float) $parts[2];
+            return $hours * 3600 + $minutes * 60 + $seconds - $timestamp_offset;
         } else if (count($parts) === 2) {
+            // mm:ss(.xx)
             $minutes = (int) $parts[0];
             $seconds = (float) $parts[1];
-            $milliseconds = 0;
-        } else {
-            throw new UserException("$lrc_time timestamp is not valid in .lrc file");
+            return $minutes * 60 + $seconds - $timestamp_offset;
         }
 
-        return $minutes * 60 + $seconds + (float) ('.' . $milliseconds) - $timestamp_offset;
+        throw new UserException("$lrc_time timestamp is not valid in .lrc file");
     }
 
     protected static function internalTimeToLrc($internal_time) : string
     {
-        $parts = explode('.', $internal_time); // 1.23
-        $whole = $parts[0]; // 1
-        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : 0; // 23
+        $whole = (int) floor($internal_time);
+        $minutes = (int) floor($whole / 60);
+        $seconds = $whole % 60;
 
-        $lrc_time = gmdate("i:s", floor($whole)) . '.' . str_pad($decimal, 2, '0', STR_PAD_RIGHT);
+        $parts = explode('.', (string) $internal_time);
+        $decimal = isset($parts[1]) ? substr($parts[1], 0, 3) : '0';
+        $decimal = str_pad($decimal, 2, '0', STR_PAD_RIGHT);
+
+        $lrc_time = sprintf('%02d:%02d.%s', $minutes, $seconds, $decimal);
 
         return $lrc_time;
     }
