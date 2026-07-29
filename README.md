@@ -54,7 +54,7 @@ use \Done\Subtitles\Subtitles;
 ```php
 // if no input format is specified, library will determine file format by its content
 // if third parameter is specified, library will convert the file to specified format.
-// list of formats are in Subtitle::$formats, they are: ass, dfxp, sbv, srt, stl, sub, ttml, txt_quicktime, vtt 
+// list of formats are in Subtitles::$formats via getFormats(), they are: ass, dfxp, sbv, srt, stl, sub, ttml, txt_quicktime, vtt 
 (new Subtitles())->convert('subtitles1', 'subtitles2', ['output_format' => 'vtt']); 
 ```
 
