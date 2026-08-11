@@ -11,10 +11,29 @@ class LrcConverter implements ConverterContract
 
     public function canParseFileContent(string $file_content, string $original_file_content): bool
     {
-        // only select when there is text after the timestamp
-        // do not select files that have timestamp and text somewhere on the other line
-        $regex = rtrim(self::$regexp, '/') . ' *[\p{L}]+' . '/s';
-        return preg_match($regex, $file_content) === 1;
+        // only select when the text comes right after the timestamp on the same line
+        // do not select files that have timestamp and text on separate lines (those are handled by TxtConverter)
+        $inline_regex = rtrim(self::$regexp, '/') . ' *[\p{L}]+' . '/u';
+
+        $lines = explode("\n", $file_content);
+        $timestamp_line_count = 0;
+        $inline_text_line_count = 0;
+        foreach ($lines as $line) {
+            if (preg_match(self::$regexp, $line) !== 1) {
+                continue;
+            }
+            $timestamp_line_count++;
+            if (preg_match($inline_regex, $line) === 1) {
+                $inline_text_line_count++;
+            }
+        }
+
+        if ($timestamp_line_count === 0) {
+            return false;
+        }
+
+        // most timestamp lines must carry their own text, otherwise it is not an .lrc file
+        return $inline_text_line_count >= $timestamp_line_count * 0.5;
     }
 
     public function fileContentToInternalFormat(string $file_content, string $original_file_content, bool $strict): array

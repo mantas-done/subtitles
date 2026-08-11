@@ -37,6 +37,33 @@ Sang Baandh Launga';
         $this->assertTrue(get_class($converter) !== LrcConverter::class);
     }
 
+    public function testNotLrcWhenOnlyFewInlineTextLines()
+    {
+        // timestamps are mostly on their own line (TxtConverter style), only a couple have inline text
+        $content = <<< TEXT
+[00:08.6]
+first line on separate line
+
+[00:23.2]
+second line on separate line
+
+[00:38.1]
+third line on separate line
+
+[00:47.1] inline text here
+TEXT;
+        $converter = Helpers::getConverterByFileContent((new Subtitles())->getFormats(), $content, $content);
+        $this->assertTrue(get_class($converter) !== LrcConverter::class);
+
+        $actual = (new Subtitles())->loadFromString($content)->getInternalFormat();
+        $this->assertCount(4, $actual);
+        $this->assertEquals(8.6, $actual[0]['start']);
+        $this->assertEquals('first line on separate line', $actual[0]['lines'][0]);
+        $this->assertEquals(23.2, $actual[1]['start']);
+        $this->assertEquals(38.1, $actual[2]['start']);
+        $this->assertEquals(47.1, $actual[3]['start']);
+    }
+
     public function testParsesLrc()
     {
         $expected = (new Subtitles())->loadFromFile('./tests/files/lrc.lrc')->getInternalFormat();
