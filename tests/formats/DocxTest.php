@@ -2,6 +2,7 @@
 
 namespace Formats;
 
+use Done\Subtitles\Code\Exceptions\UserException;
 use Done\Subtitles\Code\Helpers;
 use Done\Subtitles\Subtitles;
 use Helpers\AdditionalAssertionsTrait;
@@ -25,6 +26,28 @@ class DocxTest extends TestCase
     {
         $actual = (new Subtitles())->loadFromFile('./tests/files/docx_document2.docx')->content('txt');
         $this->assertStringContainsString('That crooked branch', $actual);
+    }
+
+    public function testRejectsZipBomb()
+    {
+        $tmp_path = tempnam(sys_get_temp_dir(), 'docx_bomb_');
+        $zip = new \ZipArchive();
+        $zip->open($tmp_path, \ZipArchive::OVERWRITE);
+        $zip->addFromString('[Content_Types].xml', '<Types/>');
+        $zip->addFromString('word/document.xml', str_repeat('a', 20 * 1024 * 1024)); // ~20 KB compressed
+        $zip->close();
+        $content = file_get_contents($tmp_path);
+        unlink($tmp_path);
+
+        $memory_before = memory_get_usage();
+        memory_reset_peak_usage();
+        try {
+            (new Subtitles())->loadFromString($content);
+            $this->fail('Expected UserException');
+        } catch (UserException $e) {
+            $this->assertStringContainsString('too large when uncompressed', $e->getMessage());
+        }
+        $this->assertLessThan(5 * 1024 * 1024, memory_get_peak_usage() - $memory_before);
     }
 
     public function testCorruptedZip()
