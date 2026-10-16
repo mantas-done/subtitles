@@ -19,9 +19,19 @@ class DocxToText
             throw new \RuntimeException("Can't open zip");
         }
 
+        $parts = ['word/document.xml', 'word/document2.xml'];
+        try {
+            self::assertSafeUncompressedSize($zip, $parts);
+        } catch (UserException $e) {
+            $zip->close();
+            unlink($tmp_path);
+            throw $e;
+        }
+
         $content = '';
-        $content .= $zip->getFromName('word/document.xml') ?: '';
-        $content .= $zip->getFromName('word/document2.xml') ?: '';
+        foreach ($parts as $part) {
+            $content .= $zip->getFromName($part) ?: ''; // reads at most the size declared in the zip index, which was checked above
+        }
 
         $content = str_replace('<w:tab/>', "    ", $content); // tab
         $content = str_replace('<w:pStyle w:val="ListParagraph"/>', '1. ', $content); // numbering but not correct, jus for word count
@@ -39,5 +49,27 @@ class DocxToText
         }
 
         return $striped_content;
+    }
+
+    private const MAX_COMPRESSION_RATIO = 100;
+    private const RATIO_CHECK_MIN_SIZE = 1024 * 1024;
+    private const MAX_TOTAL_UNCOMPRESSED_SIZE = 100 * 1024 * 1024;
+
+    /** @throws UserException */
+    private static function assertSafeUncompressedSize(\ZipArchive $zip, array $part_names): void
+    {
+        $total_size = 0;
+        foreach ($part_names as $part_name) {
+            $stat = $zip->statName($part_name);
+            if ($stat === false) {
+                continue;
+            }
+
+            $too_compressed = $stat['size'] > self::RATIO_CHECK_MIN_SIZE && $stat['size'] > self::MAX_COMPRESSION_RATIO * $stat['comp_size'];
+            $total_size += $stat['size'];
+            if ($too_compressed || $total_size > self::MAX_TOTAL_UNCOMPRESSED_SIZE) {
+                throw new UserException('.docx file is too large when uncompressed');
+            }
+        }
     }
 }
