@@ -12,6 +12,14 @@ class OtherTest extends TestCase
 {
     use AdditionalAssertionsTrait;
 
+    public function testTooManyLinesThrowsUserException()
+    {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage('File has too many lines (' . (Subtitles::MAX_LINES + 1) . ')');
+
+        (new Subtitles())->loadFromString(str_repeat("a\n", Subtitles::MAX_LINES));
+    }
+
     public function testEndTimeIsBiggerThanStart()
     {
         $this->expectException(UserException::class);

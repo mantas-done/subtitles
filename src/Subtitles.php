@@ -37,6 +37,9 @@ class Subtitles
 
     protected ConverterContract $converter;
 
+    // parsing uses ~2KB of memory per line, bigger files exhaust the memory limit
+    public const MAX_LINES = 100000;
+
     /** @var array<int, array{extension: string, format: string, name: string, class: class-string}> */
     private array $formats = [
         ['extension' => 'ass',  'format' => 'ass',              'name' => 'Advanced Sub Station Alpha', 'class' => AssConverter::class],
@@ -288,6 +291,10 @@ class Subtitles
         $modified_string = Helpers::convertToUtf8($string);
         $modified_string = Helpers::removeUtf8Bom($modified_string);
         $modified_string = Helpers::normalizeNewLines($modified_string);
+        $line_count = substr_count($modified_string, "\n") + 1;
+        if ($line_count > self::MAX_LINES) {
+            throw new UserException('File has too many lines (' . $line_count . '), maximum is ' . self::MAX_LINES);
+        }
         $this->input = $modified_string;
 
         $input_converter = Helpers::getConverterByFileContent($this->formats, $this->input, $string);
